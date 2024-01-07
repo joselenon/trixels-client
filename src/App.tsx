@@ -22,6 +22,7 @@ function App() {
         </Body>
       </ScreenConfigProvider>
       <GlobalStyles />
+
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
