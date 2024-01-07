@@ -1,0 +1,22 @@
+import React from 'react';
+import styled from 'styled-components';
+
+import ItemStats from '../components/Item/ItemStatsDetails';
+
+const HomeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+export default function Home() {
+  return (
+    <HomeContainer>
+      <h4>Welcome to Trixels.xyz</h4>
+      <h2>We do the tricks, you get the profit!</h2>
+
+      <ItemStats itemName="itm_popberryFruit" />
+    </HomeContainer>
+  );
+}
