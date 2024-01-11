@@ -28,7 +28,6 @@ const HeaderMobile = ({ websiteLogo, menuItems }: HeaderProps) => {
             </svg>
           </styles.HeaderMenuItem>
         </styles.HeaderMenusContainer>
-
         {isMenuOpened && (
           <styles.DropdownMenuContainer>
             {menuItemsKeys.map((item: string, i) => (

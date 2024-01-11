@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { v4 } from 'uuid';
 
 import AddNewTimer from '../components/MyTimersComponents/AddNewTimer';
 import CircleTimer from '../components/MyTimersComponents/CircleTimer';
-import {
-  getDataFromLocalStorage,
-  localStorageKeys,
-  saveDataInLocalStorage,
-} from '../utils/addLocalStorageObj';
-import getTimersFromServersJson from '../utils/getTimersFromServersJson';
-import saveDataInJSON from '../utils/saveDataInJSON';
+import { IUserResourceFrontEnd, IUserResourcesRedis } from '../interfaces/IUserResources';
+import AxiosService from '../services/AxiosService';
+import getTimersFromServer from '../utils/getTimersFromServer';
+import saveResourceInServer from '../utils/saveResourceInServer';
 
 const MyTimersContainer = styled.div`
   display: flex;
@@ -24,70 +22,70 @@ const TimersContainer = styled.div`
   gap: 3rem;
 `;
 
-export interface TimerInfo {
-  [id: string]: {
-    resourceName: string;
-    cooldown: number;
-    landNumber: number;
-    startTime: number;
-    acc: string;
-  };
-}
-
 export default function MyTimers() {
-  const [timersAcc, setTimersAcc] = useState<string | undefined>(undefined);
-  const [resourcesList, setResourcesList] = useState<TimerInfo>({});
+  const [selectedAcc, setSelectedAcc] = useState<string | undefined>(undefined);
+  const [resourcesList, setResourcesList] = useState<IUserResourcesRedis>({});
+  const [newResource, setNewResource] = useState<IUserResourceFrontEnd | null>(null);
+
+  const [circleTimersElements, setCircleTimersElements] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     const loadTimersFromJSON = async () => {
-      if (!timersAcc) return;
+      if (!selectedAcc) return;
 
-      const timersData = await getTimersFromServersJson(timersAcc);
+      const timersData = await getTimersFromServer(selectedAcc);
       if (timersData) {
         setResourcesList(timersData);
       }
     };
 
     loadTimersFromJSON();
-  }, [timersAcc]);
+  }, [selectedAcc]);
 
   useEffect(() => {
-    saveDataInLocalStorage(localStorageKeys.timers, resourcesList);
-    const jsonBackup = async () => {
-      await saveDataInJSON(resourcesList);
-    };
+    if (newResource) {
+      const saveResource = async () => {
+        await saveResourceInServer(newResource);
+      };
+      saveResource();
 
-    jsonBackup();
-  }, [resourcesList]);
+      setResourcesList((prev) => {
+        /* MUDAR ABORDAGEM DE ID RANDOM */
+        return { ...prev, [v4()]: { ...newResource } };
+      });
+    }
+  }, [newResource]);
 
   const renderCircleTimers = () => {
-    const sortedResourcesList = Object.values(resourcesList).sort((a, b) => {
-      return a.landNumber - b.landNumber;
+    const resourcesListEntries = Object.entries(resourcesList);
+    const resourcesListSortedEntries = resourcesListEntries.sort((a, b) => {
+      return a[1].landNumber - b[1].landNumber;
     });
 
-    return sortedResourcesList.map((resource) => {
-      const resourceId = `${resource.resourceName}${resource.landNumber}:${resource.acc}`;
-      return (
-        <CircleTimer
-          key={`${resource.landNumber}${resource.resourceName}${resource.acc}`}
-          resourcesList={resourcesList}
-          setResourcesList={setResourcesList}
-          timerInfo={{ [resourceId]: { ...resource } }}
-        />
-      );
-    });
+    return resourcesListSortedEntries.map(([resourceId, resource]) => (
+      <CircleTimer
+        key={resourceId}
+        resourcesList={resourcesList}
+        setResourcesList={setResourcesList}
+        timerInfo={{ [resourceId]: { ...resource } }}
+      />
+    ));
   };
+
+  useEffect(() => {
+    setCircleTimersElements(renderCircleTimers());
+  }, [resourcesList]);
 
   return (
     <MyTimersContainer>
       <AddNewTimer
-        timersAcc={timersAcc}
-        setTimersAcc={setTimersAcc}
+        selectedAcc={selectedAcc}
+        setSelectedAcc={setSelectedAcc}
         resourcesList={resourcesList}
-        setResourcesList={setResourcesList}
+        setNewResource={setNewResource}
       />
 
-      <TimersContainer>{renderCircleTimers()}</TimersContainer>
+      <TimersContainer>{circleTimersElements}</TimersContainer>
     </MyTimersContainer>
   );
 }

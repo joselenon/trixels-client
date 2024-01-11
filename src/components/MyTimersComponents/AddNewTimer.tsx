@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
-import { TimerInfo } from '../../pages/MyTimers';
-import { localStorageKeys, saveDataInLocalStorage } from '../../utils/addLocalStorageObj';
+import { IUserResourcesRedis } from '../../interfaces/IUserResources';
 
 const AddNewTimerContainer = styled.div`
   display: flex;
@@ -16,24 +16,81 @@ const AddNewTimerContainer = styled.div`
     border: none;
     background: #1b1b1b;
     padding: 8px;
+    height: 35px;
+    border-radius: 6px;
   }
 `;
 
 const SelectorsContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(6, 90px);
+  grid-template-rows: 80px 80px;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   gap: 1rem;
-`;
 
-const ResourceTypeSelectionContainer = styled.div`
-  display: flex;
-  gap: 2rem;
+  .land-number {
+    width: 100%;
+    grid-column: 5/6;
+  }
+
+  .add-button {
+    grid-column: 6/7;
+    width: 100%;
+    background: #24768f;
+  }
+
+  .account {
+    grid-column: 1/5;
+  }
+
+  .resource-type {
+    grid-column: 1 / 7;
+  }
+
+  @media (max-width: 700px) {
+    grid-template-columns: repeat(3, 90px);
+
+    .resource-type {
+      grid-column: 1 / 4;
+    }
+
+    .account {
+      grid-column: 1/2;
+    }
+
+    .land-number {
+      width: 100%;
+      grid-column: 2/3;
+    }
+
+    .add-button {
+      grid-column: 3/4;
+      width: 100%;
+      background: #24768f;
+    }
+  }
+
+  @media (max-width: 650px) {
+    .account {
+      grid-column: 1/2;
+    }
+
+    .land-number {
+      width: 100%;
+      grid-column: 2/3;
+    }
+
+    .add-button {
+      grid-column: 3/4;
+      width: 100%;
+      background: #24768f;
+    }
+  }
 
   button {
+    width: 100%;
     background: #3f3f3f;
-    border-radius: 2px;
 
     &.active {
       background-color: #3898ae;
@@ -41,28 +98,23 @@ const ResourceTypeSelectionContainer = styled.div`
   }
 `;
 
-const ResourceLandSelectionContainer = styled.div`
+const AccountSelectionContainer = styled.div`
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
 
-  input {
-    width: 80px;
-    background-color: #343434;
-    border-radius: 2px;
+  h5 {
+    white-space: normal;
   }
-
-  button {
-    &.add {
-      background: #3f7f2f;
-    }
+  select {
+    width: 100%;
   }
 `;
 
 interface ResourcesCooldownProps {
   [resourceName: string]: { cooldown: number };
 }
-const resourcesCooldown: ResourcesCooldownProps = {
+export const resourcesCooldown: ResourcesCooldownProps = {
   APIARY: { cooldown: 2700000 },
   SPECIAL_MINE: { cooldown: 2700000 },
   COOP: { cooldown: 3600000 },
@@ -72,17 +124,17 @@ const resourcesCooldown: ResourcesCooldownProps = {
 };
 
 interface AddNewTimer {
-  timersAcc: string | undefined;
-  setTimersAcc: React.Dispatch<React.SetStateAction<string | undefined>>;
-  resourcesList: TimerInfo;
-  setResourcesList: React.Dispatch<React.SetStateAction<TimerInfo>>;
+  selectedAcc: string | undefined;
+  setSelectedAcc: React.Dispatch<React.SetStateAction<string | undefined>>;
+  resourcesList: IUserResourcesRedis;
+  setNewResource: React.Dispatch<React.SetStateAction<IUserResourcesRedis | null>>;
 }
 
 export default function AddNewTimer({
   resourcesList,
-  setResourcesList,
-  setTimersAcc,
-  timersAcc,
+  setNewResource,
+  setSelectedAcc,
+  selectedAcc,
 }: AddNewTimer) {
   const [resourceType, setResourceType] = useState<string>('');
   const [landNumber, setLandNumber] = useState<number | undefined>(undefined);
@@ -98,31 +150,29 @@ export default function AddNewTimer({
   };
 
   const handleAddNewTimer = () => {
-    if (!timersAcc) return toast.error('Account is missing...');
-    if (!landNumber) return toast.error('Land number is missing...');
-
-    const newTimerId = `${resourceType}${landNumber}:${timersAcc}`;
+    if (!selectedAcc) return toast.error('Account field is required.');
+    if (!landNumber) return toast.error('Land number is required.');
+    if (!resourceType) return toast.error('Resource type is required.');
 
     const resourcesListKeys = Object.keys(resourcesList);
-    if (resourcesListKeys.includes(newTimerId)) {
-      return toast.error('Already exists.');
+
+    /* MELHORAR NOME DE VARIAVEIS (RESOURCETYPE E RESOURCENAME) */
+    for (const key of resourcesListKeys) {
+      if (
+        resourcesList[key].landNumber === landNumber &&
+        resourcesList[key].resourceName === resourceType
+      ) {
+        return toast.error('Already exists.');
+      }
     }
 
-    const obj: TimerInfo = {
-      [newTimerId]: {
-        resourceName: resourceType,
-        cooldown:
-          resourcesCooldown[resourceType as keyof ResourcesCooldownProps].cooldown,
-        landNumber,
-        startTime: new Date().getTime(),
-        acc: timersAcc,
-      },
+    const obj: any = {
+      resourceName: resourceType,
+      landNumber,
+      startTime: new Date().getTime(),
     };
 
-    setResourcesList((prev) => {
-      return { ...prev, ...obj };
-    });
-
+    setNewResource(obj);
     return toast.success(`Added: ${resourceType} at land ${landNumber}!`);
   };
 
@@ -131,65 +181,75 @@ export default function AddNewTimer({
       <h3>ADD NEW TIMER</h3>
 
       <SelectorsContainer>
-        <ResourceTypeSelectionContainer>
-          <button
-            className={resourceType === 'TEST' ? 'active' : ''}
-            onClick={(e) => handleSelectResourceType(e)}
-            type="button"
-          >
-            <h4>TEST</h4>
-          </button>
-          <button
-            className={resourceType === 'APIARY' ? 'active' : ''}
-            onClick={(e) => handleSelectResourceType(e)}
-            type="button"
-          >
-            <h4>Apiary</h4>
-          </button>
-          <button
-            className={resourceType === 'COOP' ? 'active' : ''}
-            onClick={(e) => handleSelectResourceType(e)}
-            type="button"
-          >
-            <h4>Coop</h4>
-          </button>
-          <button
-            className={resourceType === 'MINE' ? 'active' : ''}
-            onClick={(e) => handleSelectResourceType(e)}
-            type="button"
-          >
-            <h4>Mine</h4>
-          </button>
-          <button
-            className={resourceType === 'SPECIAL_MINE' ? 'active' : ''}
-            onClick={(e) => handleSelectResourceType(e)}
-            type="button"
-          >
-            <h4>Special_Mine</h4>
-          </button>
-          <button
-            className={resourceType === 'SLUGGER' ? 'active' : ''}
-            onClick={(e) => handleSelectResourceType(e)}
-            type="button"
-          >
-            <h4>Slugger</h4>
-          </button>
-        </ResourceTypeSelectionContainer>
+        <button
+          className={resourceType === 'TEST' ? 'active' : ''}
+          onClick={(e) => handleSelectResourceType(e)}
+          type="button"
+        >
+          <h4>TEST</h4>
+        </button>
+        <button
+          className={resourceType === 'APIARY' ? 'active' : ''}
+          onClick={(e) => handleSelectResourceType(e)}
+          type="button"
+        >
+          <h4>Apiary</h4>
+        </button>
+        <button
+          className={resourceType === 'COOP' ? 'active' : ''}
+          onClick={(e) => handleSelectResourceType(e)}
+          type="button"
+        >
+          <h4>Coop</h4>
+        </button>
+        <button
+          className={resourceType === 'MINE' ? 'active' : ''}
+          onClick={(e) => handleSelectResourceType(e)}
+          type="button"
+        >
+          <h4>Mine</h4>
+        </button>
+        <button
+          className={resourceType === 'SPECIAL_MINE' ? 'active' : ''}
+          onClick={(e) => handleSelectResourceType(e)}
+          type="button"
+        >
+          <h4>Special_Mine</h4>
+        </button>
+        <button
+          className={resourceType === 'SLUGGER' ? 'active' : ''}
+          onClick={(e) => handleSelectResourceType(e)}
+          type="button"
+        >
+          <h4>Slugger</h4>
+        </button>
 
-        <ResourceLandSelectionContainer>
-          <h4>Acc</h4>
-          <select defaultValue={''} onChange={(e) => setTimersAcc(e.target.value)}>
+        <AccountSelectionContainer className="account">
+          <select defaultValue={''} onChange={(e) => setSelectedAcc(e.target.value)}>
             <option value={''}>Select an account: </option>
             <option>JOSELENON</option>
-            <option>MICHINHA</option>
+            <option>XX</option>
           </select>
 
-          <h4>Land</h4>
-          <input type="text" onChange={(e) => handleSetLandNumber(e)} />
-          <button onClick={handleAddNewTimer} className="add" type="button">
-            <h4>Add</h4>
-          </button>
-        </ResourceLandSelectionContainer>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+            <h5>*You can add an account by going to your</h5>
+            <Link to={'/'}>
+              <h5>profile</h5>
+            </Link>
+            <h5>settings.</h5>
+          </div>
+        </AccountSelectionContainer>
+
+        <input
+          className="land-number"
+          placeholder="Land N."
+          type="text"
+          onChange={(e) => handleSetLandNumber(e)}
+        />
+
+        <button onClick={handleAddNewTimer} className="add-button" type="button">
+          <h4>Add</h4>
+        </button>
       </SelectorsContainer>
     </AddNewTimerContainer>
   );

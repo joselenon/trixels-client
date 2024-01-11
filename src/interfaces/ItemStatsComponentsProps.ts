@@ -13,15 +13,19 @@ export interface ItemListingProps {
 
 export type ItemListingKeys = keyof ItemListingProps;
 
+export interface GetItemsListingsProps {
+  [itemName: string]: ItemMarketData;
+}
+
 export interface ItemMarketData {
-  listings: ItemListingProps[] | null | undefined;
+  listings: ItemListingProps[];
   ownerUsernames: { [id: string]: string } | null | undefined;
 }
 
 export type HistoryPricesAndTimeObj = { value: number; time: number }[];
 
 export type ItemHistoryPricesData = {
-  prices: { [itemName: string]: { value: number; time: number }[] };
+  [itemName: string]: { value: number; time: number }[];
 };
 
 export type ItemMetricsProps = {
@@ -33,19 +37,22 @@ export type ItemMetricsProps = {
 };
 
 export type MetricsProps = {
-  cheapestListing: ItemListingProps | null | undefined;
+  cheapestListing: ItemListingProps | undefined;
   averages:
     | {
         averagePrice1h: { caption: string; metricValue: number };
         averagePrice1d: { caption: string; metricValue: number };
         averagePrice7d: { caption: string; metricValue: number };
       }
-    | null
     | undefined;
 };
 
 export type ItemProp = {
-  [itemName: string]: { image: string; metrics: MetricsProps; market: ItemMarketData };
+  [itemName: string]: {
+    image: string;
+    metrics: MetricsProps | undefined;
+    market: ItemMarketData;
+  };
 };
 
 export interface ItemStatsProps {

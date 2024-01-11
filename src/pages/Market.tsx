@@ -97,12 +97,17 @@ const ItemsTable = styled.table`
 export default function Market() {
   const { allItemsInfo } = useLoadItemsAndMetrics();
 
+  console.log('itens aqui market', allItemsInfo);
+
   const [allItemsKeys, setAllItemsKeys] = useState<Array<string> | undefined>(undefined);
   const [filteredItems, setFilteredItems] = useState<Array<string>>();
   const [itemSelection, setItemSelection] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (allItemsInfo) setAllItemsKeys(Object.keys(allItemsInfo));
+    if (allItemsInfo) {
+      const allItemsKeys = Object.keys(allItemsInfo);
+      setAllItemsKeys(allItemsKeys);
+    }
   }, [allItemsInfo]);
 
   return (
@@ -156,6 +161,7 @@ export default function Market() {
           </tbody>
         </ItemsTable>
 
+        {/* Começar a implementar logica para atualização dinamica de itens */}
         <ItemStatsDetails itemName={itemSelection} />
       </ItemsAndStatsDetailsContainer>
     </MarketContainer>

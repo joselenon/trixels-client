@@ -5,16 +5,19 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { toast } from 'react-toastify';
 
 import gameLibItemsJSON from '../assets/gameLibItems.json';
 import { GameLibItemsProps } from '../interfaces/GameLibItemsProps';
 import {
+  GetItemsListingsProps,
   ItemHistoryPricesData,
+  ItemListingProps,
   ItemMarketData,
   ItemProp,
   MetricsProps,
 } from '../interfaces/ItemStatsComponentsProps';
-import AxiosService from '../services/AxiosService';
+import { MyApiAxiosService } from '../services/AxiosService';
 import historyPricesTreatment from '../utils/historyPricesTreatment';
 
 interface LoadItemsAndMetricsState {
@@ -32,21 +35,22 @@ const LoadItemsAndMetricsContextProvider = ({ children }: { children: ReactEleme
   const [allItemsInfo, setAllItemsInfo] = useState<ItemProp | undefined>(undefined);
 
   const getAllHistoryPrices = async () => {
-    const { data } = await AxiosService<{ data: ItemHistoryPricesData }>({
+    const responseData = await MyApiAxiosService<ItemHistoryPricesData>({
       url: `http://localhost:3008/api/historyprices`,
       method: 'get',
     });
 
-    if (data) return data.data; // FIX THIS
+    if (responseData) return responseData; // FIX THIS
   };
 
   const getAllItemsListings = async () => {
-    const { data } = await AxiosService({
+    const responseData = await MyApiAxiosService<GetItemsListingsProps>({
       url: `http://localhost:3008/api/itemslistings`,
       method: 'get',
     });
 
-    if (data) return data.data; // FIX THIS
+    const responseDataParsed = JSON.parse(responseData);
+    if (responseData) return responseDataParsed;
   };
 
   const allItemsAndMetrics = async () => {
@@ -55,62 +59,62 @@ const LoadItemsAndMetricsContextProvider = ({ children }: { children: ReactEleme
     const allItems = Object.keys(gameLibItems);
 
     const allHistoryPrices = await getAllHistoryPrices();
-    const itemsListingsJSON = await getAllItemsListings();
+    const allItemsListings = await getAllItemsListings();
 
-    const itemsListings: { [itemName: string]: ItemMarketData } =
-      itemsListingsJSON && JSON.parse(itemsListingsJSON);
+    const itemsWithError = [];
 
     for (const itemName of allItems) {
-      const itemListingsInfo = itemsListings[itemName];
+      if (allItemsListings && allItemsListings[itemName] && allHistoryPrices) {
+        const itemListingsInfo = allItemsListings[itemName];
 
-      const getItemMarketAndMetrics = (): {
-        market: ItemMarketData;
-        metrics: MetricsProps;
-      } => {
-        const isItemsListingsEmpty =
-          !itemListingsInfo?.listings || itemListingsInfo?.listings.length <= 0;
+        const getItemMarketAndMetrics = (): {
+          market: ItemMarketData;
+          metrics: MetricsProps;
+        } => {
+          const itemListings = itemListingsInfo.listings;
+          const itemOwnerUsernames = itemListingsInfo.ownerUsernames;
 
-        const itemListings = isItemsListingsEmpty ? null : itemListingsInfo.listings;
+          const cheapestListing = itemListingsInfo.listings[0];
 
-        const itemOwnerUsernames = isItemsListingsEmpty
-          ? null
-          : itemListingsInfo.ownerUsernames;
+          const averages = historyPricesTreatment(allHistoryPrices[itemName]);
 
-        const cheapestListing = isItemsListingsEmpty
-          ? null
-          : itemListingsInfo.listings?.[0];
-
-        const averages =
-          isItemsListingsEmpty || !allHistoryPrices
-            ? null
-            : historyPricesTreatment(allHistoryPrices.prices[itemName]);
-
-        return {
-          metrics: { averages, cheapestListing },
-          market: { listings: itemListings, ownerUsernames: itemOwnerUsernames },
+          return {
+            metrics: { averages, cheapestListing },
+            market: { listings: itemListings, ownerUsernames: itemOwnerUsernames },
+          };
         };
-      };
 
-      const putItemInItemsObj = () => {
-        const { market, metrics } = getItemMarketAndMetrics();
+        const putItemInItemsObj = () => {
+          const { market, metrics } = getItemMarketAndMetrics();
 
-        items[itemName] = {
-          image: gameLibItems[itemName].image,
-          metrics,
-          market,
+          items[itemName] = {
+            image: gameLibItems[itemName].image,
+            metrics,
+            market,
+          };
         };
-      };
 
-      putItemInItemsObj();
+        putItemInItemsObj();
+      } else {
+        itemsWithError.push({ itemName });
+      }
+
+      setAllItemsInfo(items);
     }
 
-    setAllItemsInfo(items);
+    if (itemsWithError.length > 0) {
+      /* toast.error(
+        'Some errors related to items listings and metrics. \n Check console for more details.',
+      );
+      console.log(itemsWithError); */
+    }
   };
 
   useEffect(() => {
     const loadItems = async () => {
-      allItemsAndMetrics();
+      await allItemsAndMetrics();
     };
+
     loadItems();
 
     /*     const getItemsLoop = setInterval(loadItems, 10000);

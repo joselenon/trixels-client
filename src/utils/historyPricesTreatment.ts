@@ -6,6 +6,8 @@ import {
 export default function historyPricesTreatment(
   historyPricesArray: HistoryPricesAndTimeObj,
 ): MetricsProps['averages'] {
+  if (historyPricesArray.length <= 0) return undefined;
+
   const averagePrice1h = (function () {
     const today = new Date();
 

@@ -2,10 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
-import { TimerInfo } from '../../pages/MyTimers';
+import { IUserResourcesRedis } from '../../interfaces/IUserResources';
+import { MyApiAxiosService } from '../../services/AxiosService';
+import { resourcesCooldown } from './AddNewTimer';
 import Timer from './Timer';
 
 const CircleTimerContainer = styled.div`
+  position: relative;
   display: flex;
 
   h4 {
@@ -39,20 +42,77 @@ const TimerInfoContainer = styled.div`
   }
 `;
 
+const TimerMenuContainer = styled.div`
+  background: rgb(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 100%;
+  backdrop-filter: blur(7px);
+  border: 2px solid #3da3de;
+  transition: all 0.2s;
+
+  &.hidden {
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+  }
+
+  h4 {
+    font-weight: 600;
+    color: white;
+    transition: all 0.1s;
+  }
+  .edit {
+    &:hover {
+      color: #3da3de;
+    }
+  }
+
+  .remove {
+    &:hover {
+      color: #fb6b6b;
+    }
+  }
+`;
+
 interface CirleTimer {
-  timerInfo: TimerInfo;
-  resourcesList: TimerInfo;
-  setResourcesList: React.Dispatch<React.SetStateAction<TimerInfo>>;
+  timerInfo: IUserResourcesRedis;
+  resourcesList: IUserResourcesRedis;
+  setResourcesList: React.Dispatch<React.SetStateAction<IUserResourcesRedis>>;
 }
 
 export default function CircleTimer({ setResourcesList, timerInfo }: CirleTimer) {
+  const [isTimerMenuOpened, setIsTimerMenuOpened] = useState(false);
+
   const timerId = Object.keys(timerInfo)[0];
-  const { cooldown, landNumber, resourceName, startTime } = timerInfo[timerId];
+
+  const { landNumber, resourceName, startTime } = timerInfo[timerId];
 
   const timerRef = useRef<HTMLDivElement>(null);
-  const [timeInMs, setTimeInMs] = useState<number>(cooldown);
+  const [timeInMs, setTimeInMs] = useState<number>(0);
 
   const handleResetTimer = () => {
+    const nowTimestamp = new Date().getTime();
+
+    // TIRAR DAQUI ESSA PORRA
+    const updateTimersWithStartTime = async () => {
+      try {
+        const postRequest = await MyApiAxiosService({
+          url: `http://localhost:3008/api/saveresources?resourceId=${timerId}`,
+          method: 'put',
+          data: { startTime: nowTimestamp },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     setResourcesList((prev) => {
       if (!prev[timerId]) {
         toast.error('Something went wrong...');
@@ -60,20 +120,28 @@ export default function CircleTimer({ setResourcesList, timerInfo }: CirleTimer)
       }
 
       const updatedObj = { ...prev };
-      updatedObj[timerId].startTime = new Date().getTime();
+      updatedObj[timerId].startTime = nowTimestamp;
+
       return updatedObj;
     });
 
-    setTimeInMs(cooldown);
+    updateTimersWithStartTime();
+    setTimeInMs(resourcesCooldown[resourceName].cooldown);
   };
 
   useEffect(() => {
-    const nowTime = new Date().getTime();
-    const elapsedTime = nowTime - startTime;
+    if (startTime) {
+      const nowTime = new Date().getTime();
+      const elapsedTime = nowTime - startTime;
 
-    const cooldownMinusElapsedTime = cooldown - elapsedTime;
-    const cooldownLeft = cooldownMinusElapsedTime > 0 ? cooldownMinusElapsedTime : 0;
-    setTimeInMs(cooldownLeft);
+      const cooldownMinusElapsedTime =
+        resourcesCooldown[resourceName].cooldown - elapsedTime;
+      const cooldownLeft = cooldownMinusElapsedTime > 0 ? cooldownMinusElapsedTime : 0;
+
+      setTimeInMs(cooldownLeft);
+    } else {
+      setTimeInMs(0);
+    }
   }, []);
 
   useEffect(() => {
@@ -83,31 +151,28 @@ export default function CircleTimer({ setResourcesList, timerInfo }: CirleTimer)
     }
   }, [timeInMs]);
 
-  /* REMOVING TIMER CONFIG */
-  let removeTimerTimeout: any;
+  const handleTimerInfoContainerClick = (e: React.MouseEvent) => {
+    e.preventDefault();
 
-  const handleMouseDown = () => {
-    removeTimerTimeout = setTimeout(() => {
-      setResourcesList((prev) => {
-        const updatedObj = { ...prev };
-        delete updatedObj[timerId];
-
-        return updatedObj;
-      });
-    }, 5000);
+    if (e.button === 2) {
+      setIsTimerMenuOpened((prev) => !prev);
+    }
   };
 
-  const handleMouseUp = () => {
-    clearTimeout(removeTimerTimeout);
+  const removeTimer = () => {
+    setResourcesList((prev) => {
+      const updatedObj = { ...prev };
+      delete updatedObj[timerId];
+
+      return updatedObj;
+    });
   };
-  /* */
 
   return (
     <CircleTimerContainer>
       <TimerInfoContainer
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
         onClick={handleResetTimer}
+        onContextMenu={(e) => handleTimerInfoContainerClick(e)}
         ref={timerRef}
       >
         <h5 className="chicken">{resourceName}</h5>
@@ -115,6 +180,18 @@ export default function CircleTimer({ setResourcesList, timerInfo }: CirleTimer)
 
         <Timer timeInMs={timeInMs} setTimeInMs={setTimeInMs} />
       </TimerInfoContainer>
+
+      <TimerMenuContainer
+        className={isTimerMenuOpened ? '' : 'hidden'}
+        onContextMenu={(e) => handleTimerInfoContainerClick(e)}
+      >
+        <button type="button">
+          <h4 className="edit">Edit</h4>
+        </button>
+        <button type="button" onClick={removeTimer}>
+          <h4 className="remove">Remove</h4>
+        </button>
+      </TimerMenuContainer>
     </CircleTimerContainer>
   );
 }

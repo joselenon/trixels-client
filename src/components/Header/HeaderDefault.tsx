@@ -13,6 +13,7 @@ const HeaderDefault = ({ menuItems, websiteLogo }: HeaderProps) => {
         <Link to={'/'}>
           <styles.LogoItem>{websiteLogo}</styles.LogoItem>
         </Link>
+
         <styles.TogetherItems>
           {menuItemsKeys.map((item: string, i) => (
             <Link to={menuItems[item].param} key={i}>
@@ -23,7 +24,10 @@ const HeaderDefault = ({ menuItems, websiteLogo }: HeaderProps) => {
             </Link>
           ))}
         </styles.TogetherItems>
-        <div></div>
+
+        <div>
+          <Link to={'/profile'}>USER</Link>
+        </div>
       </styles.HeaderMenusContainer>
     </styles.HeaderContainer>
   );

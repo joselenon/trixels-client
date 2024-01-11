@@ -9,6 +9,7 @@ export const HeaderContainer = styled.div`
   width: 100%;
   background: var(--header-color);
   backdrop-filter: blur(8px);
+  padding: 0 20px;
 `;
 
 export const Logo = styled.h3`

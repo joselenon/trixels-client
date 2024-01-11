@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import ItemStatsDetails from '../components/Item/ItemStatsDetails';
@@ -10,7 +10,7 @@ import {
   ItemMetricsProps,
   ItemProp,
 } from '../interfaces/ItemStatsComponentsProps';
-import AxiosService from '../services/AxiosService';
+import { AxiosService } from '../services/AxiosService';
 import getDiffFromCurrentPrice from '../utils/getDiffFromCurrentPrice';
 import treatItemListings from '../utils/treatItemListings';
 
@@ -43,40 +43,37 @@ const ListingsContainer = styled.div`
 `;
 
 export default function Trading() {
-  const [itemsToShow, setItemsToShow] = useState<string[]>([]);
+  const { allItemsInfo } = useLoadItemsAndMetrics();
+
   const [allItemsInfoUpdated, setAllItemsInfoUpdated] = useState<ItemProp | undefined>(
     undefined,
   );
+  const [itemsToShow, setItemsToShow] = useState<string[]>([]);
   const [elementsOrdered, setElementsOrdered] = useState<JSX.Element[] | undefined>();
-
-  const { allItemsInfo } = useLoadItemsAndMetrics();
 
   useEffect(() => {
     setAllItemsInfoUpdated(allItemsInfo);
   }, [allItemsInfo]);
 
   const sortBy1h = () => {
-    console.log('ORDENADO!!!');
-
     if (allItemsInfoUpdated) {
       const sortedItemsToShowTreated = [...itemsToShow];
       sortedItemsToShowTreated.sort((itemName1, itemName2) => {
         const infoItem1 = allItemsInfoUpdated[itemName1];
         const infoItem2 = allItemsInfoUpdated[itemName2];
 
-        if (
-          infoItem1.market.listings &&
-          infoItem2.market.listings &&
-          infoItem1.market.listings.length > 0 &&
-          infoItem2.market.listings.length
-        ) {
+        const { metrics: metricsInfo1 } = infoItem1;
+        const { metrics: metricsInfo2 } = infoItem2;
+
+        if (metricsInfo1 && metricsInfo2) {
           const diffCalc1 = getDiffFromCurrentPrice(
-            infoItem1.metrics.cheapestListing!.price,
-            infoItem1.metrics.averages!.averagePrice1d.metricValue,
+            metricsInfo1.cheapestListing.price,
+            metricsInfo1.averages.averagePrice1d.metricValue,
           );
+
           const diffCalc2 = getDiffFromCurrentPrice(
-            infoItem2.metrics.cheapestListing!.price,
-            infoItem2.metrics.averages!.averagePrice1d.metricValue,
+            metricsInfo2.cheapestListing.price,
+            metricsInfo2.averages.averagePrice1d.metricValue,
           );
 
           return diffCalc2 - diffCalc1;
@@ -104,47 +101,57 @@ export default function Trading() {
   };
 
   const fetchItemMarketData = async (itemName: string) => {
-    console.log(itemName, '- Fetching Item...');
-    const { data } = await AxiosService<ItemMarketData>({
-      method: 'get',
+    const fetchedData = await AxiosService<ItemMarketData>({
       url: `https://pixels-server.pixels.xyz/v1/marketplace/item/${itemName}`,
     });
 
-    if (data) {
-      console.log(itemName, '- Item fetched');
-
+    if (fetchedData) {
       setAllItemsInfoUpdated((prev: ItemProp | undefined) => {
         if (prev && itemName) {
-          const newItemListingsTreated = treatItemListings(data.listings);
+          const newItemListingsTreated = treatItemListings(fetchedData.listings);
           const newItemInfo: ItemProp = {
             [itemName]: {
               ...prev[itemName],
               market: {
-                listings: newItemListingsTreated,
-                ownerUsernames: data.ownerUsernames,
+                listings: newItemListingsTreated ? newItemListingsTreated : [],
+                ownerUsernames: fetchedData.ownerUsernames,
               },
               metrics: {
-                averages: prev[itemName].metrics.averages,
+                averages: prev[itemName].metrics?.averages, // TODOS ITENS TEM A CHAVE METRICS (ARRUMAR A DUVIDA)
                 cheapestListing: newItemListingsTreated![0], // FIX
               },
             },
           };
 
           return { ...prev, ...newItemInfo };
+        } else {
+          return prev;
         }
-        return prev;
       });
     }
   };
 
   useEffect(() => {
+    sortBy1h();
+  }, [allItemsInfoUpdated]);
+
+  useEffect(() => {
+    const socket = new WebSocket('ws://localhost:3008');
+    socket.addEventListener('open', (event) => {
+      console.log('Conectado ao servidor WS.');
+      socket.send(JSON.stringify(itemsToShow));
+    });
+
+    socket.addEventListener('message', (event) => {
+      console.log('Mensagem Recebida: ', event.data);
+    });
+
     const fetchDataAndUpdate = async () => {
-      await Promise.all(
-        itemsToShow.map(async (itemName) => {
-          await fetchItemMarketData(itemName);
-        }),
-      );
-      sortBy1h();
+      const fetchPromises = itemsToShow.map(async (itemName) => {
+        await fetchItemMarketData(itemName);
+      });
+
+      await Promise.all(fetchPromises);
     };
 
     fetchDataAndUpdate();
