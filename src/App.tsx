@@ -11,10 +11,8 @@ import Header from './components/Header/Header';
 import Modal from './components/Modal';
 import { JWTCookie } from './config/app/CookiesConfig';
 import { AuthModalProvider } from './contexts/AuthModalContext';
-import { LoadItemsAndMetricsContextProvider } from './contexts/LoadItemsAndMetricsContext';
 import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
 import { UserContextProvider } from './contexts/UserContext';
-import { WebSocketProvider } from './contexts/WebSocketContext';
 import { IUser } from './interfaces/IUser';
 import { setToken } from './redux/features/authSlice';
 import AppRoutes from './routes/AppRoutes';
@@ -47,20 +45,16 @@ function App() {
   return (
     <BrowserRouter>
       <UserContextProvider>
-        <WebSocketProvider>
-          <AuthModalProvider>
-            <ScreenConfigProvider>
-              <Body>
-                <Header />
-                <LoadItemsAndMetricsContextProvider>
-                  <AppRoutes />
-                </LoadItemsAndMetricsContextProvider>
+        <AuthModalProvider>
+          <ScreenConfigProvider>
+            <Body>
+              <Header />
+              <AppRoutes />
 
-                <Modal children={<AuthModal />} />
-              </Body>
-            </ScreenConfigProvider>
-          </AuthModalProvider>
-        </WebSocketProvider>
+              <Modal children={<AuthModal />} />
+            </Body>
+          </ScreenConfigProvider>
+        </AuthModalProvider>
       </UserContextProvider>
 
       <GlobalStyles />
