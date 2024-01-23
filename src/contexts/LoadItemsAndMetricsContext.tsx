@@ -5,19 +5,17 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { toast } from 'react-toastify';
 
 import gameLibItemsJSON from '../assets/gameLibItems.json';
 import { GameLibItemsProps } from '../interfaces/GameLibItemsProps';
 import {
   GetItemsListingsProps,
   ItemHistoryPricesData,
-  ItemListingProps,
   ItemMarketData,
   ItemProp,
   MetricsProps,
 } from '../interfaces/ItemStatsComponentsProps';
-import { MyApiAxiosService } from '../services/AxiosService';
+import { MyAxiosService } from '../services/MyAxiosService';
 import historyPricesTreatment from '../utils/historyPricesTreatment';
 
 interface LoadItemsAndMetricsState {
@@ -34,23 +32,27 @@ const LoadItemsAndMetricsContext = createContext<LoadItemsAndMetricsState | unde
 const LoadItemsAndMetricsContextProvider = ({ children }: { children: ReactElement }) => {
   const [allItemsInfo, setAllItemsInfo] = useState<ItemProp | undefined>(undefined);
 
-  const getAllHistoryPrices = async () => {
-    const responseData = await MyApiAxiosService<ItemHistoryPricesData>({
-      url: `http://localhost:3008/api/historyprices`,
+  const getAllHistoryPrices = async (): Promise<ItemHistoryPricesData | undefined> => {
+    const response = await MyAxiosService<ItemHistoryPricesData>({
+      endpoint: `/historyprices`,
       method: 'get',
     });
 
-    if (responseData) return responseData; // FIX THIS
+    if (response.api.data) return response.api.data; // FIX THIS
   };
 
   const getAllItemsListings = async () => {
-    const responseData = await MyApiAxiosService<GetItemsListingsProps>({
-      url: `http://localhost:3008/api/itemslistings`,
+    const responseData = await MyAxiosService<string>({
+      endpoint: `/itemslistings`,
       method: 'get',
     });
 
-    const responseDataParsed = JSON.parse(responseData);
-    if (responseData) return responseDataParsed;
+    if (responseData.api.data) {
+      const responseDataParsed = JSON.parse(
+        responseData.api.data,
+      ) as GetItemsListingsProps;
+      return responseDataParsed;
+    }
   };
 
   const allItemsAndMetrics = async () => {

@@ -5,7 +5,7 @@ export const HeaderContainer = styled.div`
   top: 0;
   left: 0;
   position: fixed;
-  z-index: 100;
+  z-index: 10;
   width: 100%;
   background: var(--header-color);
   backdrop-filter: blur(8px);

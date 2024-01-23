@@ -8,11 +8,13 @@ import Market from '../pages/Market';
 import MyTimers from '../pages/MyTimers';
 import Trading from '../pages/Trading';
 import Tricks from '../pages/Tricks';
+import UserProfile from '../pages/UserProfile';
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/profile/:username" element={<UserProfile />} />
       <Route path="/mytimers" element={<MyTimers />} />
       <Route path="/market" element={<Market />} />
       <Route path="/tricks" element={<Tricks />} />

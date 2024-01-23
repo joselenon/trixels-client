@@ -5,7 +5,6 @@ import { v4 } from 'uuid';
 import AddNewTimer from '../components/MyTimersComponents/AddNewTimer';
 import CircleTimer from '../components/MyTimersComponents/CircleTimer';
 import { IUserResourceFrontEnd, IUserResourcesRedis } from '../interfaces/IUserResources';
-import AxiosService from '../services/AxiosService';
 import getTimersFromServer from '../utils/getTimersFromServer';
 import saveResourceInServer from '../utils/saveResourceInServer';
 

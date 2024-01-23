@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 
 import { IUserResourcesRedis } from '../interfaces/IUserResources';
-import { MyApiAxiosService } from '../services/AxiosService';
+import { MyAxiosService } from '../services/MyAxiosService';
 
 export default async function getTimersFromServer(
   timersAcc: string,
@@ -11,12 +11,12 @@ export default async function getTimersFromServer(
     return undefined;
   }
 
-  const data = await MyApiAxiosService<IUserResourcesRedis>({
+  const data = await MyAxiosService<IUserResourcesRedis>({
     method: 'get',
-    url: `http://localhost:3008/api/saveresources?acc=${timersAcc}`,
+    endpoint: `/saveresources?acc=${timersAcc}`,
   });
 
   if (!data) return undefined;
 
-  return data;
+  return data.api.data;
 }

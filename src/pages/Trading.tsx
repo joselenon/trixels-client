@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import ItemStatsDetails from '../components/Item/ItemStatsDetails';
 import TradingSearchInput from '../components/SearchInput/TradingSearchInput';
 import { useLoadItemsAndMetrics } from '../contexts/LoadItemsAndMetricsContext';
+import { useWebSocket } from '../contexts/WebSocketContext';
 import {
   ItemMarketData,
   ItemMetricsProps,
@@ -94,13 +95,13 @@ export default function Trading() {
             </div>
           );
         })
-        .slice(0, 10);
+        .slice(0, 3);
 
       return setElementsOrdered(elements);
     }
   };
 
-  const fetchItemMarketData = async (itemName: string) => {
+  /*   const fetchItemMarketData = async (itemName: string) => {
     const fetchedData = await AxiosService<ItemMarketData>({
       url: `https://pixels-server.pixels.xyz/v1/marketplace/item/${itemName}`,
     });
@@ -129,36 +130,72 @@ export default function Trading() {
         }
       });
     }
+  }; */
+
+  const updateItemMarketData = (itemName: string, fetchedData: ItemMarketData) => {
+    if (fetchedData) {
+      setAllItemsInfoUpdated((prev: ItemProp | undefined) => {
+        if (prev && itemName) {
+          const newItemListingsTreated = treatItemListings(fetchedData.listings);
+
+          const newItemInfo: ItemProp = {
+            [itemName]: {
+              ...prev[itemName],
+              market: {
+                listings: newItemListingsTreated ? newItemListingsTreated : [],
+                ownerUsernames: fetchedData.ownerUsernames,
+              },
+              metrics: {
+                averages: prev[itemName].metrics?.averages, // TODOS ITENS TEM A CHAVE METRICS (ARRUMAR A DUVIDA)
+                cheapestListing: newItemListingsTreated
+                  ? newItemListingsTreated[0]
+                  : undefined, // FIX
+              },
+            },
+          };
+
+          return { ...prev, ...newItemInfo };
+        } else {
+          return prev;
+        }
+      });
+    }
   };
 
   useEffect(() => {
     sortBy1h();
   }, [allItemsInfoUpdated]);
 
+  const { webSocket } = useWebSocket();
+
   useEffect(() => {
-    const socket = new WebSocket('ws://localhost:3008');
-    socket.addEventListener('open', (event) => {
-      console.log('Conectado ao servidor WS.');
-      socket.send(JSON.stringify(itemsToShow));
-    });
+    if (webSocket) {
+      webSocket.send(JSON.stringify(itemsToShow));
 
-    socket.addEventListener('message', (event) => {
-      console.log('Mensagem Recebida: ', event.data);
-    });
+      webSocket.addEventListener('message', (event) => {
+        const dataParsed = JSON.parse(event.data);
+        console.log('Mensagem Recebida: ', dataParsed);
 
-    const fetchDataAndUpdate = async () => {
+        itemsToShow.forEach((itemName) =>
+          updateItemMarketData(itemName, dataParsed[itemName]),
+        );
+      });
+    }
+
+    /*     const fetchDataAndUpdate = async () => {
       const fetchPromises = itemsToShow.map(async (itemName) => {
-        await fetchItemMarketData(itemName);
+        await updateItemMarketData(itemName);
       });
 
       await Promise.all(fetchPromises);
     };
-
     fetchDataAndUpdate();
 
     const updateItemsInterval = setInterval(fetchDataAndUpdate, 5000);
     return () => clearInterval(updateItemsInterval);
-  }, [itemsToShow, allItemsInfo]);
+
+    */
+  }, [itemsToShow]);
 
   return (
     <div style={{ display: 'flex' }}>
@@ -169,7 +206,7 @@ export default function Trading() {
             <h3>Long-term</h3>
           </TypeTitleContainer>
 
-          <TradingSearchInput itemsToShow={itemsToShow} setItemsToShow={setItemsToShow} />
+          {/* <TradingSearchInput itemsToShow={itemsToShow} setItemsToShow={setItemsToShow} /> */}
         </TypeContainer>
 
         <TypeContainer>
@@ -189,7 +226,7 @@ export default function Trading() {
             <h3>VIP-Term</h3>
           </TypeTitleContainer>
 
-          <TradingSearchInput itemsToShow={itemsToShow} setItemsToShow={setItemsToShow} />
+          {/* <TradingSearchInput itemsToShow={itemsToShow} setItemsToShow={setItemsToShow} /> */}
         </TypeContainer>
       </TradingTypesContainer>
     </div>

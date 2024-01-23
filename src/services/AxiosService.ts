@@ -1,16 +1,13 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 
+import { IAPIAxiosService, IAPIResponse } from '../interfaces/IAPIResponse';
+
 interface AxiosServiceOptions {
   url: string;
   method?: 'get' | 'post' | 'put' | 'delete';
   data?: any;
   headers?: Record<string, string>;
-}
-
-interface ApiResponse<T = any> {
-  data?: T;
-  error?: AxiosError;
 }
 
 async function AxiosService<T = any>({
@@ -27,7 +24,7 @@ async function AxiosService<T = any>({
   };
 
   try {
-    const response: AxiosResponse<ApiResponse<T>> = await axios(config);
+    const response: AxiosResponse<T> = await axios(config);
 
     const data = response.data;
     if (!data || data === undefined) throw new Error('something');
@@ -38,32 +35,4 @@ async function AxiosService<T = any>({
   }
 }
 
-async function MyApiAxiosService<T = any>({
-  url,
-  method = 'get',
-  data,
-  headers,
-}: AxiosServiceOptions): Promise<T | undefined> {
-  const config: AxiosRequestConfig = {
-    method,
-    url,
-    data,
-    headers,
-  };
-
-  try {
-    const response: AxiosResponse<ApiResponse<T>> = await axios(config);
-
-    const responseData = response.data;
-    if (!responseData) {
-      throw new Error('Resposta vazia ou sem dados.');
-    }
-
-    return responseData.data;
-  } catch (error: any) {
-    toast.error(error);
-    return undefined;
-  }
-}
-
-export { AxiosService, MyApiAxiosService };
+export { AxiosService };

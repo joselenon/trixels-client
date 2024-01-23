@@ -1,7 +1,9 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import cur_berry from '../../assets/cur_berry.png';
+import sonicRingSound from '../../assets/sonicRingSound.mp3';
 import { SVGAverage, SVGFilledQuantity, SVGFilledUser } from '../../assets/SVGIcons';
 import {
   ItemListingKeys,
@@ -173,7 +175,6 @@ export default function ItemListings({
   const [chunkPage, setChunkPage] = useState(1);
   const item = itemInfo[itemName];
 
-  const cheapestListing = item.metrics.cheapestListing;
   const listings = item.market.listings;
   const metrics = item.metrics;
   const listingsOwners = item.market.ownerUsernames;
@@ -196,16 +197,18 @@ export default function ItemListings({
     };
 
     const addMetricsTHs = () => {
-      const metricsAverages = metrics.averages;
+      if (metrics) {
+        const metricsAverages = metrics.averages;
 
-      if (metricsAverages) {
-        showMetrics.map((m: string) => {
-          THsInfo[m] = {
-            tdName: metricsAverages[m as keyof ItemMetricsProps].caption,
-            tdIcon: tdIcons[m],
-          };
-          return m;
-        });
+        if (metricsAverages) {
+          showMetrics.map((m: string) => {
+            THsInfo[m] = {
+              tdName: metricsAverages[m as keyof ItemMetricsProps].caption,
+              tdIcon: tdIcons[m],
+            };
+            return m;
+          });
+        }
       }
     };
 
@@ -251,29 +254,42 @@ export default function ItemListings({
             });
 
           const metricsTDs = () => {
-            const metricAverages = metrics.averages;
+            if (metrics) {
+              const metricAverages = metrics.averages;
+              const cheapestListing = metrics.cheapestListing;
 
-            if (metricAverages && cheapestListing) {
-              const averagesKeys = Object.keys(metricAverages);
-              const filteredAverages = averagesKeys.filter((avgKey) =>
-                showMetrics.includes(avgKey as keyof ItemMetricsProps),
-              );
-
-              const renderMetricCalc = (average: keyof ItemMetricsProps) => {
-                const getDiffFromCurrentPriceSettings = diffFromCurrentPriceInfo(
-                  listing.price,
-                  metricAverages[average as keyof ItemMetricsProps].metricValue,
+              if (metricAverages && cheapestListing) {
+                const averagesKeys = Object.keys(metricAverages);
+                const filteredAverages = averagesKeys.filter((avgKey) =>
+                  showMetrics.includes(avgKey as keyof ItemMetricsProps),
                 );
-                const { css, treatedString } = getDiffFromCurrentPriceSettings;
 
-                return <h4 className={css}>{treatedString}</h4>;
-              };
+                const renderMetricCalc = (average: keyof ItemMetricsProps) => {
+                  const getDiffFromCurrentPriceSettings = diffFromCurrentPriceInfo(
+                    listing.price,
+                    metricAverages[average as keyof ItemMetricsProps].metricValue,
+                  );
+                  const { css, treatedString, percentage } =
+                    getDiffFromCurrentPriceSettings;
 
-              return filteredAverages.map((average, i) => (
-                <td className={average} key={i}>
-                  {renderMetricCalc(average as keyof ItemMetricsProps)}
-                </td>
-              ));
+                  return (
+                    <div>
+                      {percentage > 6.5 && (
+                        <audio autoPlay>
+                          <source src={sonicRingSound} type="audio/mp3" />
+                        </audio>
+                      )}
+                      <h4 className={css}>{treatedString}</h4>
+                    </div>
+                  );
+                };
+
+                return filteredAverages.map((average, i) => (
+                  <td className={average} key={i}>
+                    {renderMetricCalc(average as keyof ItemMetricsProps)}
+                  </td>
+                ));
+              }
             }
           };
 

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 import { IUserResourcesRedis } from '../../interfaces/IUserResources';
-import { MyApiAxiosService } from '../../services/AxiosService';
+import { MyAxiosService } from '../../services/MyAxiosService';
 import { resourcesCooldown } from './AddNewTimer';
 import Timer from './Timer';
 
@@ -103,8 +103,8 @@ export default function CircleTimer({ setResourcesList, timerInfo }: CirleTimer)
     // TIRAR DAQUI ESSA PORRA
     const updateTimersWithStartTime = async () => {
       try {
-        const postRequest = await MyApiAxiosService({
-          url: `http://localhost:3008/api/saveresources?resourceId=${timerId}`,
+        await MyAxiosService({
+          endpoint: `/saveresources?resourceId=${timerId}`,
           method: 'put',
           data: { startTime: nowTimestamp },
         });

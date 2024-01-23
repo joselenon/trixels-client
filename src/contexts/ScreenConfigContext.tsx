@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-const ScreenConfigContext = createContext<{
+interface ScreenConfigContextProps {
   isMobile: boolean;
   width: number;
-}>({
+}
+
+const ScreenConfigContext = createContext<ScreenConfigContextProps>({
   isMobile: false,
   width: window.innerWidth,
 });

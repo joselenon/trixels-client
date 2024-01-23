@@ -1,28 +1,69 @@
 import 'react-toastify/dist/ReactToastify.css';
 
-import React from 'react';
+import Cookies from 'js-cookie';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
+import AuthModal from './components/AuthModal';
 import Header from './components/Header/Header';
+import Modal from './components/Modal';
+import { JWTCookie } from './config/app/CookiesConfig';
+import { AuthModalProvider } from './contexts/AuthModalContext';
 import { LoadItemsAndMetricsContextProvider } from './contexts/LoadItemsAndMetricsContext';
 import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
+import { UserContextProvider } from './contexts/UserContext';
+import { WebSocketProvider } from './contexts/WebSocketContext';
+import { IUser } from './interfaces/IUser';
+import { setToken } from './redux/features/authSlice';
 import AppRoutes from './routes/AppRoutes';
+import { MyAxiosService } from './services/MyAxiosService';
 import GlobalStyles, { Body } from './styles/GlobalStyles';
 
 function App() {
+  const reduxDispatch = useDispatch();
+
+  useEffect(() => {
+    const authToken = Cookies.get(JWTCookie.key);
+
+    if (authToken) {
+      const getUserCredentials = async () => {
+        try {
+          const credentials = await MyAxiosService<IUser>({ endpoint: '/' });
+
+          if (credentials.api.data) {
+            reduxDispatch(setToken(credentials.api.data));
+          }
+        } catch (err) {
+          toast.error('Something went wrong.');
+        }
+      };
+
+      getUserCredentials();
+    }
+  }, [reduxDispatch]);
+
   return (
     <BrowserRouter>
-      <ScreenConfigProvider>
-        <Body>
-          <Header />
-          <LoadItemsAndMetricsContextProvider>
-            <AppRoutes />
-          </LoadItemsAndMetricsContextProvider>
-        </Body>
-      </ScreenConfigProvider>
-      <GlobalStyles />
+      <UserContextProvider>
+        <WebSocketProvider>
+          <AuthModalProvider>
+            <ScreenConfigProvider>
+              <Body>
+                <Header />
+                <LoadItemsAndMetricsContextProvider>
+                  <AppRoutes />
+                </LoadItemsAndMetricsContextProvider>
 
+                <Modal children={<AuthModal />} />
+              </Body>
+            </ScreenConfigProvider>
+          </AuthModalProvider>
+        </WebSocketProvider>
+      </UserContextProvider>
+
+      <GlobalStyles />
       <ToastContainer
         position="bottom-right"
         autoClose={3000}

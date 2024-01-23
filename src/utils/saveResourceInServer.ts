@@ -1,8 +1,8 @@
-import { MyApiAxiosService } from '../services/AxiosService';
+import { MyAxiosService } from '../services/MyAxiosService';
 
 export default async function saveResourceInServer(data: any) {
-  const postRequest = await MyApiAxiosService({
-    url: 'http://localhost:3008/api/saveresources',
+  const postRequest = await MyAxiosService({
+    endpoint: '/saveresources',
     method: 'post',
     data,
   });

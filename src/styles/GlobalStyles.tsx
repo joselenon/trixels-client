@@ -54,11 +54,21 @@ export default createGlobalStyle`
     margin: 0;
   }
 
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    font-size: 1.25rem;
+  }
+
   input {
     background: none;
-    border: none;
+    border: 1px solid red;
     font-size: 1rem;
-
+    padding: 10px;
+    color: black;
+    outline: none;
+    max-width: 300px;
   }
 
   iframe {
