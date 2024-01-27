@@ -3,15 +3,11 @@ import { FieldErrors } from 'react-hook-form/dist/types/errors';
 import { FieldValues } from 'react-hook-form/dist/types/fields';
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form/dist/types/form';
 
-import { IMyAPIResponse } from './IAPIResponse';
+import { IMyAPIResponse, TMyAxiosServiceResponse } from '../services/MyAxiosService';
 
 export interface IForm {
   // Function that will be used when form submits
-  axiosCallHook: (
-    payload: any,
-  ) =>
-    | Promise<AxiosResponse<IMyAPIResponse<any> | any> | undefined>
-    | Promise<IMyAPIResponse<any> | any>;
+  axiosCallHook: (payload: any) => TMyAxiosServiceResponse<any>;
   // In order to have custom style on inputs container
   InputContainer: React.ComponentType<{ children: React.ReactNode }>;
   inputArray: ICreateInput[];
@@ -20,7 +16,7 @@ export interface IForm {
 
 /*
 Captions
-  axiosCallHook: used to pass hook responsible for sending the data do the server-side
+  axiosCallHook: used to pass hook responsible for sending the data to the server-side
   InputContainer: used to pass a father element to receive input elements (useful for customize styles). Prop Example: const DivContainer = ({children}) => <div className='example'>{children}</div>
   inputArray: used to pass all inputs that will be used by the form in one array
   submitButton: used to pass a custom styled button to the form
@@ -35,6 +31,7 @@ interface IInputAttributes {
 }
 
 export interface ICreateInput {
+  componentKey: string;
   id: string;
   options: IInputAttributes;
   label: string;
@@ -54,6 +51,7 @@ Captions
 */
 
 export interface ITextInput {
+  componentKey: ICreateInput['componentKey'];
   id: ICreateInput['id'];
   label: ICreateInput['label'];
   options: IInputAttributes;

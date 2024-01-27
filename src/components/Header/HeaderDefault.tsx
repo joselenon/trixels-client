@@ -1,20 +1,22 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { useAuthModalContext } from '../../contexts/AuthModalContext';
-import { useUserContext } from '../../contexts/UserContext';
 import { HeaderProps } from '../../interfaces/HeaderProps';
+import { IReduxStore } from '../../interfaces/IRedux';
 import Button from '../Button';
+import Balance from './Balance';
 import * as styles from './styles';
 
 const HeaderDefault = ({ menuItems, websiteLogo }: HeaderProps) => {
-  const { credentials } = useUserContext();
+  const userCredentials = useSelector<
+    IReduxStore,
+    IReduxStore['auth']['userCredentials']
+  >((state) => state.auth.userCredentials);
+
   const menuItemsKeys = Object.keys(menuItems);
   const { setShowModal } = useAuthModalContext();
-
-  useEffect(() => {
-    console.log(credentials?.username);
-  }, [credentials]);
 
   return (
     <styles.HeaderContainer>
@@ -34,9 +36,11 @@ const HeaderDefault = ({ menuItems, websiteLogo }: HeaderProps) => {
           ))}
         </styles.TogetherItems>
 
-        {credentials ? (
-          <Link to={`/profile/${credentials.username}`}>
-            <h3>{credentials.username}</h3>
+        {userCredentials && <Balance />}
+
+        {userCredentials ? (
+          <Link to={`/profile/${userCredentials?.username}`}>
+            <h3>{userCredentials?.username}</h3>
           </Link>
         ) : (
           <div>

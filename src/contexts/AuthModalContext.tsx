@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
+import { useSelector } from 'react-redux';
 
-import { useUserContext } from './UserContext';
+import { IReduxStore } from '../interfaces/IRedux';
 
 interface AuthModalContextProps {
   showModal: boolean;
@@ -13,8 +14,9 @@ const AuthModalContext = createContext<AuthModalContextProps>({
 });
 
 export function AuthModalProvider({ children }: { children: JSX.Element }) {
+  /*   const auth = useSelector((state: IReduxStore) => state.auth);
+   */
   const [showModal, setShowModal] = useState<boolean>(false);
-  const { isLogged } = useUserContext();
 
   return (
     <AuthModalContext.Provider value={{ showModal, setShowModal }}>

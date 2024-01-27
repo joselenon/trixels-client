@@ -5,16 +5,13 @@ import { toast } from 'react-toastify';
 import { JWTCookie } from '../config/app/CookiesConfig';
 import URLS from '../config/constants/URLS';
 
-interface IMyAxiosService<T> {
-  api: IMyAPIResponse<T>;
-  axios: AxiosResponse<IMyAPIResponse<T>>;
-}
-
 export interface IMyAPIResponse<T> {
   success: boolean;
   message: string;
   data: T;
 }
+
+export type TMyAxiosServiceResponse<T> = Promise<IMyAPIResponse<T> | null>;
 
 interface AxiosServiceOptions {
   endpoint: string;
@@ -33,7 +30,7 @@ export async function MyAxiosService<T>({
   method = 'get',
   data,
   headers,
-}: AxiosServiceOptions): Promise<IMyAxiosService<T | undefined>> {
+}: AxiosServiceOptions): TMyAxiosServiceResponse<T> {
   /* REFATORAR PARA NÃO FICAR PEGANDO COOKIE TODA HORA */
   const tokenCookie = Cookies.get(JWTCookie.key);
 
@@ -47,29 +44,14 @@ export async function MyAxiosService<T>({
         ...headers,
       },
     });
+    if (response.data.success) toast.success(response.data.message);
 
     const responseData = response.data;
+    return responseData;
+  } catch (err: any) {
+    const axiosError = err as AxiosError<IMyAPIResponse<undefined>>;
+    toast.error(axiosError.response?.data.message);
 
-    if (!responseData.success) {
-      throw new Error(responseData.message);
-    }
-
-    return { api: responseData, axios: response };
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      const axiosError = error as AxiosError<IMyAPIResponse<T>>;
-
-      if (axiosError.response) {
-        toast.error(axiosError.response.data.message);
-      } else if (axiosError.request) {
-        toast.error('No response received from the server.');
-      } else {
-        toast.error('Error in making the request.');
-      }
-    } else {
-      toast.error('An unexpected error occurred.');
-    }
-
-    throw error;
+    return null;
   }
 }

@@ -1,12 +1,16 @@
 // Arrumar input que ao colocar como vazio e ir para outra aba, ao voltar ele retorna o valor desatualizado
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
-import validator from 'validator';
 
 import Button from '../components/Button';
 import Form from '../components/Form';
-import { useUserContext } from '../contexts/UserContext';
+import useGetUserProfile from '../hooks/useGetUserProfile';
+import useUpdateUserInfo from '../hooks/useUpdateUserInfo';
 import { ICreateInput } from '../interfaces/IRHF';
+import { TParams } from '../routes/AppRoutes';
+import validateEmail from '../utils/validateEmail';
 
 const FormContainer = styled.div`
   display: flex;
@@ -33,41 +37,47 @@ export const InputsContainer = styled.div`
   color: white;
 `;
 
+export interface IUpdateUserCredentialsPayload {
+  email?: string;
+  roninWallet?: string;
+}
+
 export default function UserProfile() {
-  const userInfo = useUserContext();
+  const handleUpdateUserInfo = useUpdateUserInfo();
+  const userProfileInfo = useGetUserProfile();
+  const urlParams = useParams<TParams>();
 
-  const validateEmail = (value: string) => {
-    if (!validator.isEmail(value) && value.length !== 0) {
-      return { valid: false, errorMsg: 'E-mail inválido.' };
-    }
-    return { valid: true, errorMsg: '' };
-  };
+  const [inputArray, setInputArray] = useState<ICreateInput[]>([]);
 
-  const handleUpdateUserInfo = (): any => {
-    console.log('oi');
-  };
+  const { username: usernameToQuery } = urlParams;
 
-  const emailInput: ICreateInput = {
-    id: 'email',
-    options: {
-      type: 'text',
-      defaultValue: userInfo?.jwtPayload?.username,
-      required: false,
-      //disabled: userInfo?.email?.value ? true : false,
-    },
-    label: 'E-mail',
-    rhfConfig: { rhfValidationFn: (value: string) => validateEmail(value) },
-  };
+  useEffect(() => {
+    const emailInput: ICreateInput = {
+      componentKey: 'email:' + usernameToQuery,
+      id: 'email',
+      options: {
+        type: 'text',
+        defaultValue: userProfileInfo?.email?.value,
+        required: false,
+        //disabled: userInfo?.email?.value ? true : false,
+      },
+      label: 'E-mail',
+      rhfConfig: { rhfValidationFn: (value: string) => validateEmail(value) },
+    };
 
-  const walletInput: ICreateInput = {
-    id: 'ronin-wallet',
-    options: {
-      type: 'text',
-      defaultValue: userInfo?.jwtPayload?.username,
-      required: false,
-    },
-    label: 'Ronin Wallet',
-  };
+    const walletInput: ICreateInput = {
+      componentKey: 'roninWallet:' + usernameToQuery,
+      id: 'roninWallet',
+      options: {
+        type: 'text',
+        defaultValue: userProfileInfo?.ronin_wallet.value,
+        required: false,
+      },
+      label: 'Ronin Wallet',
+    };
+
+    setInputArray([emailInput, walletInput]);
+  }, [userProfileInfo]);
 
   const saveButton = (
     <SaveButtonContainer>
@@ -79,12 +89,12 @@ export default function UserProfile() {
 
   return (
     <FormContainer>
-      <h2>{userInfo.jwtPayload?.username}</h2>
+      <h2>{userProfileInfo?.username}</h2>
 
       <Form
         axiosCallHook={handleUpdateUserInfo}
         InputContainer={InputsContainer}
-        inputArray={[emailInput, walletInput]}
+        inputArray={inputArray}
         submitButton={saveButton}
       />
     </FormContainer>

@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { IAuthState } from '../../interfaces/IRedux';
+import { IReduxStore } from '../../interfaces/IRedux';
 import { IUser } from '../../interfaces/IUser';
 
-const initialState: IAuthState = {
+const initialState: IReduxStore['auth'] = {
   userCredentials: undefined,
 };
 
@@ -11,7 +11,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setToken: (state, action: PayloadAction<IUser>) => {
+    setToken: (state, action: PayloadAction<IUser | undefined>) => {
       if (!action.payload) return (state.userCredentials = undefined);
 
       const credentials = action.payload;

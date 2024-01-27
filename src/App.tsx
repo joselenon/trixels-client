@@ -2,17 +2,17 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Cookies from 'js-cookie';
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 
 import AuthModal from './components/AuthModal';
 import Header from './components/Header/Header';
 import Modal from './components/Modal';
 import { JWTCookie } from './config/app/CookiesConfig';
 import { AuthModalProvider } from './contexts/AuthModalContext';
+import BalanceContextProvider from './contexts/BalanceContext';
 import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
-import { UserContextProvider } from './contexts/UserContext';
+import { IReduxStore } from './interfaces/IRedux';
 import { IUser } from './interfaces/IUser';
 import { setToken } from './redux/features/authSlice';
 import AppRoutes from './routes/AppRoutes';
@@ -20,42 +20,57 @@ import { MyAxiosService } from './services/MyAxiosService';
 import GlobalStyles, { Body } from './styles/GlobalStyles';
 
 function App() {
+  const userCredentials = useSelector<IReduxStore>((state) => state.auth.userCredentials);
   const reduxDispatch = useDispatch();
+
+  const handleLogout = () => {
+    Cookies.remove(JWTCookie.key);
+    reduxDispatch(setToken(undefined));
+
+    return window.location.reload();
+  };
+
+  const getUserCredentials = async () => {
+    const credentialsResponse = await MyAxiosService<IUser>({ endpoint: '/user' });
+
+    if (credentialsResponse) {
+      return reduxDispatch(setToken(credentialsResponse.data));
+    }
+
+    handleLogout();
+  };
 
   useEffect(() => {
     const authToken = Cookies.get(JWTCookie.key);
 
     if (authToken) {
-      const getUserCredentials = async () => {
-        try {
-          const credentials = await MyAxiosService<IUser>({ endpoint: '/' });
-
-          if (credentials.api.data) {
-            reduxDispatch(setToken(credentials.api.data));
-          }
-        } catch (err) {
-          toast.error('Something went wrong.');
-        }
-      };
-
       getUserCredentials();
     }
   }, [reduxDispatch]);
 
   return (
-    <BrowserRouter>
-      <UserContextProvider>
-        <AuthModalProvider>
-          <ScreenConfigProvider>
-            <Body>
-              <Header />
-              <AppRoutes />
+    <>
+      <AuthModalProvider>
+        <ScreenConfigProvider>
+          <Body>
+            {userCredentials ? (
+              <BalanceContextProvider>
+                <Header />
+                <AppRoutes />
+              </BalanceContextProvider>
+            ) : (
+              <>
+                <Header />
+                <AppRoutes />
+              </>
+            )}
 
-              <Modal children={<AuthModal />} />
-            </Body>
-          </ScreenConfigProvider>
-        </AuthModalProvider>
-      </UserContextProvider>
+            <Modal>
+              <AuthModal />
+            </Modal>
+          </Body>
+        </ScreenConfigProvider>
+      </AuthModalProvider>
 
       <GlobalStyles />
       <ToastContainer
@@ -70,7 +85,7 @@ function App() {
         pauseOnHover
         theme="dark"
       />
-    </BrowserRouter>
+    </>
   );
 }
 

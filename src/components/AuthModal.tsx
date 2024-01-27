@@ -1,11 +1,12 @@
 import Cookies from 'js-cookie';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 import { JWTCookie } from '../config/app/CookiesConfig';
 import { useAuthModalContext } from '../contexts/AuthModalContext';
-import { useUserContext } from '../contexts/UserContext';
+import { IReduxStore } from '../interfaces/IRedux';
 import { MyAxiosService } from '../services/MyAxiosService';
 import Button from './Button';
 
@@ -41,7 +42,8 @@ const ModalHeaderContainer = styled.div`
 `;
 
 export default function AuthModal() {
-  const { isLogged } = useUserContext();
+  const auth = useSelector<IReduxStore, IReduxStore['auth']>((state) => state.auth);
+
   const { setShowModal } = useAuthModalContext();
   const [usernameValue, setUsernameValue] = useState('');
 
@@ -60,7 +62,7 @@ export default function AuthModal() {
 
   const handleEnterButtonClick = async () => {
     try {
-      if (isLogged) return toast.error("You're already logged.");
+      if (auth.userCredentials) return toast.error("You're already logged.");
 
       const response = await MyAxiosService<{ token: string }>({
         endpoint: '/auth/username',
@@ -68,8 +70,8 @@ export default function AuthModal() {
         data: { username: usernameValue },
       });
 
-      if (response && response.api.success && response.api.data?.token) {
-        finishEnteringProcess(response.api.data.token);
+      if (response) {
+        finishEnteringProcess(response.data.token);
       } else {
         toast.error('Something went wrong.');
       }

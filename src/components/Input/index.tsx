@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import { ITextInput } from '../../interfaces/IRHF';
 import * as styles from './styles';
 
-export default function Input({ id, label, options, rhfConfig }: ITextInput) {
+export default function Input(props: ITextInput) {
+  const { id, label, options, rhfConfig, componentKey } = props;
+
   const { type } = options;
   const {
     rhfRegister,
@@ -37,7 +39,7 @@ export default function Input({ id, label, options, rhfConfig }: ITextInput) {
   });
 
   return (
-    <styles.InputContainer>
+    <styles.InputContainer key={componentKey}>
       <h3>{label}</h3>
       <label htmlFor={id}>
         <input

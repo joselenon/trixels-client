@@ -173,3 +173,7 @@ export const TabTitle = styled.h3`
   margin: 20px 0;
   text-transform: uppercase;
 `;
+
+export const SectionTitle = styled.h3`
+  margin-bottom: 1rem;
+`;

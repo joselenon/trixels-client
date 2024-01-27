@@ -1,9 +1,8 @@
 import React from 'react';
 
-import * as styles from './styles';
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Button from '.';
+import * as styles from './styles';
 
 interface IPageSelectButtons {
   page: number;

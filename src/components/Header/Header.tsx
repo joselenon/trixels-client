@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaShoppingCart } from 'react-icons/fa';
+import { TbSwords } from 'react-icons/tb';
 
-import { SVGClock, SVGLittleBox, SVGMagicWand } from '../../assets/SVGIcons';
+import { SVGLittleBox } from '../../assets/SVGIcons';
 import { useScreenConfig } from '../../contexts/ScreenConfigContext';
 import { HeaderProps } from '../../interfaces/HeaderProps';
 import HeaderDefault from './HeaderDefault';
@@ -10,11 +10,11 @@ import * as styles from './styles';
 
 const Header = () => {
   const { isMobile } = useScreenConfig();
-  const websiteLogo = <styles.Logo>PIXELSBOX</styles.Logo>;
+  const websiteLogo = <styles.Logo>TRIXELS</styles.Logo>;
 
   const menuItems: HeaderProps['menuItems'] = {
     Unboxing: { param: '/boxes', icon: <>{SVGLittleBox()}</> },
-    Battles: { param: '/battles', icon: <FaShoppingCart /> },
+    Battles: { param: '/battles', icon: <TbSwords /> },
   };
 
   const responsiveComponent = () => {

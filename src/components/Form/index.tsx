@@ -2,8 +2,8 @@ import { AxiosResponse } from 'axios';
 import React, { useEffect } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 
-import { IMyAPIResponse } from '../../interfaces/IAPIResponse';
 import { IForm } from '../../interfaces/IRHF';
+import { IMyAPIResponse } from '../../services/MyAxiosService';
 import Input from '../Input';
 
 export default function Form(props: IForm) {
@@ -24,7 +24,11 @@ export default function Form(props: IForm) {
 
   useEffect(() => {
     inputArray.forEach((input) => {
-      if (input.options.defaultValue) setValue(input.id, input.options.defaultValue);
+      if (input.options.defaultValue) {
+        setValue(input.id, input.options.defaultValue);
+      } else {
+        setValue(input.id, '');
+      }
     });
   }, [setValue, inputArray]);
 
@@ -33,7 +37,8 @@ export default function Form(props: IForm) {
 
     return (
       <Input
-        key={input.id}
+        key={input.componentKey}
+        componentKey={input.componentKey}
         id={input.id}
         options={options}
         label={input.label}

@@ -4,6 +4,8 @@ import { Route, Routes } from 'react-router-dom';
 import Home from '../pages/Home';
 import UserProfile from '../pages/UserProfile';
 
+export type TParams = 'username';
+
 export default function AppRoutes() {
   return (
     <Routes>
