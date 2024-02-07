@@ -1,13 +1,39 @@
 import styled, { createGlobalStyle } from 'styled-components';
 
+import kemcoFont from '../assets/fonts/pixelated-1-kemco/kemco-pixel-bold.ttf';
+import dePixelFont from '../assets/fonts/pixelated-2-depixel/DePixelBreit.ttf';
+
 export default createGlobalStyle`
+  @font-face {
+    font-family: 'DePixelBreit';
+    src: url(${dePixelFont}) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'KemcoPixelBold';
+    src: url(${kemcoFont}) format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+
   :root {
-    --karla-font: 'Karla', sans-serif;
-    --header-height: 60px;
+    --kemco-font: 'KemcoPixelBold', sans-serif;
+    --depixel-font: 'DePixelBreit', sans-serif;
+
+    --default-blue: #2985ff;
     --default-red: #cb2626;
-    --header-color: rgb(33, 33, 33, 0.5);
-    --bg-color: linear-gradient(153deg, #282828 18%, #0e0e0e 100%) fixed;
-    --primary-text-color: white;
+
+    --header-height: 80px;
+    --header-color: white;
+    --header-mx-width: 1600px;
+
+    --primary-bg-color: #f0f0f2;
+    --secondary-bg-color: #ffffff;
+
+    --primary-filling-color: black;
+
     --primary-color: #353535;
     --soft-primary-color: #2d2d2d;
     --secondary-color: #cecece;
@@ -17,7 +43,7 @@ export default createGlobalStyle`
     --body-mxwidth: 1400px;
 
     --default-br: 10px; // Border-radius
-    --default-pdn: 15px; // Padding
+    --default-pdn: 25px; // Padding
     --default-bshadow: 0px 2px 3px rgb(0, 0, 0, 0.6); // Box-shadow
     --default-btn-mt: 8px;
     --main-gradient: linear-gradient(153deg, #1a1a1a 18%, rgba(74,74,74,1) 100%);
@@ -28,12 +54,12 @@ export default createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: var(--primary-text-color);
-    font-family: var(--karla-font);
+    color: var(--primary-filling-color);
+    font-family: var(--depixel-font);
   }
 
   body {
-    background: var(--bg-color);
+    background: var(--primary-bg-color);
 
     .positive {
       color: #4dab4d;
@@ -62,13 +88,26 @@ export default createGlobalStyle`
   }
 
   input {
-    background: none;
-    border: 1px solid red;
-    font-size: 1rem;
-    padding: 10px;
-    color: black;
+    background: var(--primary-bg-color);
+    border: none;
     outline: none;
-    max-width: 300px;
+    padding: 10px;
+    width: 100%;
+    font-weight: 600;
+
+    h4 {
+      color: black;
+    }
+
+    &:hover {
+      cursor: text;
+    }
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   iframe {
@@ -87,7 +126,7 @@ export default createGlobalStyle`
   }
 
   svg {
-    fill: white;
+    fill: var(--primary-filling-color);
   }
 
   ul {
@@ -97,6 +136,7 @@ export default createGlobalStyle`
   button {
     border: none;
     background: none;
+    width: 100%;
   }
 
   a {
@@ -106,30 +146,25 @@ export default createGlobalStyle`
     font-weight: 800;
   }
 
-  h1,h2,h3,h4,h5 {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
   h1 {
+    font-family: var(--kemco-font);
     font-size: 5rem;
   }
   h2 {
+    font-family: var(--kemco-font);
     font-size: 3rem;
     font-weight: 600;
   }
   h3 {
+    font-family: var(--kemco-font);
     font-size: 1.5rem;
     font-weight: 600;
   }
   h4 {
+    font-family: var(--kemco-font);
     font-size: 1rem;
-    color: #bdbdbd;
     font-weight: 400;
     text-transform: uppercase;
-    color: white;
   }
   h5 {
     font-size: .8rem;
@@ -161,6 +196,19 @@ export default createGlobalStyle`
   }
 `;
 
+export const TruncatedText = styled.div`
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+`;
+
 export const Body = styled.div`
   max-width: var(--body-mxwidth);
   margin: 0 auto;
@@ -174,6 +222,4 @@ export const TabTitle = styled.h3`
   text-transform: uppercase;
 `;
 
-export const SectionTitle = styled.h3`
-  margin-bottom: 1rem;
-`;
+export const SectionTitle = styled.h4``;

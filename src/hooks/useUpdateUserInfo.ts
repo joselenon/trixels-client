@@ -1,15 +1,17 @@
 import React from 'react';
 
 import { IUpdateUserCredentialsPayload } from '../pages/UserProfile';
-import { MyAxiosService, TMyAxiosServiceResponse } from '../services/MyAxiosService';
+import MyAxiosServiceInstance, {
+  TMyAxiosServiceResponse,
+} from '../services/MyAxiosService';
 
 export default function useUpdateUserInfo() {
   const postUpdateUserInfo = async (
     payload: IUpdateUserCredentialsPayload,
   ): TMyAxiosServiceResponse<null> => {
-    const response = await MyAxiosService<null>({
+    const response = await MyAxiosServiceInstance.request<null>({
       method: 'put',
-      endpoint: '/user/update',
+      endpoint: '/user',
       data: payload,
     });
 

@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { IReduxStore } from '../interfaces/IRedux';
 import { IUserToFrontEnd } from '../interfaces/IUser';
 import { TParams } from '../routes/AppRoutes';
-import { MyAxiosService } from '../services/MyAxiosService';
+import MyAxiosServiceInstance from '../services/MyAxiosService';
 
 export default function useGetUserProfile() {
   const urlParams = useParams<TParams>();
@@ -25,7 +25,8 @@ export default function useGetUserProfile() {
       return setUserProfileInfo(userCredentials);
     }
 
-    const response = await MyAxiosService<IUserToFrontEnd>({
+    const response = await MyAxiosServiceInstance.request<IUserToFrontEnd>({
+      method: 'get',
       endpoint: `/user?username=${usernameToQuery}`,
       data: usernameToQuery,
     });

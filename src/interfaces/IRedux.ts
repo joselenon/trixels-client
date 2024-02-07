@@ -1,5 +1,5 @@
-import { IUser, IUserToFrontEnd } from './IUser';
+import { IUserToFrontEnd } from './IUser';
 
 export interface IReduxStore {
-  auth: { userCredentials: IUserToFrontEnd | undefined };
+  auth: { userCredentials: IUserToFrontEnd | undefined; token: string | undefined };
 }

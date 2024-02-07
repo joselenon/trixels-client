@@ -40,5 +40,7 @@ export const RedeemButtonContainer = styled.div`
 
 export const HeaderContainer = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 0.5rem;
 `;

@@ -1,10 +1,15 @@
-import { AxiosResponse } from 'axios';
 import React, { useEffect } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import styled from 'styled-components';
 
 import { IForm } from '../../interfaces/IRHF';
-import { IMyAPIResponse } from '../../services/MyAxiosService';
 import Input from '../Input';
+
+const DefaultContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
 
 export default function Form(props: IForm) {
   const { axiosCallHook, InputContainer, inputArray, submitButton } = props;
@@ -17,9 +22,7 @@ export default function Form(props: IForm) {
   } = useForm();
 
   const onSubmitHandler: SubmitHandler<FieldValues> = async (info) => {
-    (await axiosCallHook({ ...info })) as
-      | AxiosResponse<IMyAPIResponse<unknown>, any>
-      | undefined;
+    await axiosCallHook({ ...info });
   };
 
   useEffect(() => {
@@ -53,8 +56,12 @@ export default function Form(props: IForm) {
 
   return (
     <form onSubmit={handleSubmit(onSubmitHandler)} noValidate>
-      <InputContainer>{inputArrayHTML}</InputContainer>
-      {submitButton}
+      <DefaultContainer>
+        {InputContainer && <InputContainer>{inputArrayHTML}</InputContainer>}
+        {!InputContainer && inputArrayHTML}
+
+        {submitButton}
+      </DefaultContainer>
     </form>
   );
 }

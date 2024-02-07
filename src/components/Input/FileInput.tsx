@@ -1,9 +1,69 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useEffect, useState } from 'react';
+import { styled } from 'styled-components';
 
 import { IFileInput } from '../../interfaces/IRHF';
 import Button from '../Button';
-import * as styles from './styles';
+
+export const InputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  h3 {
+    font-family: var(--bai-font);
+    font-size: 14px;
+  }
+
+  input {
+    width: 100%;
+    font-family: var(--bai-font);
+    background-color: #3d3d3d;
+    border-radius: var(--default-br);
+    padding: var(--default-pdn) 5px;
+    color: white;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+`;
+
+export const ErrorMessage = styled.span`
+  font-size: 14px;
+  color: red;
+`;
+
+const SelectedFilesContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+
+  ul {
+    overflow: scroll;
+  }
+`;
+
+const FilesListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: auto;
+
+  h3 {
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+`;
 
 export default function FileInput({
   id,
@@ -127,7 +187,7 @@ export default function FileInput({
   });
 
   return (
-    <styles.InputContainer>
+    <InputContainer>
       <input
         style={{
           opacity: 0,
@@ -154,22 +214,25 @@ export default function FileInput({
           label="Adicionar Arquivos"
         />
       </label>
+
       {rhfErrors[id] && rhfErrors[id]!.type === 'required' && (
-        <styles.ErrorMessage>Campo obrigatório.</styles.ErrorMessage>
+        <ErrorMessage>Campo obrigatório.</ErrorMessage>
       )}
       {rhfErrors[id] && rhfErrors[id]!.type === 'validate' && (
-        <styles.ErrorMessage>{validationValue.errorMsg}</styles.ErrorMessage>
+        <ErrorMessage>{validationValue.errorMsg}</ErrorMessage>
       )}
-      <styles.SelectedFilesContainer>
+
+      <SelectedFilesContainer>
         <h2>Arquivos Selecionados</h2>
+
         {files.length > 0 && (
-          <styles.FilesListContainer>
+          <FilesListContainer>
             {files.map((file, index) => (
               <h3 key={index}>{file.name}</h3>
             ))}
-          </styles.FilesListContainer>
+          </FilesListContainer>
         )}
-      </styles.SelectedFilesContainer>
-    </styles.InputContainer>
+      </SelectedFilesContainer>
+    </InputContainer>
   );
 }

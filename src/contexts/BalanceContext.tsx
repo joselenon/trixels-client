@@ -28,8 +28,6 @@ export default function BalanceContextProvider({ children }: { children: ReactNo
     gql: USER_QUERIES.GET_LIVE_BALANCE,
   });
 
-  console.log(data, liveData);
-
   return (
     <BalanceContext.Provider value={{ balance: { data, refetch, liveData } }}>
       {children}

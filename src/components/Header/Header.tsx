@@ -1,20 +1,25 @@
 import React from 'react';
-import { TbSwords } from 'react-icons/tb';
 
 import { SVGLittleBox } from '../../assets/SVGIcons';
 import { useScreenConfig } from '../../contexts/ScreenConfigContext';
-import { HeaderProps } from '../../interfaces/HeaderProps';
+import TrixelsLogo from '../TrixelsLogo';
 import HeaderDefault from './HeaderDefault';
 import HeaderMobile from './HeaderMobile';
-import * as styles from './styles';
+
+export interface IHeader {
+  websiteLogo: any;
+  menuItems: { [id: string]: { param: string; icon: any } };
+}
 
 const Header = () => {
   const { isMobile } = useScreenConfig();
-  const websiteLogo = <styles.Logo>TRIXELS</styles.Logo>;
+  const websiteLogo = <TrixelsLogo />;
 
-  const menuItems: HeaderProps['menuItems'] = {
+  const menuItems: IHeader['menuItems'] = {
+    Home: { param: '/', icon: <>{SVGLittleBox()}</> },
+    Raffles: { param: '/raffles', icon: <>{SVGLittleBox()}</> },
     Unboxing: { param: '/boxes', icon: <>{SVGLittleBox()}</> },
-    Battles: { param: '/battles', icon: <TbSwords /> },
+    Battles: { param: '/battles', icon: <>{SVGLittleBox()}</> },
   };
 
   const responsiveComponent = () => {

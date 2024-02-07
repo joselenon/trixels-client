@@ -3,11 +3,17 @@ import { toast } from 'react-toastify';
 
 import { useBalanceContext } from '../contexts/BalanceContext';
 
-export default function useGetBalance() {
-  const errorAlreadyDisplayed = useRef(false);
-  const [updatedBalance, setUpdatedBalance] = useState<null | number>(null);
+interface IUseGetBalanceReturn {
+  updatedBalance: number | undefined;
+}
 
+export default function useGetBalance(): IUseGetBalanceReturn {
   const { balance } = useBalanceContext();
+
+  const errorAlreadyDisplayed = useRef(false);
+
+  const [updatedBalance, setUpdatedBalance] = useState<undefined | number>(undefined);
+
   const { data, liveData } = balance;
 
   useEffect(() => {
@@ -34,5 +40,5 @@ export default function useGetBalance() {
     }
   }, [balance]);
 
-  return updatedBalance;
+  return { updatedBalance };
 }

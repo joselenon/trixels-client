@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
+import { AuthModalProvider } from './contexts/AuthModalContext';
 import reduxStore from './redux';
 import GraphQLClientService from './services/GraphQLClientService';
 
@@ -14,7 +15,9 @@ root.render(
     <ApolloProvider client={GraphQLClientService.getClient()}>
       {/*       <React.StrictMode> */}
       <BrowserRouter>
-        <App />
+        <AuthModalProvider>
+          <App />
+        </AuthModalProvider>
       </BrowserRouter>
       {/*       </React.StrictMode> */}
     </ApolloProvider>

@@ -1,24 +1,33 @@
 // Arrumar input que ao colocar como vazio e ir para outra aba, ao voltar ele retorna o valor desatualizado
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 import Button from '../components/Button';
 import Form from '../components/Form';
+import Modal from '../components/Modal';
 import useGetUserProfile from '../hooks/useGetUserProfile';
+import useLogout from '../hooks/useLogout';
 import useUpdateUserInfo from '../hooks/useUpdateUserInfo';
+import { IReduxStore } from '../interfaces/IRedux';
 import { ICreateInput } from '../interfaces/IRHF';
 import { TParams } from '../routes/AppRoutes';
 import validateEmail from '../utils/validateEmail';
 
+const UserProfileContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  background-color: var(--primary-color);
-  padding: 13px;
-  border-radius: var(--default-br);
+  gap: 2rem;
+  background-color: var(--secondary-bg-color);
+  padding: var(--default-pdn);
 `;
 
 const SaveButtonContainer = styled.div`
@@ -44,9 +53,17 @@ export interface IUpdateUserCredentialsPayload {
 
 export default function UserProfile() {
   const handleUpdateUserInfo = useUpdateUserInfo();
+  const { handleCarefulLogout, showLogoutWarnInfo } = useLogout();
   const userProfileInfo = useGetUserProfile();
+
+  const userLoggedCredentials = useSelector<
+    IReduxStore,
+    IReduxStore['auth']['userCredentials']
+  >((state) => state.auth.userCredentials);
+
   const urlParams = useParams<TParams>();
 
+  const [showWarnModal, setShowWarnModal] = useState<boolean>(false);
   const [inputArray, setInputArray] = useState<ICreateInput[]>([]);
 
   const { username: usernameToQuery } = urlParams;
@@ -70,7 +87,7 @@ export default function UserProfile() {
       id: 'roninWallet',
       options: {
         type: 'text',
-        defaultValue: userProfileInfo?.ronin_wallet.value,
+        defaultValue: userProfileInfo?.roninWallet?.value,
         required: false,
       },
       label: 'Ronin Wallet',
@@ -78,6 +95,10 @@ export default function UserProfile() {
 
     setInputArray([emailInput, walletInput]);
   }, [userProfileInfo]);
+
+  useEffect(() => {
+    if (showLogoutWarnInfo.showWarn) setShowWarnModal(true);
+  }, [showLogoutWarnInfo]);
 
   const saveButton = (
     <SaveButtonContainer>
@@ -88,15 +109,33 @@ export default function UserProfile() {
   );
 
   return (
-    <FormContainer>
-      <h2>{userProfileInfo?.username}</h2>
-
-      <Form
-        axiosCallHook={handleUpdateUserInfo}
-        InputContainer={InputsContainer}
-        inputArray={inputArray}
-        submitButton={saveButton}
-      />
-    </FormContainer>
+    <UserProfileContainer>
+      <FormContainer>
+        {userLoggedCredentials?.username === usernameToQuery ? (
+          <>
+            <h2>{userProfileInfo?.username}</h2>
+            <Form
+              axiosCallHook={handleUpdateUserInfo}
+              InputContainer={InputsContainer}
+              inputArray={inputArray}
+              submitButton={saveButton}
+            />
+            <Button
+              btnType="DANGER"
+              attributes={{ onClick: handleCarefulLogout }}
+              label={'LOGOUT'}
+            />
+          </>
+        ) : (
+          <h2>Please log in.</h2>
+        )}
+      </FormContainer>
+      <Modal showModal={showWarnModal} setShowModal={setShowWarnModal}>
+        <>
+          <h2>Warning</h2>
+          <h3>You might lose the whole access to your account if you log out.</h3>
+        </>
+      </Modal>
+    </UserProfileContainer>
   );
 }

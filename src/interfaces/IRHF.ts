@@ -1,15 +1,14 @@
-import { AxiosResponse } from 'axios';
 import { FieldErrors } from 'react-hook-form/dist/types/errors';
 import { FieldValues } from 'react-hook-form/dist/types/fields';
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form/dist/types/form';
 
-import { IMyAPIResponse, TMyAxiosServiceResponse } from '../services/MyAxiosService';
+import { TMyAxiosServiceResponse } from '../services/MyAxiosService';
 
 export interface IForm {
   // Function that will be used when form submits
   axiosCallHook: (payload: any) => TMyAxiosServiceResponse<any>;
   // In order to have custom style on inputs container
-  InputContainer: React.ComponentType<{ children: React.ReactNode }>;
+  InputContainer?: React.ComponentType<{ children: React.ReactNode }>;
   inputArray: ICreateInput[];
   submitButton: JSX.Element;
 }
@@ -23,7 +22,7 @@ Captions
 */
 
 interface IInputAttributes {
-  type: 'number' | 'text' | 'file';
+  type: 'number' | 'text' | 'file' | 'password';
   multiple?: boolean;
   defaultValue?: string | number;
   required?: boolean;

@@ -5,6 +5,13 @@ import { toast } from 'react-toastify';
 import { JWTCookie } from '../config/app/CookiesConfig';
 import URLS from '../config/constants/URLS';
 
+export interface IRequestProps {
+  endpoint: string;
+  method: 'get' | 'post' | 'put';
+  data: any;
+  showToastMessage?: boolean;
+}
+
 export interface IMyAPIResponse<T> {
   success: boolean;
   message: string;
@@ -13,45 +20,57 @@ export interface IMyAPIResponse<T> {
 
 export type TMyAxiosServiceResponse<T> = Promise<IMyAPIResponse<T> | null>;
 
-interface AxiosServiceOptions {
-  endpoint: string;
-  method?: 'get' | 'post' | 'put' | 'delete';
-  data?: any;
-  headers?: Record<string, string>;
-}
+class MyAxiosServiceClass {
+  private tokenCookie: string | undefined;
+  private headers: Record<string, string> = {};
 
-const MyAxiosConfig = axios.create({
-  baseURL: URLS.MAIN_URLS.API_URL,
-  timeout: 10000,
-} as AxiosRequestConfig);
+  constructor() {
+    this.tokenCookie = Cookies.get(JWTCookie.key);
+  }
 
-export async function MyAxiosService<T>({
-  endpoint,
-  method = 'get',
-  data,
-  headers,
-}: AxiosServiceOptions): TMyAxiosServiceResponse<T> {
-  /* REFATORAR PARA NÃO FICAR PEGANDO COOKIE TODA HORA */
-  const tokenCookie = Cookies.get(JWTCookie.key);
+  setHeaders(headers: Record<string, string>): void {
+    this.headers = headers;
+  }
 
-  try {
-    const response: AxiosResponse<IMyAPIResponse<T>> = await MyAxiosConfig({
-      url: endpoint,
-      method,
-      data,
-      headers: {
-        ...(tokenCookie && { Authorization: `Bearer ${tokenCookie}` }), // Adiciona o token aos cabeçalhos se existir
-        ...headers,
-      },
-    });
-    if (response.data.success) toast.success(response.data.message);
+  async request<T>({
+    endpoint,
+    method = 'get',
+    data,
+    showToastMessage = false,
+  }: IRequestProps): TMyAxiosServiceResponse<T> {
+    try {
+      const response: AxiosResponse<IMyAPIResponse<T>> = await axios({
+        url: `${URLS.MAIN_URLS.API_URL}${endpoint}`,
+        method,
+        data,
+        headers: {
+          ...(this.tokenCookie && { Authorization: `Bearer ${this.tokenCookie}` }),
+          ...this.headers,
+        },
+      });
 
-    const responseData = response.data;
-    return responseData;
-  } catch (err: any) {
-    const axiosError = err as AxiosError<IMyAPIResponse<undefined>>;
-    toast.error(axiosError.response?.data.message);
+      if (response.data.success && showToastMessage) toast.success(response.data.message);
 
-    return null;
+      return response.data;
+    } catch (err: any) {
+      const axiosError = err as AxiosError<IMyAPIResponse<undefined>>;
+      toast.error(axiosError.response?.data.message);
+
+      return null;
+    }
   }
 }
+
+// Uso da classe
+const MyAxiosServiceInstance = new MyAxiosServiceClass();
+
+// Exemplo de como mudar os headers após o usuário se autenticar
+/* const authHeaders = {
+  'Custom-Header': 'value',
+  // Adicione outros headers conforme necessário
+};
+
+myAxiosService.setHeaders(authHeaders);
+*/
+
+export default MyAxiosServiceInstance;

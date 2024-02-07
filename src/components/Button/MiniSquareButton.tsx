@@ -56,6 +56,8 @@ const ButtonTypes: IButtonTypeConfig = {
 
 const ButtonStyle = styled.button`
   font-weight: 900;
+  width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,7 +78,7 @@ const ButtonStyle = styled.button`
   }
 `;
 
-export default function Button(props: IButton): JSX.Element {
+export default function MiniSquareButton(props: IButton): JSX.Element {
   const { btnType, icon, label, element, attributes } = props;
   const btnStyles: React.CSSProperties = ButtonTypes[btnType];
 

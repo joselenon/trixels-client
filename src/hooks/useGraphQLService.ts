@@ -18,6 +18,7 @@ interface IGQL {
 function gqlQuery<DataType, GQLType extends string>(props: IGQL['query']) {
   const { gql } = props;
   const token = Cookies.get(JWTCookie.key);
+
   const { data, error, refetch } = useQuery(gql, {
     context: GraphQLOptionsConfig(token).context,
   });

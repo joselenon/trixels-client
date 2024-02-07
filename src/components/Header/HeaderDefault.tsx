@@ -1,60 +1,77 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { styled } from 'styled-components';
 
 import { useAuthModalContext } from '../../contexts/AuthModalContext';
-import { HeaderProps } from '../../interfaces/HeaderProps';
 import { IReduxStore } from '../../interfaces/IRedux';
 import Button from '../Button';
 import Balance from './Balance';
+import { IHeader } from './Header';
 import * as styles from './styles';
 
-const HeaderDefault = ({ menuItems, websiteLogo }: HeaderProps) => {
+const MenuItemsContainer = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  text-transform: uppercase;
+  color: black;
+`;
+
+const AuthAndBalanceContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+`;
+
+const HeaderDefault = ({ menuItems, websiteLogo }: IHeader) => {
   const userCredentials = useSelector<
     IReduxStore,
     IReduxStore['auth']['userCredentials']
   >((state) => state.auth.userCredentials);
 
-  const menuItemsKeys = Object.keys(menuItems);
   const { setShowModal } = useAuthModalContext();
+
+  const menuItemsElements = () => {
+    return Object.entries(menuItems).map(([item, { param, icon }], i) => (
+      <Link to={param} key={i}>
+        <styles.HeaderMenuItem>
+          {icon}
+          <h4>{item}</h4>
+        </styles.HeaderMenuItem>
+      </Link>
+    ));
+  };
 
   return (
     <styles.HeaderContainer>
       <styles.HeaderMenusContainer>
-        <Link to={'/'}>
-          <styles.LogoItem>{websiteLogo}</styles.LogoItem>
-        </Link>
-
-        <styles.TogetherItems>
-          {menuItemsKeys.map((item: string, i) => (
-            <Link to={menuItems[item].param} key={i}>
-              <styles.HeaderMenuItem>
-                {menuItems[item].icon}
-                <h4>{item}</h4>
-              </styles.HeaderMenuItem>
-            </Link>
-          ))}
-        </styles.TogetherItems>
-
-        {userCredentials && <Balance />}
-
-        {userCredentials ? (
-          <Link to={`/profile/${userCredentials?.username}`}>
-            <h3>{userCredentials?.username}</h3>
+        <div style={{ display: 'flex', height: '100%' }}>
+          <Link to={'/'}>
+            <styles.LogoItem>{websiteLogo}</styles.LogoItem>
           </Link>
-        ) : (
-          <div>
+
+          <MenuItemsContainer>{menuItemsElements()}</MenuItemsContainer>
+        </div>
+
+        <AuthAndBalanceContainer>
+          {userCredentials && <Balance />}
+
+          {userCredentials ? (
+            <Link to={`/profile/${userCredentials?.username}`}>
+              <h3>{userCredentials?.username}</h3>
+            </Link>
+          ) : (
             <Button
               btnType="CTA"
-              label={'ENTER'}
+              label={'Enter'}
               attributes={{
-                onClick: () => {
-                  if (setShowModal) setShowModal(true);
-                },
+                onClick: () => setShowModal && setShowModal(true),
               }}
             />
-          </div>
-        )}
+          )}
+        </AuthAndBalanceContainer>
       </styles.HeaderMenusContainer>
     </styles.HeaderContainer>
   );

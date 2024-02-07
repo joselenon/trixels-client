@@ -12,32 +12,6 @@ export const HeaderContainer = styled.div`
   padding: 0 20px;
 `;
 
-export const Logo = styled.h3`
-  text-shadow: 0 2px red;
-  transition: all 0.25s;
-  &:hover {
-    text-shadow: 0 2px #46d916;
-  }
-`;
-
-export const HeaderMenusContainer = styled.div`
-  max-width: var(--body-mxwidth);
-  display: flex;
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-export const TogetherItems = styled.div`
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  text-transform: uppercase;
-  color: black;
-`;
-
 export const LogoItem = styled.div`
   cursor: pointer;
   display: flex;
@@ -47,6 +21,20 @@ export const LogoItem = styled.div`
   padding: 10px;
   white-space: nowrap;
   transition: all 0.15s;
+
+  &:hover {
+    text-shadow: 0 2px #1160c7;
+  }
+`;
+
+export const HeaderMenusContainer = styled.div`
+  max-width: var(--header-mx-width);
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const HeaderMenuItem = styled.div`
@@ -57,69 +45,31 @@ export const HeaderMenuItem = styled.div`
   align-items: center;
   padding: 20px;
   white-space: nowrap;
-
-  &:hover {
-    background-color: #191919;
+  transition: all 0.15s;
+  h4 {
+    color: #8e8e99;
   }
   svg {
-    width: 14px;
-    height: 14px;
+    fill: #8e8e99;
   }
-  h4 {
-    font-weight: 800;
-    color: white;
-  }
-`;
-
-export const SandwichButtonContainer = styled.div`
-  width: 25px;
-  height: 25px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 6px;
-  border-radius: 2px;
-  scale: 0.8;
-  div {
-    border-bottom: 2px solid black;
-    border-radius: 5px;
-    width: 100%;
-  }
-`;
-
-export const DropdownMenuContainer = styled.div`
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  text-transform: uppercase;
-  color: black;
-  background: black;
-  h2 {
-    color: white;
-  }
-`;
-
-export const DropdownMenuItem = styled.div`
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  white-space: nowrap;
-  transition: background 100ms;
 
   &:hover {
-    background-color: #cecece;
-    h2 {
-      color: black;
-      text-shadow: 0px 0px 1px black;
+    h4 {
+      color: #6b8dbd;
     }
+    svg {
+      fill: #6b8dbd;
+    }
+  }
+`;
+
+export const Logo = styled.h3`
+  color: #2985ff;
+  font-size: 2.25rem;
+  text-shadow: 0 2px black;
+
+  &:hover {
+    text-shadow: 0 3px #124e9d;
   }
 `;
 

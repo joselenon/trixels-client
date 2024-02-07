@@ -1,7 +1,25 @@
 import React, { useState } from 'react';
+import { styled } from 'styled-components';
 
 import { ITextInput } from '../../interfaces/IRHF';
-import * as styles from './styles';
+
+export const InputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+`;
+
+export const ErrorMessage = styled.span`
+  font-size: 14px;
+  color: red;
+`;
 
 export default function Input(props: ITextInput) {
   const { id, label, options, rhfConfig, componentKey } = props;
@@ -39,22 +57,23 @@ export default function Input(props: ITextInput) {
   });
 
   return (
-    <styles.InputContainer key={componentKey}>
-      <h3>{label}</h3>
+    <InputContainer key={componentKey}>
+      <h4>{label}</h4>
+
       <label htmlFor={id}>
         <input
           {...options}
           {...registerProps}
-          style={{ color: options.disabled ? '#cecece' : 'white' }}
           aria-invalid={rhfErrors[id] ? 'true' : 'false'}
         />
       </label>
+
       {rhfErrors[id] && rhfErrors[id]!.type === 'required' && (
-        <styles.ErrorMessage>Campo obrigatório.</styles.ErrorMessage>
+        <ErrorMessage>Campo obrigatório.</ErrorMessage>
       )}
       {rhfErrors[id] && rhfErrors[id]!.type === 'validate' && (
-        <styles.ErrorMessage>{validationValue.errorMsg}</styles.ErrorMessage>
+        <ErrorMessage>{validationValue.errorMsg}</ErrorMessage>
       )}
-    </styles.InputContainer>
+    </InputContainer>
   );
 }

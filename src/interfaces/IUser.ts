@@ -8,8 +8,9 @@ export interface IUser {
     lastEmail: string;
     updatedAt: number;
   };
-  ronin_wallet: {
+  roninWallet: {
     value: string;
+    verified: boolean;
     lastWallet: string;
     updatedAt: number;
   };
@@ -36,8 +37,9 @@ export interface IUserToFrontEnd {
     lastEmail: string;
     updatedAt: number;
   };
-  ronin_wallet: {
+  roninWallet: {
     value: string;
+    verified?: boolean;
   };
   createdAt: number;
 }

@@ -1,5 +1,5 @@
 import URLS from '../config/constants/URLS';
-import { MyAxiosService } from '../services/MyAxiosService';
+import MyAxiosServiceInstance from '../services/MyAxiosService';
 
 export interface IRedeemCodePayload {
   code: string;
@@ -7,7 +7,7 @@ export interface IRedeemCodePayload {
 
 export default function useRedeemCode() {
   const handleRedeemCode = async (payload: IRedeemCodePayload) => {
-    const res = await MyAxiosService({
+    const res = await MyAxiosServiceInstance.request({
       endpoint: URLS.ENDPOINTS.DEPOSIT.code,
       data: payload,
       method: 'post',
