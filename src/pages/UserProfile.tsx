@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import Button from '../components/Button';
 import Form from '../components/Form';
+import LogoutButton from '../components/LogoutButton';
 import Modal from '../components/Modal';
 import useGetUserProfile from '../hooks/useGetUserProfile';
 import useLogout from '../hooks/useLogout';
@@ -53,7 +54,7 @@ export interface IUpdateUserCredentialsPayload {
 
 export default function UserProfile() {
   const handleUpdateUserInfo = useUpdateUserInfo();
-  const { handleCarefulLogout, showLogoutWarnInfo } = useLogout();
+
   const userProfileInfo = useGetUserProfile();
 
   const userLoggedCredentials = useSelector<
@@ -63,7 +64,6 @@ export default function UserProfile() {
 
   const urlParams = useParams<TParams>();
 
-  const [showWarnModal, setShowWarnModal] = useState<boolean>(false);
   const [inputArray, setInputArray] = useState<ICreateInput[]>([]);
 
   const { username: usernameToQuery } = urlParams;
@@ -96,10 +96,6 @@ export default function UserProfile() {
     setInputArray([emailInput, walletInput]);
   }, [userProfileInfo]);
 
-  useEffect(() => {
-    if (showLogoutWarnInfo.showWarn) setShowWarnModal(true);
-  }, [showLogoutWarnInfo]);
-
   const saveButton = (
     <SaveButtonContainer>
       <div>
@@ -111,31 +107,17 @@ export default function UserProfile() {
   return (
     <UserProfileContainer>
       <FormContainer>
-        {userLoggedCredentials?.username === usernameToQuery ? (
-          <>
-            <h2>{userProfileInfo?.username}</h2>
-            <Form
-              axiosCallHook={handleUpdateUserInfo}
-              InputContainer={InputsContainer}
-              inputArray={inputArray}
-              submitButton={saveButton}
-            />
-            <Button
-              btnType="DANGER"
-              attributes={{ onClick: handleCarefulLogout }}
-              label={'LOGOUT'}
-            />
-          </>
-        ) : (
-          <h2>Please log in.</h2>
-        )}
+        <h2>{userProfileInfo?.username}</h2>
+
+        <Form
+          axiosCallHook={handleUpdateUserInfo}
+          InputContainer={InputsContainer}
+          inputArray={inputArray}
+          submitButton={saveButton}
+        />
       </FormContainer>
-      <Modal showModal={showWarnModal} setShowModal={setShowWarnModal}>
-        <>
-          <h2>Warning</h2>
-          <h3>You might lose the whole access to your account if you log out.</h3>
-        </>
-      </Modal>
+
+      {userLoggedCredentials?.username === usernameToQuery && <LogoutButton />}
     </UserProfileContainer>
   );
 }

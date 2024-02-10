@@ -45,7 +45,7 @@ const ModalHeaderContainer = styled.div`
 
 export const SectionSelectionContainer = styled.div`
   width: 100%;
-  overflow-x: scroll;
+  overflow-x: hidden;
   display: flex;
   margin: 20px 0;
   border: 2px solid var(--primary-bg-color);
@@ -68,7 +68,7 @@ export const SectionItem = styled.div<ISectionItemProps>`
   white-space: nowrap;
   transition: all 0.15s;
 
-  h4 {
+  h5 {
     color: ${({ isSelected, sectionColor }) => (isSelected ? sectionColor : '#8e8e99')};
   }
   svg {
@@ -76,7 +76,7 @@ export const SectionItem = styled.div<ISectionItemProps>`
   }
 
   &:hover {
-    h4 {
+    h5 {
       color: ${({ sectionColor }) => sectionColor};
     }
     svg {

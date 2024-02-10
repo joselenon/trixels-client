@@ -5,8 +5,9 @@ import BerryIconAndAmount from '../BerryIconAndAmount';
 import Button from '../Button';
 
 const RaffleBoxContainer = styled.div`
+  user-select: none;
   background: white;
-  min-width: 320px;
+  width: 320px;
   padding: var(--default-pdn);
   display: flex;
   flex-direction: column;

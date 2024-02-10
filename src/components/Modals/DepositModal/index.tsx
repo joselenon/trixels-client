@@ -78,7 +78,7 @@ export default function DepositModal() {
                 isSelected={section === 'deposit'}
                 sectionColor="green"
               >
-                <h4>Deposit</h4>
+                <h5>Deposit</h5>
               </SectionItem>
 
               <SectionItem
@@ -86,7 +86,7 @@ export default function DepositModal() {
                 isSelected={section === 'withdraw'}
                 sectionColor="red"
               >
-                <h4>Withdraw</h4>
+                <h5>Withdraw</h5>
               </SectionItem>
 
               <SectionItem
@@ -94,7 +94,7 @@ export default function DepositModal() {
                 isSelected={section === 'tip'}
                 sectionColor="grey"
               >
-                <h4>Tip</h4>
+                <h5>Tip</h5>
               </SectionItem>
             </SectionSelectionContainer>
 

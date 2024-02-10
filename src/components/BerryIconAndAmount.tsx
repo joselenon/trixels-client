@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from 'styled-components';
 
-import berryIcon from '../assets/currenciesIcons/cur_berry.png';
+import { BERRYIcon } from './CurrenciesIcons';
 
 const BerryIconAndAmountContainer = styled.div`
   display: flex;
@@ -20,7 +20,7 @@ interface IBerryIconAndAmountProps {
 export default function BerryIconAndAmount({ amount }: IBerryIconAndAmountProps) {
   return (
     <BerryIconAndAmountContainer>
-      <img width={16} src={berryIcon} alt="" />
+      {BERRYIcon}
       <h4>{amount}</h4>
     </BerryIconAndAmountContainer>
   );

@@ -6,7 +6,8 @@ import { AXSIcon, BERRYIcon } from './CurrenciesIcons';
 interface IDropdownSelectionProps {
   selected: any;
   setSelected: Dispatch<SetStateAction<any>>;
-  dropdownItems: any;
+  openDropdownButtonElement: JSX.Element;
+  dropdownElements: any;
 }
 
 interface IDropdownCotainerProps {
@@ -48,10 +49,11 @@ export const ItemButton = styled.button`
   }
 `;
 
-export default function TokenSelection({
+export default function DropdownSelection({
   selected,
   setSelected,
-  dropdownItems,
+  openDropdownButtonElement,
+  dropdownElements,
 }: IDropdownSelectionProps) {
   const [isDropdownOpened, setIsDropdownOpened] = useState(false);
 
@@ -76,19 +78,19 @@ export default function TokenSelection({
         type="button"
         onClick={() => setIsDropdownOpened((prev) => !prev)}
       >
-        {selectedToken.Element}
+        {openDropdownButtonElement}
       </ItemButton>
 
       <DropdownContainer isOpened={isDropdownOpened}>
-        {dropdownItems.map(element)}
+        {dropdownElements.map((element: any, i: number) => (
+          <ItemButton key={i} type="button" onClick={() => handleTokenSelection('AXS')}>
+            {element}
+          </ItemButton>
+        ))}
+
         <ItemButton type="button" onClick={() => handleTokenSelection('AXS')}>
           {AXSIcon}
           <h4>AXS</h4>
-        </ItemButton>
-
-        <ItemButton type="button" onClick={() => handleTokenSelection('BERRY')}>
-          {BERRYIcon}
-          <h4>BERRY</h4>
         </ItemButton>
       </DropdownContainer>
     </TokenSelectionContainer>

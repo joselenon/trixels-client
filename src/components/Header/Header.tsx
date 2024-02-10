@@ -18,7 +18,7 @@ const Header = () => {
   const menuItems: IHeader['menuItems'] = {
     Home: { param: '/', icon: <>{SVGLittleBox()}</> },
     Raffles: { param: '/raffles', icon: <>{SVGLittleBox()}</> },
-    Unboxing: { param: '/boxes', icon: <>{SVGLittleBox()}</> },
+    Boxes: { param: '/boxes', icon: <>{SVGLittleBox()}</> },
     Battles: { param: '/battles', icon: <>{SVGLittleBox()}</> },
   };
 

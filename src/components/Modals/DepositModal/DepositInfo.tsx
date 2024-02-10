@@ -63,7 +63,7 @@ export default function DepositInfo() {
         <>
           <CurrencyAndNetworkContainer>
             <div>
-              <h4>Currency</h4>
+              <h5>Currency</h5>
 
               <TokenSelection
                 selectedToken={selectedToken}
@@ -72,7 +72,7 @@ export default function DepositInfo() {
             </div>
 
             <div>
-              <h4>Network</h4>
+              <h5>Network</h5>
 
               <TokenSelection
                 selectedToken={selectedToken}
@@ -82,7 +82,7 @@ export default function DepositInfo() {
           </CurrencyAndNetworkContainer>
 
           <DepositWalletContainer>
-            <h4>Deposit Wallet</h4>
+            <h5>Deposit Wallet</h5>
 
             <WalletAndCopyButtonContainer>
               <input

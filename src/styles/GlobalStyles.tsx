@@ -24,6 +24,7 @@ export default createGlobalStyle`
 
     --default-blue: #2985ff;
     --default-red: #cb2626;
+    --default-green: #3cb934;
 
     --header-height: 80px;
     --header-color: white;
@@ -146,29 +147,27 @@ export default createGlobalStyle`
     font-weight: 800;
   }
 
-  h1 {
+  h1,h2,h3,h4,h5 {
     font-family: var(--kemco-font);
+    font-weight: 400;
+  }
+
+  h1 {
     font-size: 5rem;
   }
   h2 {
-    font-family: var(--kemco-font);
     font-size: 3rem;
-    font-weight: 600;
   }
   h3 {
-    font-family: var(--kemco-font);
     font-size: 1.5rem;
-    font-weight: 600;
   }
   h4 {
-    font-family: var(--kemco-font);
     font-size: 1rem;
-    font-weight: 400;
     text-transform: uppercase;
   }
   h5 {
     font-size: .8rem;
-    font-weight: 500;
+    text-transform: uppercase;
   }
 
   th {
