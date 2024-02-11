@@ -75,24 +75,24 @@ export default function DepositModal() {
             <SectionSelectionContainer>
               <SectionItem
                 onClick={() => handleToggleSection('deposit')}
-                isSelected={section === 'deposit'}
-                sectionColor="green"
+                $isSelected={section === 'deposit'}
+                $sectionColor="green"
               >
                 <h5>Deposit</h5>
               </SectionItem>
 
               <SectionItem
                 onClick={() => handleToggleSection('withdraw')}
-                isSelected={section === 'withdraw'}
-                sectionColor="red"
+                $isSelected={section === 'withdraw'}
+                $sectionColor="red"
               >
                 <h5>Withdraw</h5>
               </SectionItem>
 
               <SectionItem
                 onClick={() => handleToggleSection('tip')}
-                isSelected={section === 'tip'}
-                sectionColor="grey"
+                $isSelected={section === 'tip'}
+                $sectionColor="grey"
               >
                 <h5>Tip</h5>
               </SectionItem>

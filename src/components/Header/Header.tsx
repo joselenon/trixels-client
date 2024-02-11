@@ -20,6 +20,7 @@ const Header = () => {
     Raffles: { param: '/raffles', icon: <>{SVGLittleBox()}</> },
     Boxes: { param: '/boxes', icon: <>{SVGLittleBox()}</> },
     Battles: { param: '/battles', icon: <>{SVGLittleBox()}</> },
+    Timers: { param: '/timers', icon: <>{SVGLittleBox()}</> },
   };
 
   const responsiveComponent = () => {
