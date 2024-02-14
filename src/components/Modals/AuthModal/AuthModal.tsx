@@ -52,14 +52,14 @@ export const SectionSelectionContainer = styled.div`
 `;
 
 interface ISectionItemProps {
-  isSelected: boolean;
-  sectionColor: string;
+  $isSelected: boolean;
+  $sectionColor: string;
 }
 
 export const SectionItem = styled.div<ISectionItemProps>`
   cursor: pointer;
-  background: ${({ isSelected }) =>
-    isSelected ? 'var(--primary-bg-color)' : 'var(--secondary-bg-color)'};
+  background: ${({ $isSelected }) =>
+    $isSelected ? 'var(--primary-bg-color)' : 'var(--secondary-bg-color)'};
   display: flex;
   gap: 12px;
   height: 100%;
@@ -69,7 +69,8 @@ export const SectionItem = styled.div<ISectionItemProps>`
   transition: all 0.15s;
 
   h5 {
-    color: ${({ isSelected, sectionColor }) => (isSelected ? sectionColor : '#8e8e99')};
+    color: ${({ $isSelected, $sectionColor }) =>
+      $isSelected ? $sectionColor : '#8e8e99'};
   }
   svg {
     fill: #8e8e99;
@@ -77,7 +78,7 @@ export const SectionItem = styled.div<ISectionItemProps>`
 
   &:hover {
     h5 {
-      color: ${({ sectionColor }) => sectionColor};
+      color: ${({ $sectionColor }) => $sectionColor};
     }
     svg {
       fill: #6b8dbd;
@@ -104,16 +105,16 @@ const AuthModal = () => {
 
           <SectionSelectionContainer>
             <SectionItem
-              sectionColor="#6b8dbd"
-              isSelected={section === 'register'}
+              $sectionColor="#6b8dbd"
+              $isSelected={section === 'register'}
               onClick={() => handleToggleSection('register')}
             >
               <h4>Register</h4>
             </SectionItem>
 
             <SectionItem
-              sectionColor="#4bb03f"
-              isSelected={section === 'login'}
+              $sectionColor="#4bb03f"
+              $isSelected={section === 'login'}
               onClick={() => handleToggleSection('login')}
             >
               <h4>Login</h4>

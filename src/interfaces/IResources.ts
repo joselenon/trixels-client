@@ -1,15 +1,18 @@
+export type TResourcesTypes = 'chicken' | 'slugger' | 'mine';
+
 export interface IResourceInfoCreationPayload {
-  resourceName: string;
+  resourceType: TResourcesTypes;
   cooldown: number;
   landNumber: number;
   startTime: number;
-  acc: string;
+  account: string;
 }
 
 export interface IUserResourceFrontEnd {
-  resourceName: string;
+  resourceType: TResourcesTypes;
   landNumber: number;
   startTime?: number;
+  account: string;
 }
 
 export interface IUserResourcesRedis {

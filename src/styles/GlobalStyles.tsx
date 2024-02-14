@@ -88,13 +88,17 @@ export default createGlobalStyle`
     font-size: 1.25rem;
   }
 
-  input {
-    background: var(--primary-bg-color);
+  input, select {
+    width: 100%;
     border: none;
     outline: none;
+    font-weight: 600;
+    background: var(--primary-bg-color);
+  }
+
+  input {
     padding: 10px;
     width: 100%;
-    font-weight: 600;
 
     h4 {
       color: black;
@@ -116,7 +120,6 @@ export default createGlobalStyle`
   }
 
   button, select {
-    background: none;
     &:hover {
       filter: brightness(0.9);
       cursor: pointer;
