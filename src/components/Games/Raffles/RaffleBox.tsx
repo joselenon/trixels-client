@@ -2,17 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import useGetAvailableItems from '../../../hooks/useGetAvailableItems';
 import { IRaffleToFrontEndTreated } from '../../../interfaces/IRaffles';
 import { TruncatedText } from '../../../styles/GlobalStyles';
-import BerryIconAndAmount from '../../CurrencyIconAndAmount';
+import CurrencyIconAndAmount from '../../CurrencyIconAndAmount';
 import TrixelsButton from '../../TrixelsButton';
-import RaffleWinnersPrizesCarouselAuto from './RaffleWinnersPrizesCarouselAuto';
+import Prizes from './RafflesDetails/PrizesElement';
 
 const RaffleBoxContainer = styled.div`
   user-select: none;
   background: white;
-  width: 320px;
+  width: 300px;
   padding: var(--default-pdn);
   display: flex;
   flex-direction: column;
@@ -114,7 +113,7 @@ const DateContainer = styled.div`
   }
 `;
 
-export default function RaffleBox({ raffleInfo }: { raffleInfo: IRaffleToFrontEndTreated }) {
+export default function RaffleBox({ raffleInfo }: { width: '100%' | undefined; raffleInfo: IRaffleToFrontEndTreated }) {
   const { createdAt, info, gameId, description } = raffleInfo;
 
   const { prizes, totalTickets, ticketPrice, prizesTotalValue } = info;
@@ -151,12 +150,12 @@ export default function RaffleBox({ raffleInfo }: { raffleInfo: IRaffleToFrontEn
           }}
         >
           <h5>Prize</h5>
-          <BerryIconAndAmount amount={prizesTotalValue} />
+          <CurrencyIconAndAmount amount={prizesTotalValue} />
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <RaffleWinnersPrizesCarouselAuto winnersPrizes={prizes} />
+      <div style={{}}>
+        <Prizes prizes={prizes} slidesPerView={1} />
       </div>
 
       <DetailsContainer>
@@ -174,7 +173,7 @@ export default function RaffleBox({ raffleInfo }: { raffleInfo: IRaffleToFrontEn
 
           <PriceContainer>
             <h5>Price /ea</h5>
-            <BerryIconAndAmount amount={ticketPrice} />
+            <CurrencyIconAndAmount amount={ticketPrice} />
           </PriceContainer>
         </TicketsAndPriceContainer>
 

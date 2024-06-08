@@ -20,6 +20,7 @@ export default createGlobalStyle`
     --default-blue: #2985ff;
     --default-lightblue: #579efc;
     --default-red: #cb2626;
+    --default-lightgreen: #5bd353;
     --default-green: #4cc043;
     --default-darkgreen: #459f3f;
     --default-yellow: #ddc449;

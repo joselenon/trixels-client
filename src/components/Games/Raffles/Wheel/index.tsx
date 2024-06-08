@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useEffect, useRef, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
 import { v4 } from 'uuid';
 
-import { raffleAnimationAlreadyEndedFn, TimerTime, WheelAnimationTime } from '../../../../config/app/RaffleConfig';
+import {
+  DelayTillAnimate,
+  raffleAnimationAlreadyEndedFn,
+  TimerTime,
+  TotalTimeTillAnimationFinish,
+  WheelAnimationTime,
+} from '../../../../config/app/RaffleConfig';
 import { IRaffleToFrontEndTreated } from '../../../../interfaces/IRaffles';
 import AvatarItem from './AvatarItem';
 import PreRollScreen from './PreRollScreen';
@@ -45,11 +52,7 @@ const AvatarsContainer = styled.div`
   }
 `;
 
-interface IWheelPointerProps {
-  $jackpotFinished: boolean;
-}
-
-const WheelPointer = styled.div<IWheelPointerProps>`
+const WheelPointer = styled.div<{ $nowTime: number; $timerEnded: boolean; $finishedAt: number | undefined }>`
   position: absolute;
   z-index: 1;
   top: 0;
@@ -57,8 +60,11 @@ const WheelPointer = styled.div<IWheelPointerProps>`
   width: 3px;
   height: 100%;
   background-color: red;
-  transition: opacity 0.5ms;
-  opacity: ${(props) => (props.$jackpotFinished ? 1 : 0)};
+  transition: all 0.5s ease-in-out;
+  opacity: ${({ $timerEnded, $finishedAt, $nowTime }) => {
+    if ($finishedAt && $timerEnded /*  && $nowTime < $finishedAt + TotalTimeTillAnimationFinish */) return 1;
+    return 0;
+  }};
 `;
 
 interface IWheelProps {
@@ -68,10 +74,12 @@ interface IWheelProps {
 export default function Wheel({ raffle }: IWheelProps) {
   const { finishedAt, info } = raffle;
   const { winnersBetsInfo, bets, totalTickets } = info;
-  const { alreadyEnded } = raffleAnimationAlreadyEndedFn(finishedAt);
+
   const theresWinnersBetsInfo = winnersBetsInfo && winnersBetsInfo.length > 0;
 
   const wheelRef = useRef<any>(undefined);
+
+  const [timerEnded, setTimerEnded] = useState(false);
   const [renderedAvatars, setRenderedAvatars] = useState<JSX.Element[] | undefined>(undefined);
 
   const getJSXAvatars = (avatarsArray: string[]) => {
@@ -80,8 +88,17 @@ export default function Wheel({ raffle }: IWheelProps) {
     });
   };
 
+  const spinWheelAnimation = () => {
+    setTimeout(() => {
+      wheelRef.current.classList.add('start');
+    }, TimerTime + DelayTillAnimate);
+
+    setTimeout(() => {}, 5000);
+  };
+
   const renderAvatars = () => {
     const renderPlayers = new RenderAvatars(bets, totalTickets);
+    const raffleAlreadyEnded = raffleAnimationAlreadyEndedFn(finishedAt);
 
     if (theresWinnersBetsInfo) {
       winnersBetsInfo.forEach((winnerBet) => {
@@ -92,23 +109,20 @@ export default function Wheel({ raffle }: IWheelProps) {
         setRenderedAvatars(getJSXAvatars(avatarsOrder));
 
         /* Editar aqui caso haja mudança de animações (responsável por skipar animação caso tenha sido há mais do tempo de finalização) */
-        if (alreadyEnded) {
+        if (raffleAlreadyEnded.alreadyEnded) {
           return (wheelRef.current.style.transform = ' translateX(-7320px)');
         }
 
-        setTimeout(() => {
-          wheelRef.current.classList.add('start');
-        }, TimerTime);
-
-        /* Remove a animação para começar a próxima do próximo vencedor */
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => {}, 5000);
+        spinWheelAnimation();
       });
-    } else {
-      wheelRef.current.classList.remove('start');
-      const avatarsOrder = renderPlayers.normalRender();
-      setRenderedAvatars(getJSXAvatars(avatarsOrder));
+
+      return;
     }
+
+    wheelRef.current.classList.remove('start');
+
+    const avatarsOrder = renderPlayers.normalRender();
+    setRenderedAvatars(getJSXAvatars(avatarsOrder));
   };
 
   useEffect(() => {
@@ -117,9 +131,15 @@ export default function Wheel({ raffle }: IWheelProps) {
 
   return (
     <WheelContainer>
-      {!alreadyEnded && <PreRollScreen raffleInfo={info} raffleFinishedAt={finishedAt} />}
+      <PreRollScreen
+        timerEnded={timerEnded}
+        setTimerEnded={setTimerEnded}
+        raffleInfo={info}
+        raffleFinishedAt={finishedAt}
+      />
 
-      {finishedAt && <WheelPointer $jackpotFinished={finishedAt ? true : false} />}
+      <WheelPointer $nowTime={new Date().getTime()} $finishedAt={finishedAt} $timerEnded={timerEnded} />
+
       <AvatarsContainer ref={wheelRef}>{renderedAvatars}</AvatarsContainer>
     </WheelContainer>
   );

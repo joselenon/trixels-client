@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 import { SVGLittleBox } from '../../assets/SVGIcons';
@@ -65,7 +65,7 @@ const AuthAndBalanceContainer = styled.div`
   gap: 3rem;
 `;
 
-const HeaderMenuItem = styled.div`
+const HeaderMenuItem = styled.div<{ $isActive: boolean }>`
   cursor: pointer;
   display: flex;
   gap: 12px;
@@ -82,10 +82,10 @@ const HeaderMenuItem = styled.div`
     padding: 20px;
   }
   h4 {
-    color: var(--default-grey);
+    color: ${({ $isActive }) => ($isActive ? '#6b8dbd' : 'var(--default-grey)')};
   }
   svg {
-    fill: var(--default-grey);
+    fill: ${({ $isActive }) => ($isActive ? '#6b8dbd' : 'var(--default-grey)')};
   }
 
   &:hover {
@@ -99,7 +99,7 @@ const HeaderMenuItem = styled.div`
 `;
 
 export interface IHeader {
-  menuItems: { [id: string]: { element: JSX.Element | undefined } };
+  menuItems: { [id: string]: { element: JSX.Element | undefined; path: string } };
 }
 
 const Header = () => {
@@ -108,43 +108,46 @@ const Header = () => {
   );
   const { width } = useScreenConfig();
   const { setShowModal } = useAuthModalContext();
+  const location = useLocation();
 
   const menuItems: IHeader['menuItems'] = {
-    'Home ': {
+    Home: {
       element: (
         <Link to={'/'}>
           {SVGLittleBox()}
           <h4>Home</h4>
         </Link>
       ),
+      path: '/home',
     },
-    'Raffles ': {
+    Raffles: {
       element: (
         <Link to={'/raffles'}>
           {SVGLittleBox()}
           <h4>Raffles</h4>
         </Link>
       ),
+      path: '/raffles',
     },
-    'Affiliates ': {
+    Affiliates: {
       element: (
         <Link to={'/affiliates'}>
           {SVGLittleBox()}
           <h4>Affiliates</h4>
         </Link>
       ),
+      path: '/affiliates',
     },
-    /*     Boxes: { param: '/boxes', icon: <>{SVGLittleBox()}</> }, */
-    /*     Battles: { param: '/battles', icon: <>{SVGLittleBox()}</> }, */
   };
 
   const menuItemsElements = () => {
-    return Object.entries(menuItems).map(([item, { element }], i) => (
-      <React.Fragment key={i}>
-        <HeaderMenuItem>{element}</HeaderMenuItem>
-      </React.Fragment>
+    return Object.entries(menuItems).map(([item, { element, path }], i) => (
+      <HeaderMenuItem key={i} $isActive={location.pathname.includes(path)}>
+        {element}
+      </HeaderMenuItem>
     ));
   };
+
   return (
     <HeaderContainer>
       <HeaderMenusContainer>

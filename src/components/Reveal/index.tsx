@@ -1,5 +1,12 @@
 import { motion, useAnimation, useInView } from 'framer-motion';
 import React, { useEffect, useRef } from 'react';
+import styled from 'styled-components';
+
+const RevealContainer = styled.div<{ $width: string }>`
+  position: relative;
+  overflow: hidden;
+  width: ${({ $width }) => `${$width}`};
+`;
 
 interface IRevealProps {
   children: JSX.Element;
@@ -20,7 +27,7 @@ export default function Reveal({ children, width = 'fit-content' }: IRevealProps
   }, [isInView]);
 
   return (
-    <div ref={ref} style={{ position: 'relative', width, overflow: 'hidden' }}>
+    <RevealContainer $width={width} ref={ref}>
       <motion.div
         variants={{
           hidden: { opacity: 0, y: -75 },
@@ -32,6 +39,6 @@ export default function Reveal({ children, width = 'fit-content' }: IRevealProps
       >
         {children}
       </motion.div>
-    </div>
+    </RevealContainer>
   );
 }

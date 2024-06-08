@@ -13,7 +13,7 @@ export type IButtonTypeConfig = {
 export interface ITrixelsButtonAtributtes {
   id?: string;
   type?: 'button' | 'submit' | undefined;
-  onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  onClick?: (() => Promise<void>) | (() => void) | undefined;
 }
 
 const ButtonTypes: IButtonTypeConfig = {

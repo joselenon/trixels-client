@@ -50,7 +50,6 @@ class MyAxiosServiceClass {
       });
 
       if (response.data.success && showToastMessage) toast.success(response.data.message);
-
       return response.data;
     } catch (err: any) {
       const axiosError = err as AxiosError<IMyAPIResponse<undefined>>;

@@ -8,6 +8,7 @@ import Modal from './components/Modal';
 import AuthModal from './components/Modals/AuthModal/AuthModal';
 import { useAuthModalContext } from './contexts/AuthModalContext';
 import BalanceContextProvider from './contexts/BalanceContext';
+import MessagesContextProvider from './contexts/MessagesContext';
 import RafflesContextProvider from './contexts/RafflesContext';
 import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
 import useGetUserCredentials from './hooks/useGetUserCredentials';
@@ -39,10 +40,12 @@ function App() {
           {/* ARRUMAR ESSA SAFADEZA AQUI */}
           {credentials ? (
             <RafflesContextProvider>
-              <BalanceContextProvider>
-                <Header />
-                <AppRoutes />
-              </BalanceContextProvider>
+              <MessagesContextProvider>
+                <BalanceContextProvider>
+                  <Header />
+                  <AppRoutes />
+                </BalanceContextProvider>
+              </MessagesContextProvider>
             </RafflesContextProvider>
           ) : (
             <>

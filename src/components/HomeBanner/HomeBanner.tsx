@@ -3,10 +3,12 @@ import styled from 'styled-components';
 
 import pixel from '../../assets/images/cur_pixel_custom.png';
 import pixel_on_the_table from '../../assets/images/pixel_on_the_table.png';
+import { useScreenConfig } from '../../contexts/ScreenConfigContext';
 import Reveal from '../Reveal';
-import WelcomeToTrixelsXyz from './Sentence0';
-import YourLuck from './Sentence1';
-import InAPixelatedUniverse from './Sentence2';
+import HomeBannerVertical from './HomeBannerVertical';
+import InAPixelatedUniverse from './InAPixelatedUniverse';
+import WelcomeToTrixelsXyz from './WelcomeToTrixelsXyz';
+import YourLuck from './YourLuck';
 
 const FallingPixel = styled.div`
   position: absolute;
@@ -30,11 +32,11 @@ const FallingPixel = styled.div`
   }
 `;
 
-const HomeBannerContainer = styled.div`
+const HomeBannerContainer = styled.div<{ $displayHeight: number }>`
   background: linear-gradient(180deg, #86d9f8 30%, var(--primary-bg-color) 100%);
 
   width: 100%;
-  height: 500px;
+  height: ${({ $displayHeight }) => `${$displayHeight}px`};
   position: relative;
   display: flex;
   flex-direction: column;
@@ -63,6 +65,7 @@ const PixelAbsolute = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
 
   img {
     image-rendering: pixelated;
@@ -70,8 +73,10 @@ const PixelAbsolute = styled.div`
 `;
 
 export default function HomeBanner() {
+  const { width, height } = useScreenConfig();
+
   return (
-    <HomeBannerContainer>
+    <HomeBannerContainer $displayHeight={height}>
       <div style={{ position: 'absolute', top: 0, right: 0, height: '100%', width: '100%' }}>
         {/* Adicionando vários diamantes caindo */}
         {[...Array(10)].map((_, index) => (
@@ -86,15 +91,19 @@ export default function HomeBanner() {
       </div>
 
       <Reveal>
-        <TextElementsContainer>
-          <PixelAbsolute>
-            <img width={50} src={pixel_on_the_table} alt="" />
-          </PixelAbsolute>
+        {width > 740 ? (
+          <TextElementsContainer>
+            <PixelAbsolute>
+              <img width={50} src={pixel_on_the_table} alt="" />
+            </PixelAbsolute>
 
-          <WelcomeToTrixelsXyz />
-          <YourLuck />
-          <InAPixelatedUniverse />
-        </TextElementsContainer>
+            <WelcomeToTrixelsXyz />
+            <YourLuck />
+            <InAPixelatedUniverse />
+          </TextElementsContainer>
+        ) : (
+          <HomeBannerVertical />
+        )}
       </Reveal>
     </HomeBannerContainer>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from 'styled-components';
 
-import { TItemInfos } from '../../../../hooks/useGetAvailableItems';
+import { TItemInfos } from '../../../../contexts/ItemsAvailableContext';
 import { THandleItemClickFn } from '../../../../pages/RaffleCreation';
 import BerryIconAndAmount from '../../../CurrencyIconAndAmount';
 import TrixelsButton from '../../../TrixelsButton';

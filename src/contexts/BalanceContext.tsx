@@ -9,11 +9,7 @@ const BalanceContext = React.createContext<{
   balance: {
     data: { getBalance: IGQLResponses<{ balance: number }> } | undefined;
     liveData: { getLiveBalance: IGQLResponses<{ balance: number }> } | undefined;
-    refetch:
-      | ((
-          variables?: Partial<OperationVariables> | undefined,
-        ) => Promise<ApolloQueryResult<any>>)
-      | undefined;
+    refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<any>>) | undefined;
   };
 }>({
   balance: { data: undefined, liveData: undefined, refetch: undefined },
@@ -28,11 +24,7 @@ export default function BalanceContextProvider({ children }: { children: ReactNo
     gql: USER_QUERIES.GET_LIVE_BALANCE,
   });
 
-  return (
-    <BalanceContext.Provider value={{ balance: { data, liveData, refetch } }}>
-      {children}
-    </BalanceContext.Provider>
-  );
+  return <BalanceContext.Provider value={{ balance: { data, liveData, refetch } }}>{children}</BalanceContext.Provider>;
 }
 
 export function useBalanceContext() {

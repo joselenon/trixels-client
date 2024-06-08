@@ -47,13 +47,15 @@ export default function Raffles() {
       endedRaffles.sort((raffle1, raffle2) => raffle2.createdAt - raffle1.createdAt);
       const eRaffles = endedRaffles.map((raffle) => (
         <Reveal key={raffle.gameId}>
-          <RaffleBox raffleInfo={raffle} />
+          <RaffleBox width="100%" raffleInfo={raffle} />
         </Reveal>
       ));
       setERafflesElements(eRaffles);
 
       activeRaffles.sort((raffle1, raffle2) => raffle2.createdAt - raffle1.createdAt);
-      const aRaffles = activeRaffles.map((raffle) => <RaffleBox key={raffle.gameId} raffleInfo={raffle} />);
+      const aRaffles = activeRaffles.map((raffle) => (
+        <RaffleBox width="100%" key={raffle.gameId} raffleInfo={raffle} />
+      ));
       setARafflesElements(aRaffles);
     }
   }, [updatedRaffles]);

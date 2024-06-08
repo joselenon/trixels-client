@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { styled } from 'styled-components';
 
-import useGetUserProfile from '../../hooks/useGetUserInfo';
+import useGetUserProfile from '../../hooks/useGetUserProfile';
 import useUpdateUserInfo from '../../hooks/useUpdateUserInfo';
 import { ITextInput } from '../../interfaces/IRHF';
 import { TParams } from '../../routes/AppRoutes';

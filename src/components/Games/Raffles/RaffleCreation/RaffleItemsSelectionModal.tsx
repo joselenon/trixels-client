@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { IItemsInfoResponse } from '../../../../hooks/useGetAvailableItems';
+import { IItemsInfoResponse } from '../../../../contexts/ItemsAvailableContext';
 import { TRaffleCreationWinnerPrizes } from '../../../../interfaces/IRaffleCreation';
 import { THandleItemClickFn } from '../../../../pages/RaffleCreation';
 import RaffleCalcs from '../../../../utils/RaffleCalcs';
@@ -68,15 +68,8 @@ export default function RaffleItemsSelectionModal(props: IRaffleItemsSelectionMo
   };
 
   return (
-    <Modal setShowModal={setShowModal} showModal={showModal}>
+    <Modal title={`Item Selection - ${calculateTotalValue()} `} setShowModal={setShowModal} showModal={showModal}>
       <RaffleItemsSelectionModalContainer>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-          <h3>Item Selection</h3>
-          <div>
-            <h3>{`${calculateTotalValue()}`}</h3>
-          </div>
-        </div>
-
         <ItemsContainer>{renderItemsElements()}</ItemsContainer>
       </RaffleItemsSelectionModalContainer>
     </Modal>

@@ -13,11 +13,7 @@ const AuthModalContext = createContext<AuthModalContextProps>({
 export function AuthModalProvider({ children }: { children: JSX.Element }) {
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  return (
-    <AuthModalContext.Provider value={{ showModal, setShowModal }}>
-      {children}
-    </AuthModalContext.Provider>
-  );
+  return <AuthModalContext.Provider value={{ showModal, setShowModal }}>{children}</AuthModalContext.Provider>;
 }
 
 export function useAuthModalContext() {

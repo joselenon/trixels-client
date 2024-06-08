@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 import CurrencyIconAndAmountMEDIUM from '../components/CurrencyIconAndAmount';
 import PrivacyConfigElement from '../components/Games/Raffles/RaffleCreation/PrivacyModeButtons';
 import PrivacySettings from '../components/Games/Raffles/RaffleCreation/PrivacySettings';
-import SelectedPrizesElement from '../components/Games/Raffles/RaffleCreation/SelectedPrizesElement';
+import SelectPrizesElement from '../components/Games/Raffles/RaffleCreation/SelectPrizesElement';
 import TrixelsButton from '../components/TrixelsButton';
 import { ROUTES } from '../config/constants/CLIENT_ROUTES';
+import { useAvailableItemsContext } from '../contexts/ItemsAvailableContext';
 import { useScreenConfig } from '../contexts/ScreenConfigContext';
 import useCreateRaffle from '../hooks/useCreateRaffle';
-import useGetAvailableItems from '../hooks/useGetAvailableItems';
+import useGetMessages from '../hooks/useGetMessages';
 import { IRaffleCreationPayload } from '../interfaces/IRaffleCreation';
 import { Body } from '../styles/GlobalStyles';
 import RaffleCalcs from '../utils/RaffleCalcs';
@@ -85,7 +87,8 @@ export default function RaffleCreation() {
   const navigate = useNavigate();
   const handleCreateRaffle = useCreateRaffle();
   const { width } = useScreenConfig();
-  const { availableItems } = useGetAvailableItems();
+  const availableItems = useAvailableItemsContext();
+  const { messagesData, setFilteredResponse } = useGetMessages();
 
   const [isRaffleCreationProcessing, setIsRaffleCreationProcessing] = useState(false);
   const [raffleConfig, setRaffleConfig] = useState<IRaffleCreationPayload>({
@@ -95,35 +98,61 @@ export default function RaffleCreation() {
     prizes: {},
     description: 'This is a fun raffle!',
   });
-  const [totalRafflePrice, setTotalRafflePrice] = useState(0);
+  const [raffleDetails, setRaffleDetails] = useState({ prizesTotalValue: 0, ticketPrice: 0, raffleOwnerCost: 0 });
 
   const { totalTickets, prizes, discountPercentage } = raffleConfig;
+  const { prizesTotalValue, raffleOwnerCost, ticketPrice } = raffleDetails;
 
   useEffect(() => {
     if (availableItems) {
-      const { prizesTotalValue } = new RaffleCalcs(availableItems).getPrizesValues(prizes);
-      setTotalRafflePrice(parseFloat(prizesTotalValue.toFixed(2)));
+      const { prizesTotalValue, ticketPrice, raffleOwnerCost } = new RaffleCalcs(availableItems).getRaffleDetails(
+        raffleConfig,
+      );
+
+      setRaffleDetails({ prizesTotalValue, ticketPrice, raffleOwnerCost });
     }
-  }, [prizes, availableItems]);
+  }, [prizes, availableItems, discountPercentage]);
 
   const handleChangeTicketAmount = (amount: number) => {
     setRaffleConfig((prevConfig) => ({ ...prevConfig, totalTickets: amount }));
   };
 
+  const isRafflePayloadValid = () => {
+    if (Object.keys(raffleConfig.prizes).length <= 0) {
+      toast.error('You must select a prize');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCreateRaffleButtonClick = async () => {
     if (isRaffleCreationProcessing) return;
 
+    if (!isRafflePayloadValid()) return;
+
     setIsRaffleCreationProcessing(true);
-
     const res = await handleCreateRaffle(raffleConfig);
-    if (res && res.success) {
-      const { raffleId } = res.data;
-      setIsRaffleCreationProcessing(false);
-      return navigate(`${ROUTES.RAFFLE}/${raffleId}`);
-    }
-
-    return setIsRaffleCreationProcessing(false);
+    if (!res) setIsRaffleCreationProcessing(false);
   };
+
+  useEffect(() => {
+    if (messagesData) {
+      const createRaffleMessages = messagesData.filter((message) => message.type === 'CREATE_RAFFLE');
+
+      createRaffleMessages.forEach((message) => {
+        const { data, success } = message;
+        setIsRaffleCreationProcessing(false);
+
+        if (success && data) {
+          setFilteredResponse && setFilteredResponse(() => messagesData.filter((m) => m !== message));
+          return navigate(`${ROUTES.RAFFLE}/${data.gameId}`);
+        }
+
+        setFilteredResponse && setFilteredResponse(() => messagesData.filter((m) => m !== message));
+      });
+    }
+  }, [messagesData]);
 
   const { privacy } = raffleConfig;
 
@@ -172,14 +201,12 @@ export default function RaffleCreation() {
             <PricesContainer $screenWidth={width}>
               <TextValueHorizontal>
                 <h5>Raffle</h5>
-                <CurrencyIconAndAmountMEDIUM amount={totalRafflePrice} />
+                <CurrencyIconAndAmountMEDIUM amount={prizesTotalValue} />
               </TextValueHorizontal>
 
               <TextValueHorizontal>
                 <h5>Ticket</h5>
-                <CurrencyIconAndAmountMEDIUM
-                  amount={(totalRafflePrice - (totalRafflePrice * discountPercentage) / 100) / totalTickets}
-                />
+                <CurrencyIconAndAmountMEDIUM amount={ticketPrice} />
               </TextValueHorizontal>
             </PricesContainer>
           </TicketsAmountAndPrices>
@@ -189,14 +216,14 @@ export default function RaffleCreation() {
           <PrivacySettings raffleConfig={raffleConfig} setRaffleConfig={setRaffleConfig} />
         )}
 
-        <SelectedPrizesElement raffleConfig={raffleConfig} setRaffleConfig={setRaffleConfig} />
+        <SelectPrizesElement raffleConfig={raffleConfig} setRaffleConfig={setRaffleConfig} />
 
         <div style={{ display: 'flex' }}>
           <div>
             <TrixelsButton
               btnType={'CTA'}
               isPending={isRaffleCreationProcessing}
-              label="Create Raffle"
+              label={`Create Raffle ${raffleOwnerCost}`}
               attributes={{ onClick: () => handleCreateRaffleButtonClick() }}
             />
           </div>

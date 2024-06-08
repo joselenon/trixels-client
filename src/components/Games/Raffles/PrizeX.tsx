@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from 'styled-components';
 
-import useGetAvailableItems from '../../../hooks/useGetAvailableItems';
+import { useAvailableItemsContext } from '../../../contexts/ItemsAvailableContext';
 import { TRafflePrizeX } from '../../../interfaces/IRaffles';
 
 const PrizeXContainer = styled.div`
@@ -22,10 +22,9 @@ interface IPrizeXProps {
 }
 
 export default function PrizeX({ prizeInfo }: IPrizeXProps) {
-  const { availableItems } = useGetAvailableItems();
+  const availableItems = useAvailableItemsContext();
 
   const { prizeId, quantity } = prizeInfo;
-
   const itemImage = availableItems && availableItems[prizeId].img;
 
   return (

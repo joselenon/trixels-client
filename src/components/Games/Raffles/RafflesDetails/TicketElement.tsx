@@ -13,7 +13,7 @@ interface ITicketContainerProps {
 
 const TicketContainer = styled.div<ITicketContainerProps>`
   position: relative;
-  width: 80px;
+  width: 100%;
   height: 80px;
   display: flex;
   justify-content: center;
@@ -25,23 +25,38 @@ const TicketContainer = styled.div<ITicketContainerProps>`
     return 'none';
   }};
   transition: all 0.05s;
+  overflow: hidden;
 
   h3 {
     color: white;
   }
 
-  img {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    height: 100%;
-  }
-
   &:hover {
     cursor: pointer;
     background: var(--default-darkblue);
+  }
+`;
+
+const AbsoluteAvatarContainer = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    transition: all 0.1s;
+    opacity: 0.5;
+    width: 80px;
+    height: 80px;
+  }
+
+  &:hover {
+    img {
+      opacity: 1;
+    }
   }
 `;
 
@@ -112,7 +127,7 @@ export default function TicketElement({ ticketNumber, raffle, ticketsSelection }
     >
       <h3>{ticketNumber}</h3>
 
-      {betterAvatar && <UserAvatarElement url={betterAvatar} />}
+      <AbsoluteAvatarContainer>{betterAvatar && <UserAvatarElement url={betterAvatar} />}</AbsoluteAvatarContainer>
     </TicketContainer>
   );
 }

@@ -22,7 +22,7 @@ export default function LoginForm() {
     label: 'Password',
   };
 
-  const loginButton = <TrixelsButton btnType={'CTA'} label={'LOGIN'} />;
+  const loginButton = <TrixelsButton btnType={'CTA'} label={'LOGIN'} attributes={{ type: 'submit' }} />;
 
   return (
     <Form

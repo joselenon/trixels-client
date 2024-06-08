@@ -1,18 +1,31 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import React from 'react';
 import styled from 'styled-components';
 
+import { useScreenConfig } from '../../contexts/ScreenConfigContext';
 import Reveal from '../Reveal';
 
 interface IModalProps {
   children: JSX.Element;
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>> | undefined;
+  title: string;
+  width?: number;
 }
 
 interface IModalContainerProps {
   $show: 'true' | 'false';
 }
+
+const ModalBackground = styled.div<{ $showModal: boolean }>`
+  z-index: 0;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: ${({ $showModal }) => ($showModal ? 1 : 0)};
+  transition: opacity 0.5s;
+`;
 
 const ModalContainer = styled(motion.div)<IModalContainerProps>`
   display: ${({ $show }) => ($show === 'true' ? 'flex' : 'none')};
@@ -27,26 +40,31 @@ const ModalContainer = styled(motion.div)<IModalContainerProps>`
   padding: var(--default-pdn);
 `;
 
-const ModalBackground = styled.div<{ $showModal: boolean }>`
-  z-index: 0;
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: ${({ $showModal }) => ($showModal ? 1 : 0)};
-  transition: opacity 0.5s;
-`;
-
 const ModalContent = styled.div`
   z-index: 2;
-  max-width: 800px;
+  max-width: 600px;
   width: 100%;
   max-height: 800px;
   padding: var(--default-halfpdn);
   background-color: var(--primary-bg-color);
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
-export default function Modal({ children, setShowModal, showModal }: IModalProps) {
+const Header = styled.div`
+  margin-top: 10px;
+  justify-content: flex-start;
+`;
+
+const Body = styled.div`
+  background-color: white;
+  padding: var(--default-halfpdn);
+`;
+
+export default function Modal({ children, setShowModal, showModal, title }: IModalProps) {
   const toggleModal = () => {
     if (setShowModal) {
       setShowModal((prev) => !prev);
@@ -60,9 +78,15 @@ export default function Modal({ children, setShowModal, showModal }: IModalProps
     <ModalContainer key="modal" exit={{ opacity: 0 }} $show={showModal ? 'true' : 'false'}>
       <ModalBackground $showModal={showModal} onClick={() => toggleModal()} />
 
-      <Reveal>
+      <Reveal width="100%">
         <ModalContent>
-          <div>{children}</div>
+          <Header>
+            <h3>{title}</h3>
+          </Header>
+
+          <Body>
+            <div>{children}</div>
+          </Body>
         </ModalContent>
       </Reveal>
     </ModalContainer>

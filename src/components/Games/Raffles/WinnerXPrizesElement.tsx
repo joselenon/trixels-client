@@ -3,8 +3,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 import React from 'react';
-import styled from 'styled-components';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { TRaffleWinnerPrizes } from '../../../interfaces/IRaffles';

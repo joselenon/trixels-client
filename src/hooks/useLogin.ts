@@ -22,10 +22,7 @@ const useLogin = () => {
     setShowModal && setShowModal(false);
   };
 
-  const handleEnterButtonClick = async (payload: {
-    username: string;
-    password: string;
-  }) => {
+  const handleEnterButtonClick = async (payload: { username: string; password: string }) => {
     try {
       if (auth.userCredentials) {
         toast.error("You're already logged.");

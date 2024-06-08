@@ -12,12 +12,13 @@ import RaffleBox from './RaffleBox';
 const HomeRafflesContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  overflow: hidden;
+  gap: 3rem;
 
   .swiper {
-    width: 320px;
+    width: 100%;
+    max-width: 300px;
   }
 
   .swiper-slide {
@@ -35,13 +36,36 @@ const HomeRafflesContainer = styled.div`
 const TextsContainer = styled.div`
   height: 100%;
   display: flex;
+  flex-direction: column;
   text-align: center;
-  flex: 800px;
+  max-width: 800px;
+
+  h2 {
+    font-size: 40px;
+
+    @media (max-width: 800px) {
+      font-size: 40px;
+    }
+
+    @media (max-width: 700px) {
+      font-size: 30px;
+    }
+
+    @media (max-width: 600px) {
+      font-size: 26px;
+    }
+
+    @media (max-width: 500px) {
+      font-size: 22px;
+    }
+
+    @media (max-width: 350px) {
+      white-space: normal;
+    }
+  }
 `;
 
-const SwiperContainer = styled.div`
-  padding: 0 60px;
-`;
+const SwiperContainer = styled.div``;
 
 export default function HomeRaffles() {
   const { updatedRaffles } = useGetRaffles();
@@ -53,7 +77,9 @@ export default function HomeRaffles() {
       const { activeRaffles } = updatedRaffles;
 
       activeRaffles.sort((raffle1, raffle2) => raffle2.createdAt - raffle1.createdAt);
-      const aRaffles = activeRaffles.map((raffle) => <RaffleBox key={raffle.gameId} raffleInfo={raffle} />);
+      const aRaffles = activeRaffles.map((raffle) => (
+        <RaffleBox width="100%" key={raffle.gameId} raffleInfo={raffle} />
+      ));
       setARafflesElements(aRaffles);
     }
   }, [updatedRaffles]);
@@ -61,7 +87,8 @@ export default function HomeRaffles() {
   return (
     <HomeRafflesContainer>
       <TextsContainer>
-        <h2>Have you checked all active raffles?</h2>
+        <h2>Have you checked all</h2>
+        <h2>active raffles?</h2>
       </TextsContainer>
 
       <SwiperContainer>

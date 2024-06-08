@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-import PrizesElement from '../components/Games/Raffles/RafflesDetails/PrizesElement';
+import CurrencyIconAndAmount from '../components/CurrencyIconAndAmount';
+import Prizes from '../components/Games/Raffles/RafflesDetails/PrizesElement';
 import TicketsElements from '../components/Games/Raffles/RafflesDetails/TicketsElements';
 import Wheel from '../components/Games/Raffles/Wheel';
 import TrixelsButton from '../components/TrixelsButton';
 import useGetActiveRaffles from '../hooks/useGetRaffles';
 import { IRaffleToFrontEndTreated } from '../interfaces/IRaffles';
-import { Body } from '../styles/GlobalStyles';
+import { Body, TruncatedText } from '../styles/GlobalStyles';
 
 const ViewRaffleContainer = styled.div`
   display: flex;
@@ -28,6 +29,21 @@ const RaffleCaption = styled.div`
 
   h4 {
     color: var(--default-grey);
+  }
+`;
+
+const PulsingPrizeBox = styled.div`
+  background-color: #4cc043;
+  width: 100%;
+  animation: pulse 2s infinite alternate;
+
+  @keyframes pulse {
+    from {
+      background-color: var(--default-green);
+    }
+    to {
+      background-color: var(--default-lightgreen);
+    }
   }
 `;
 
@@ -71,7 +87,7 @@ export default function ViewRaffle() {
       }
     }
 
-    const { info } = raffleSelected;
+    const { info, description } = raffleSelected;
     const { prizes, prizesTotalValue } = info;
 
     const raffleDate = raffleSelected.createdAt;
@@ -87,18 +103,30 @@ export default function ViewRaffle() {
                     <TrixelsButton btnType="DEFAULT" label="BACK" />
                   </Link>
                 </div>
-                <h3>Raffle: {}</h3>
+
+                <TruncatedText>
+                  <h4 style={{ whiteSpace: 'wrap' }}>Raffle: {description}</h4>
+                </TruncatedText>
               </TitleAndBackButton>
 
               <RaffleCaption>
-                <h4>Game: {raffleSelected.gameId}</h4>
+                <TruncatedText>
+                  <h4>Game: {raffleSelected.gameId}</h4>
+                </TruncatedText>
                 <h4>{new Date(raffleDate).toLocaleDateString()}</h4>
               </RaffleCaption>
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
               <Wheel raffle={raffleSelected} />
-              <PrizesElement prizes={prizes} prizesTotalValue={prizesTotalValue} />
+
+              <div style={{ width: 280 }}>
+                <PulsingPrizeBox>
+                  <CurrencyIconAndAmount theme="transparent" amount={prizesTotalValue} />
+                </PulsingPrizeBox>
+
+                <Prizes prizes={prizes} slidesPerView={2} />
+              </div>
             </div>
 
             <TicketsElements raffle={raffleSelected} />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 import { SVGLittleBox, SVGRoundedSandwichMenu } from '../../assets/SVGIcons';
@@ -37,7 +37,7 @@ const HeaderMenusContainer = styled.div`
   align-items: center;
 `;
 
-const HeaderMenuItem = styled.div`
+const HeaderMenuItem = styled.div<{ $isActive: boolean | undefined }>`
   background: white;
   cursor: pointer;
   display: flex;
@@ -55,10 +55,10 @@ const HeaderMenuItem = styled.div`
     padding: 20px;
   }
   h4 {
-    color: var(--default-grey);
+    color: ${({ $isActive }) => ($isActive ? '#6b8dbd' : 'var(--default-grey)')};
   }
   svg {
-    fill: var(--default-grey);
+    fill: ${({ $isActive }) => ($isActive ? '#6b8dbd' : 'var(--default-grey)')};
   }
 
   &:hover {
@@ -88,6 +88,7 @@ const SandwichMenu = ({ menuItems }: IHeader) => {
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
   );
+  const location = useLocation();
   const { setShowModal } = useAuthModalContext();
 
   const [isMenuOpened, setIsMenuOpened] = useState(false);
@@ -101,22 +102,30 @@ const SandwichMenu = ({ menuItems }: IHeader) => {
           <h4>{userCredentials.username}</h4>
         </Link>
       ) : undefined,
+      path: '/profile',
     },
+
     'Enter ': {
       element: !userCredentials ? (
         <CustomEnterButton onClick={() => setShowModal && setShowModal(true)}>
           <h4>Enter</h4>
         </CustomEnterButton>
       ) : undefined,
+      path: '',
     },
   };
 
   const mobileMenuItemsElements = () => {
-    return Object.entries(mobileMenuItems).map(([item, { element }], i) => {
+    return Object.entries(mobileMenuItems).map(([, { element, path }], i) => {
       if (element) {
         return (
           <React.Fragment key={i}>
-            <HeaderMenuItem onClick={() => setIsMenuOpened((prev) => !prev)}>{element}</HeaderMenuItem>
+            <HeaderMenuItem
+              onClick={() => setIsMenuOpened((prev) => !prev)}
+              $isActive={location.pathname.includes(path)}
+            >
+              {element}
+            </HeaderMenuItem>
           </React.Fragment>
         );
       }
@@ -125,7 +134,9 @@ const SandwichMenu = ({ menuItems }: IHeader) => {
   return (
     <SandwichMenuContainer>
       <HeaderMenusContainer>
-        <HeaderMenuItem onClick={() => setIsMenuOpened((prev) => !prev)}>{SVGRoundedSandwichMenu()}</HeaderMenuItem>
+        <HeaderMenuItem $isActive={undefined} onClick={() => setIsMenuOpened((prev) => !prev)}>
+          {SVGRoundedSandwichMenu()}
+        </HeaderMenuItem>
       </HeaderMenusContainer>
 
       {isMenuOpened && <DropdownMenuContainer>{mobileMenuItemsElements()}</DropdownMenuContainer>}

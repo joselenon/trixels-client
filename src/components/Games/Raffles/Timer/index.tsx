@@ -1,15 +1,31 @@
 import React, { CSSProperties, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+
+const TimerContainer = styled.div<{ $isRaffleSoldOut: boolean }>`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  line-height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 1s ease-in-out;
+  opacity: ${({ $isRaffleSoldOut }) => ($isRaffleSoldOut ? 1 : 0)};
+`;
 
 interface ITimerProps {
   startedAt: number | undefined;
   duration: number;
   style?: CSSProperties;
   triggerWhenTimerEnd: () => void; // Definindo o tipo de retorno como 'void'
+  isRaffleSoldOut: boolean;
 }
 
-export default function Timer(props: ITimerProps) {
-  const { startedAt, duration, style, triggerWhenTimerEnd } = props;
-
+export default function Timer({ startedAt, duration, style, triggerWhenTimerEnd, isRaffleSoldOut }: ITimerProps) {
   const totalMS = useRef<number>(0); // Definindo o tipo de useRef
   const intervalRef = useRef<any>(null);
 
@@ -26,6 +42,7 @@ export default function Timer(props: ITimerProps) {
           clearInterval(intervalRef.current);
           setTimerState(0);
           totalMS.current = msLeftToRoll;
+
           triggerWhenTimerEnd(); // Chama a função quando o tempo acabar
         } else {
           const newTotalMS = totalMS.current - timerSpeed;
@@ -43,6 +60,7 @@ export default function Timer(props: ITimerProps) {
     const nowTime = new Date().getTime();
     const nowTimeToStartedAtDif = nowTime - Number(startedAt);
     const msLeftToRoll = duration - nowTimeToStartedAtDif;
+
     return msLeftToRoll > 0 ? msLeftToRoll : 0;
   };
 
@@ -55,7 +73,7 @@ export default function Timer(props: ITimerProps) {
   }, [startedAt, msLeftToRoll, duration, triggerWhenTimerEnd]);
 
   return (
-    <div style={{ width: '103px' }}>
+    <TimerContainer $isRaffleSoldOut={isRaffleSoldOut}>
       {startedAt ? (
         <h2 style={style}>
           {timerState % 1000 === 0
@@ -65,6 +83,6 @@ export default function Timer(props: ITimerProps) {
       ) : (
         <h2 style={style}>{`${duration / 1000}:00`}</h2>
       )}
-    </div>
+    </TimerContainer>
   );
 }

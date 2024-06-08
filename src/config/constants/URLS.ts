@@ -39,6 +39,8 @@ const API_ENDPOINTS = {
     GET_USER_CREDENTIALS: `${ENDPOINTS.USER}/credentials`,
     UPDATE_USER_CREDENTIALS: `${ENDPOINTS.USER}/credentials`,
     GET_ETHEREUM_DEPOSIT_WALLET: `${ENDPOINTS.USER}/depositwallet`,
+    VERIFY_WALLET: `${ENDPOINTS.USER}/verifywallet`,
+    VERIFY_WALLET_CHECK: `${ENDPOINTS.USER}/verifywallet/check`,
   },
   RAFFLES: {
     GET_AVAILABLE_ITEMS: `${ENDPOINTS.RAFFLES}/items`,

@@ -61,19 +61,11 @@ export default function Input(props: ITextInput) {
       <h4>{label}</h4>
 
       <label htmlFor={id}>
-        <input
-          {...options}
-          {...registerProps}
-          aria-invalid={rhfErrors[id] ? 'true' : 'false'}
-        />
+        <input {...options} {...registerProps} aria-invalid={rhfErrors[id] ? 'true' : 'false'} />
       </label>
 
-      {rhfErrors[id] && rhfErrors[id]!.type === 'required' && (
-        <ErrorMessage>Campo obrigatório.</ErrorMessage>
-      )}
-      {rhfErrors[id] && rhfErrors[id]!.type === 'validate' && (
-        <ErrorMessage>{validationValue.errorMsg}</ErrorMessage>
-      )}
+      {rhfErrors[id] && rhfErrors[id]!.type === 'required' && <ErrorMessage>Campo obrigatório.</ErrorMessage>}
+      {rhfErrors[id] && rhfErrors[id]!.type === 'validate' && <ErrorMessage>{validationValue.errorMsg}</ErrorMessage>}
     </InputContainer>
   );
 }

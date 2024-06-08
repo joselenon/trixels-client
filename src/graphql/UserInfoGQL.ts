@@ -42,4 +42,15 @@ export const GET_LIVE_BALANCE = gql`
   }
 `;
 
-export default { GET_USER_INFO, GET_BALANCE, GET_LIVE_BALANCE };
+export const GET_LIVE_MESSAGES = gql`
+  subscription getLiveMessages {
+    getLiveMessages {
+      success
+      message
+      data
+      type
+    }
+  }
+`;
+
+export default { GET_USER_INFO, GET_BALANCE, GET_LIVE_BALANCE, GET_LIVE_MESSAGES };

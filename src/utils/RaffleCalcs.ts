@@ -1,10 +1,12 @@
 import {
+  IRaffleCreationPayload,
   TRaffleCreationPrizesWinners,
   TRaffleCreationPrizeX,
   TRaffleCreationWinnerPrizes,
-  TRaffleWinnerPrizes,
-  TRaffleWinnersPrizes,
-} from '../interfaces/IRaffles';
+} from '../interfaces/IRaffleCreation';
+import { TRaffleWinnerPrizes, TRaffleWinnersPrizes } from '../interfaces/IRaffles';
+import calcWithDecimalsService from './calcWithDecimals';
+import formatIrrationalCryptoAmount from './formatIrrationalCryptoAmount';
 
 export interface IItemsInfo {
   [itemId: string]: {
@@ -67,6 +69,40 @@ class RaffleCals {
     }, 0);
 
     return { prizesTotalValue, winnersPrizesObj };
+  }
+
+  calculateTicketPriceAndRaffleOwnerCost(prizesTotalValue: number, discountPercentage: number, totalTickets: number) {
+    const raffleDiscountValue = calcWithDecimalsService(prizesTotalValue, 'multiply', discountPercentage) / 100;
+    const raffleDiscountValueRounded = formatIrrationalCryptoAmount(raffleDiscountValue);
+
+    const totalRafflePriceAfterDiscount = calcWithDecimalsService(
+      prizesTotalValue,
+      'subtract',
+      raffleDiscountValueRounded,
+    );
+
+    const ticketPrice = calcWithDecimalsService(totalRafflePriceAfterDiscount, 'divide', totalTickets);
+
+    return { ticketPrice, raffleOwnerCost: raffleDiscountValueRounded };
+  }
+
+  getRaffleDetails(payload: IRaffleCreationPayload) {
+    const { prizes, discountPercentage, totalTickets } = payload;
+
+    const { prizesTotalValue, winnersPrizesObj } = this.getPrizesValues(prizes);
+
+    const { ticketPrice, raffleOwnerCost } = this.calculateTicketPriceAndRaffleOwnerCost(
+      prizesTotalValue,
+      discountPercentage,
+      totalTickets,
+    );
+
+    return {
+      raffleOwnerCost,
+      winnersPrizesObj,
+      prizesTotalValue,
+      ticketPrice,
+    };
   }
 }
 

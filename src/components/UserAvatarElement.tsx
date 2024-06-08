@@ -17,7 +17,6 @@ export default function UserAvatarElement({ url, sizeInPx }: { url: string; size
   const [error, setError] = useState(false);
 
   const handleImageError = () => {
-    console.log('eerored');
     setError(true);
   };
 

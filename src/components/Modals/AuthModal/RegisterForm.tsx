@@ -29,7 +29,7 @@ export default function RegisterForm() {
     label: 'Confirm Password',
   };
 
-  const loginButton = <TrixelsButton btnType={'BLUE'} label={'REGISTER'} />;
+  const loginButton = <TrixelsButton btnType={'BLUE'} label={'REGISTER'} attributes={{ type: 'submit' }} />;
 
   return (
     <Form

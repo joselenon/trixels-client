@@ -8,7 +8,7 @@ import LogoutButton from '../components/LogoutButton';
 import UserProfileForm from '../components/Profile/UserProfileForm';
 import Reveal from '../components/Reveal';
 import UserAvatarElement from '../components/UserAvatarElement';
-import useGetUserInfo from '../hooks/useGetUserInfo';
+import useGetUserInfo from '../hooks/useGetUserProfile';
 import { IReduxStore } from '../interfaces/IRedux';
 import { TParams } from '../routes/AppRoutes';
 import { Body } from '../styles/GlobalStyles';

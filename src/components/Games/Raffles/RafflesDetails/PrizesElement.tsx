@@ -12,8 +12,9 @@ import CurrencyIconAndAmount from '../../../CurrencyIconAndAmount';
 import WinnerXPrizesElement from '../WinnerXPrizesElement';
 
 const WinnersPrizesElementContainer = styled.div`
-  width: 350px;
+  padding: 10px;
   display: flex;
+  align-items: center;
   flex-direction: column;
   gap: 0.5rem;
   user-select: none;
@@ -28,7 +29,6 @@ const WinnersPrizesElementContainer = styled.div`
     text-align: center;
     font-size: 18px;
 
-    /* Center slide text vertically */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,9 +43,9 @@ const WinnersPrizesElementContainer = styled.div`
 `;
 
 const WinnerPrizes = styled.div`
-  width: 150px;
+  width: 120px;
   background: #fff;
-  padding: var(--default-pdn);
+  padding: 15px;
   transition: all 0.05s;
   &:hover {
     box-shadow: inset 0px 0px 0px 5px var(--default-grey);
@@ -62,48 +62,54 @@ const PrizeAmountContainer = styled.div`
 
 interface IPrizesElementProps {
   prizes: TRaffleWinnersPrizes;
-  prizesTotalValue: number;
+  slidesPerView: number;
 }
 
-export default function Prizes({ prizes, prizesTotalValue }: IPrizesElementProps) {
+export default function Prizes({ prizes, slidesPerView }: IPrizesElementProps) {
   const winnersKeys = Object.keys(prizes);
 
-  const renderWinnerPrizesElement = (winnerKey: string) => {
-    const winnerPrizes = prizes[winnerKey];
+  const renderWinnerPrizesElement = () => {
+    return winnersKeys.map((winnerKey) => {
+      const winnerPrizes = prizes[winnerKey];
 
-    return (
-      <SwiperSlide key={winnerKey}>
-        <WinnerPrizes key={winnerKey}>
-          <div style={{ textAlign: 'center', marginBottom: 15 }}>
-            <h5>{winnerKey}</h5>
-          </div>
+      return (
+        <div key={winnerKey}>
+          <SwiperSlide key={winnerKey}>
+            <WinnerPrizes>
+              <div style={{ textAlign: 'center', marginBottom: 15 }}>
+                <h5>{winnerKey}</h5>
+              </div>
 
-          <WinnerXPrizesElement winnerXPrizes={winnerPrizes} />
+              <WinnerXPrizesElement winnerXPrizes={winnerPrizes} />
 
-          <PrizeAmountContainer>
-            <CurrencyIconAndAmount fontSize="small" amount={winnerPrizes.totalValue} />
-          </PrizeAmountContainer>
-        </WinnerPrizes>
-      </SwiperSlide>
-    );
+              <PrizeAmountContainer>
+                <CurrencyIconAndAmount fontSize="small" amount={winnerPrizes.totalValue} />
+              </PrizeAmountContainer>
+            </WinnerPrizes>
+          </SwiperSlide>
+
+          <SwiperSlide key={winnerKey + 'clone'}>
+            <WinnerPrizes>
+              <div style={{ textAlign: 'center', marginBottom: 15 }}>
+                <h5>{winnerKey}</h5>
+              </div>
+
+              <WinnerXPrizesElement winnerXPrizes={winnerPrizes} />
+
+              <PrizeAmountContainer>
+                <CurrencyIconAndAmount fontSize="small" amount={winnerPrizes.totalValue} />
+              </PrizeAmountContainer>
+            </WinnerPrizes>
+          </SwiperSlide>
+        </div>
+      );
+    });
   };
 
   return (
     <WinnersPrizesElementContainer>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'end',
-        }}
-      >
-        <h5>Prize</h5>
-        <CurrencyIconAndAmount amount={prizesTotalValue} />
-      </div>
-
       <Swiper
-        slidesPerView={2}
+        slidesPerView={slidesPerView}
         spaceBetween={5}
         pagination={{
           clickable: true,
@@ -111,7 +117,7 @@ export default function Prizes({ prizes, prizesTotalValue }: IPrizesElementProps
         modules={[Pagination]}
         className="mySwiper"
       >
-        {winnersKeys.map((winnerKey) => renderWinnerPrizesElement(winnerKey))}
+        {renderWinnerPrizesElement()}
       </Swiper>
     </WinnersPrizesElementContainer>
   );

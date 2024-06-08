@@ -1,22 +1,20 @@
 /* Multiplicar preropllscreentime pela quantidade de vencedores que tiver */
 const WheelAnimationTime = 4000;
 const TimerTime = 10000;
-const TotalTimeToRoll = WheelAnimationTime + TimerTime;
+const DelayTillAnimate = 500;
+const DelayTillPointerDisappear = 1000;
 
-/* Function to check if raffle is completely finished (even the animation) */
-export interface IRaffleAnimationAlreadyEndedFn {
-  alreadyEnded: boolean;
-  timeLeft: number | undefined;
-}
-const raffleAnimationAlreadyEndedFn = (finishedAt: number | undefined): IRaffleAnimationAlreadyEndedFn => {
+const TotalTimeTillAnimationFinish = WheelAnimationTime + TimerTime + DelayTillAnimate + DelayTillPointerDisappear;
+
+const raffleAnimationAlreadyEndedFn = (finishedAt: number | undefined) => {
   if (finishedAt) {
     const nowTime = new Date().getTime();
-    const diff = finishedAt + TotalTimeToRoll - nowTime;
+    const diff = finishedAt + TotalTimeTillAnimationFinish - nowTime;
 
-    return { alreadyEnded: diff < 0, timeLeft: diff };
+    return { alreadyEnded: diff <= 0, timeLeft: diff };
   }
 
   return { alreadyEnded: false, timeLeft: undefined };
 };
 
-export { raffleAnimationAlreadyEndedFn, TimerTime, TotalTimeToRoll, WheelAnimationTime };
+export { DelayTillAnimate, raffleAnimationAlreadyEndedFn, TimerTime, TotalTimeTillAnimationFinish, WheelAnimationTime };
