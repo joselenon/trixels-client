@@ -20,7 +20,7 @@ export default function useGetBalance(): IUseGetBalanceReturn {
     if (liveData) {
       if (liveData.getLiveBalance.success) {
         errorAlreadyDisplayed.current = false;
-        return setUpdatedBalance(liveData.getLiveBalance.data.balance);
+        return setUpdatedBalance(liveData.getLiveBalance!.data!.balance);
       } else {
         !errorAlreadyDisplayed.current && toast.error(liveData.getLiveBalance.message);
         errorAlreadyDisplayed.current = true;
@@ -31,7 +31,7 @@ export default function useGetBalance(): IUseGetBalanceReturn {
     if (data) {
       if (data.getBalance.success) {
         errorAlreadyDisplayed.current = false;
-        return setUpdatedBalance(data.getBalance.data.balance);
+        return setUpdatedBalance(data.getBalance!.data!.balance);
       } else {
         !errorAlreadyDisplayed.current && toast.error(data.getBalance.message);
         errorAlreadyDisplayed.current = true;

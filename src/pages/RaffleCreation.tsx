@@ -201,12 +201,12 @@ export default function RaffleCreation() {
             <PricesContainer $screenWidth={width}>
               <TextValueHorizontal>
                 <h5>Raffle</h5>
-                <CurrencyIconAndAmountMEDIUM amount={prizesTotalValue} />
+                <CurrencyIconAndAmountMEDIUM theme="default" amount={prizesTotalValue} />
               </TextValueHorizontal>
 
               <TextValueHorizontal>
                 <h5>Ticket</h5>
-                <CurrencyIconAndAmountMEDIUM amount={ticketPrice} />
+                <CurrencyIconAndAmountMEDIUM theme="default" amount={ticketPrice} />
               </TextValueHorizontal>
             </PricesContainer>
           </TicketsAmountAndPrices>

@@ -56,7 +56,7 @@ function App() {
             </>
           )}
 
-          <Modal setShowModal={setShowModal} showModal={showModal}>
+          <Modal title="" setShowModal={setShowModal} showModal={showModal}>
             <AuthModal />
           </Modal>
         </>

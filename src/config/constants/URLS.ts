@@ -23,6 +23,7 @@ const ENDPOINTS = {
   RAFFLE: '/raffle',
   RAFFLES: '/raffles',
   GRAPHQL: '/graphql',
+  DEPOSIT: '/deposit',
 };
 
 const API_ENDPOINTS = {
@@ -48,6 +49,9 @@ const API_ENDPOINTS = {
     BUY_TICKETS: `${ENDPOINTS.RAFFLES}/buy`,
   },
   GRAPHQL: `${ENDPOINTS.GRAPHQL}`,
+  DEPOSIT: {
+    REDEEM_CODE: `${ENDPOINTS.DEPOSIT}/redeemcode`,
+  },
 };
 
 const URLS = {

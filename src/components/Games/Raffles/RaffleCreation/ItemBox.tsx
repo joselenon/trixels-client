@@ -69,7 +69,7 @@ export default function ItemBox({ itemInfos, quantity = 0, handleItemClick }: II
         <h4>{name}</h4>
       </TitleContainer>
 
-      <BerryIconAndAmount currency="PIXEL" amount={price} />
+      <BerryIconAndAmount theme="default" currency="PIXEL" amount={price} />
 
       {quantity > 0 ? (
         <QuantitySelectionContainer>

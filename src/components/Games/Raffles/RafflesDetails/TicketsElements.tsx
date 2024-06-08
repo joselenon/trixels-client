@@ -108,7 +108,7 @@ export default function TicketsElements({ raffle }: ITicketsElementsProps) {
     <TicketsElementContainer>
       <BuyButtonAndTicketPrice>
         <TicketPriceContainer>
-          <CurrencyIconAndAmountMEDIUM amount={ticketPrice} />
+          <CurrencyIconAndAmountMEDIUM theme="default" amount={ticketPrice} />
           <h5>/ea</h5>
         </TicketPriceContainer>
 

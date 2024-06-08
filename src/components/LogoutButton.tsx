@@ -17,7 +17,7 @@ export default function LogoutButton() {
     <>
       <TrixelsButton btnType="DANGER" attributes={{ onClick: handleCarefulLogout }} label={'LOGOUT'} />
 
-      <Modal showModal={showWarnModal} setShowModal={setShowWarnModal}>
+      <Modal title="" showModal={showWarnModal} setShowModal={setShowWarnModal}>
         <>
           <h2>Warning</h2>
           <h3>You might lose the whole access to your account if you log out.</h3>

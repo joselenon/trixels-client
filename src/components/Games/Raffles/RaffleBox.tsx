@@ -150,7 +150,7 @@ export default function RaffleBox({ raffleInfo }: { width: '100%' | undefined; r
           }}
         >
           <h5>Prize</h5>
-          <CurrencyIconAndAmount amount={prizesTotalValue} />
+          <CurrencyIconAndAmount theme="default" amount={prizesTotalValue} />
         </div>
       </div>
 
@@ -173,7 +173,7 @@ export default function RaffleBox({ raffleInfo }: { width: '100%' | undefined; r
 
           <PriceContainer>
             <h5>Price /ea</h5>
-            <CurrencyIconAndAmount amount={ticketPrice} />
+            <CurrencyIconAndAmount theme="default" amount={ticketPrice} />
           </PriceContainer>
         </TicketsAndPriceContainer>
 

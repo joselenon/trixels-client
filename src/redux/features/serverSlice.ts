@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import IServerState from '../../config/interfaces/IServerState';
+interface IServerState {
+  isOn: boolean;
+}
 
 const initialState: IServerState = {
   isOn: false,

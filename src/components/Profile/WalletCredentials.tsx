@@ -96,7 +96,7 @@ export default function WalletCredentials({ walletInput }: { walletInput: ITextI
               <p style={{ fontWeight: '700' }}>Send the exact amount to the address: </p>
 
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <CurrencyIconAndAmount amount={parseFloat(randomValue.value.toString())} />
+                <CurrencyIconAndAmount theme="default" amount={parseFloat(randomValue.value.toString())} />
                 <input type="text" value={'TRIXELS.XYZ'} disabled />
               </div>
 

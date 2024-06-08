@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { toFloat } from 'validator';
 
 import useGetBalance from '../../hooks/useGetBalance';
 import BerryIconAndAmount, { BalanceText } from '../CurrencyIconAndAmount';
@@ -109,7 +108,7 @@ function Balance() {
     <BalanceContainer>
       <BalanceDisplayContainer>
         <BalanceAndIcon $blurred={isBalanceActive}>
-          <BerryIconAndAmount currency="PIXEL" amount={isBalanceActive ? newBalance : 0} />
+          <BerryIconAndAmount theme="default" currency="PIXEL" amount={isBalanceActive ? newBalance : 0} />
         </BalanceAndIcon>
 
         <DepositModal />
@@ -117,7 +116,7 @@ function Balance() {
 
       {balanceUpdateInfo && (
         <BalanceUpdateContainer key={animationKey} $animationType={balanceUpdateInfo.type}>
-          <BalanceText>
+          <BalanceText $fontSize="medium" $theme="default">
             {balanceUpdateInfo.type === 'add'
               ? `+${balanceUpdateInfo.differenceAmount}`
               : balanceUpdateInfo.differenceAmount}

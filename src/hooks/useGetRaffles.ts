@@ -18,7 +18,7 @@ export default function useGetRaffles() {
       if (liveData.getLiveRaffles.success) {
         errorAlreadyDisplayed.current = false;
 
-        const activeRafflesTreated: IRaffleToFrontEndTreated[] = liveData.getLiveRaffles.data.activeRaffles.map(
+        const activeRafflesTreated: IRaffleToFrontEndTreated[] = liveData.getLiveRaffles!.data!.activeRaffles.map(
           (raffle) => ({
             ...raffle,
             createdAt: parseInt(raffle.createdAt),
@@ -30,7 +30,7 @@ export default function useGetRaffles() {
           }),
         );
 
-        const endedRafflesTreated: IRaffleToFrontEndTreated[] = liveData.getLiveRaffles.data.endedRaffles.map(
+        const endedRafflesTreated: IRaffleToFrontEndTreated[] = liveData.getLiveRaffles!.data!.endedRaffles.map(
           (raffle) => ({
             ...raffle,
             createdAt: parseInt(raffle.createdAt),
@@ -57,7 +57,7 @@ export default function useGetRaffles() {
       if (data.getRaffles.success) {
         errorAlreadyDisplayed.current = false;
 
-        const activeRafflesTreated: IRaffleToFrontEndTreated[] = data.getRaffles.data.activeRaffles.map((raffle) => ({
+        const activeRafflesTreated: IRaffleToFrontEndTreated[] = data.getRaffles!.data!.activeRaffles.map((raffle) => ({
           ...raffle,
           createdAt: parseInt(raffle.createdAt),
           finishedAt: raffle.finishedAt ? parseInt(raffle.finishedAt) : undefined,
@@ -67,7 +67,7 @@ export default function useGetRaffles() {
           },
         }));
 
-        const endedRafflesTreated: IRaffleToFrontEndTreated[] = data.getRaffles.data.endedRaffles.map((raffle) => ({
+        const endedRafflesTreated: IRaffleToFrontEndTreated[] = data.getRaffles!.data!.endedRaffles.map((raffle) => ({
           ...raffle,
           createdAt: parseInt(raffle.createdAt),
           finishedAt: raffle.finishedAt ? parseInt(raffle.finishedAt) : undefined,

@@ -23,7 +23,7 @@ const BerryIconAndAmountContainer = styled.div<{ $theme: ICurrencyIconAndAmountP
 `;
 
 export const BalanceText = styled.span<{
-  $fontSize: string;
+  $fontSize: 'small' | 'medium' | 'big';
   $theme: ICurrencyIconAndAmountProps['theme'];
 }>`
   font-size: ${({ $fontSize }) => {
@@ -54,7 +54,7 @@ const ExactBalanceTextContainer = styled.div<{ $isHovered: boolean; $theme: ICur
 interface ICurrencyIconAndAmountProps {
   amount: number;
   currency?: 'PIXEL';
-  theme?: 'default' | 'transparent';
+  theme: 'default' | 'transparent';
   fontSize?: 'small' | 'medium' | 'big';
 }
 

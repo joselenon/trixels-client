@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { styled } from 'styled-components';
 
 import { IReduxStore } from '../../../interfaces/IRedux';
-import { IUser, IUserToFrontEnd } from '../../../interfaces/IUser';
+import { IUserToFrontEnd } from '../../../interfaces/IUser';
 import { SectionTitle } from '../../../styles/GlobalStyles';
 import Modal from '../../Modal';
 import TrixelsButton from '../../TrixelsButton';
@@ -73,15 +73,15 @@ export default function DepositModal() {
     <div>
       <div style={{ width: 37 }}>
         <TrixelsButton
-          label={<FontAwesomeIcon icon={faPlus} />}
+          element={<FontAwesomeIcon icon={faPlus} />}
           btnType="CTA"
           /* ARRUMAR ESSE ERRINHO */
-          attributes={{ id: 'redeem', onClick: toggleModal }}
+          attributes={{ id: 'redeem', onClick: () => toggleModal }}
         />
       </div>
 
       {showModal && (
-        <Modal showModal={showModal} setShowModal={setShowModal}>
+        <Modal title="" showModal={showModal} setShowModal={setShowModal}>
           <DepositModalContainer>
             <HeaderContainer>
               <FontAwesomeIcon icon={faTicket} />

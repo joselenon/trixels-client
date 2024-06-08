@@ -2,11 +2,9 @@ import { FieldErrors } from 'react-hook-form/dist/types/errors';
 import { FieldValues } from 'react-hook-form/dist/types/fields';
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form/dist/types/form';
 
-import { TMyAxiosServiceResponse } from '../services/MyAxiosService';
-
 export interface IForm {
   // Function that will be used when form submits
-  axiosCallHook: (payload: any) => TMyAxiosServiceResponse<any>;
+  axiosCallHook: (payload: any) => any;
   // In order to have custom style on inputs container
   InputContainer?: React.ComponentType<{ children: React.ReactNode }>;
   inputArray: ICreateInput[];

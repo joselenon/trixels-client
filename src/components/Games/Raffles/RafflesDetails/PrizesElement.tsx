@@ -83,7 +83,7 @@ export default function Prizes({ prizes, slidesPerView }: IPrizesElementProps) {
               <WinnerXPrizesElement winnerXPrizes={winnerPrizes} />
 
               <PrizeAmountContainer>
-                <CurrencyIconAndAmount fontSize="small" amount={winnerPrizes.totalValue} />
+                <CurrencyIconAndAmount theme="default" fontSize="small" amount={winnerPrizes.totalValue} />
               </PrizeAmountContainer>
             </WinnerPrizes>
           </SwiperSlide>
@@ -97,7 +97,7 @@ export default function Prizes({ prizes, slidesPerView }: IPrizesElementProps) {
               <WinnerXPrizesElement winnerXPrizes={winnerPrizes} />
 
               <PrizeAmountContainer>
-                <CurrencyIconAndAmount fontSize="small" amount={winnerPrizes.totalValue} />
+                <CurrencyIconAndAmount theme="default" fontSize="small" amount={winnerPrizes.totalValue} />
               </PrizeAmountContainer>
             </WinnerPrizes>
           </SwiperSlide>

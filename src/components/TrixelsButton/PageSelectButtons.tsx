@@ -1,8 +1,11 @@
 import React from 'react';
+import styled from 'styled-components';
 
+import * as styles from '../../styles/GlobalStyles';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import TrixelsButton from '.';
-import * as styles from './styles';
+
+const PageSelectButtonsContainer = styled.div<{ $highlights: any }>``;
 
 interface IPageSelectButtons {
   page: number;
@@ -15,7 +18,7 @@ export default function PageSelectButtons({ page, pagesLength, setPage }: IPageS
   const nextHighlight = page + 2 <= pagesLength;
 
   return (
-    <styles.PageSelectButtons $highlights={{ returnHighlight, nextHighlight }}>
+    <PageSelectButtonsContainer $highlights={{ returnHighlight, nextHighlight }}>
       <TrixelsButton
         btnType="TEXT"
         label={'Anterior'}
@@ -29,6 +32,6 @@ export default function PageSelectButtons({ page, pagesLength, setPage }: IPageS
           id: 'next',
         }}
       />
-    </styles.PageSelectButtons>
+    </PageSelectButtonsContainer>
   );
 }

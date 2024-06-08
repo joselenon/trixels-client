@@ -1,8 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 
-import { IAPIAxiosService, IAPIResponse } from '../interfaces/IAPIResponse';
-
 interface AxiosServiceOptions {
   url: string;
   method?: 'get' | 'post' | 'put' | 'delete';
