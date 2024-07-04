@@ -1,11 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { styled } from 'styled-components';
 
 import useGetUserProfile from '../../hooks/useGetUserProfile';
+import useRequireLogin from '../../hooks/useRequireLogin';
 import useUpdateUserInfo from '../../hooks/useUpdateUserInfo';
 import { ITextInput } from '../../interfaces/IRHF';
 import { TParams } from '../../routes/AppRoutes';
@@ -31,8 +32,11 @@ const SaveButtonContainer = styled.div`
 `;
 
 export default function UserProfileForm() {
+  const requireLoginFn = useRequireLogin();
   const handleUpdateUserInfo = useUpdateUserInfo();
   const userProfileInfo = useGetUserProfile();
+
+  const loginRequiredFn = useRequireLogin();
 
   const urlParams = useParams<TParams>();
   const { username: usernameToQuery } = urlParams;
@@ -90,6 +94,8 @@ export default function UserProfileForm() {
   }, [userProfileInfo]);
 
   const onSubmitHandler: SubmitHandler<FieldValues> = async (info) => {
+    if (!requireLoginFn()) return;
+
     const res = await handleUpdateUserInfo({ ...info });
     if (res?.success) {
       toast.success(res.message);
@@ -115,7 +121,7 @@ export default function UserProfileForm() {
           <WalletCredentials walletInput={walletInput} />
         </InputsContainer>
 
-        {saveButton}
+        {loginRequiredFn(false) && saveButton}
       </form>
     </div>
   );

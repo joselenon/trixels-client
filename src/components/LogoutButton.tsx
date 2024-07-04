@@ -15,13 +15,17 @@ export default function LogoutButton() {
 
   return (
     <>
-      <TrixelsButton btnType="DANGER" attributes={{ onClick: handleCarefulLogout }} label={'LOGOUT'} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <TrixelsButton btnType="DANGER" attributes={{ onClick: handleCarefulLogout }} label={'LOGOUT'} />
+      </div>
 
       <Modal title="" showModal={showWarnModal} setShowModal={setShowWarnModal}>
         <>
           <h2>Warning</h2>
           <h3>You might lose the whole access to your account if you log out.</h3>
-          <TrixelsButton btnType="DANGER" attributes={{ onClick: handleLogout }} label={'LOGOUT'} />
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <TrixelsButton btnType="DANGER" attributes={{ onClick: handleLogout }} label={'LOGOUT'} />
+          </div>
         </>
       </Modal>
     </>

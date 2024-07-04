@@ -1,37 +1,66 @@
 import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { createClient } from 'graphql-ws';
-import Cookies from 'js-cookie';
-
+import { Client, createClient } from 'graphql-ws';
 import { JWTCookie } from '../config/app/CookiesConfig';
 import URLS from '../config/constants/URLS';
+import CookiesService from './CookiesService';
 
 class GraphQLClientService {
-  private httpLink;
-  private wsLink;
-  private splitLink;
-  private apolloClient;
+  private httpLink: HttpLink;
+  private wsLink: GraphQLWsLink | null = null;
+  private splitLink: any;
+  private apolloClient: ApolloClient<any>;
+  private wsClient: Client | null = null;
 
   constructor() {
-    this.httpLink = new HttpLink({
+    this.httpLink = this.createHttpLink();
+    this.wsLink = new GraphQLWsLink(this.createWsClient());
+    this.splitLink = this.createSplitLink(this.httpLink, this.wsLink);
+
+    this.apolloClient = this.createApolloClient(this.splitLink);
+
+    CookiesService.addChangeListener(() => this.updateLinks());
+  }
+
+  private createHttpLink() {
+    return new HttpLink({
       uri: `${URLS.MAIN_URLS.API_URL}${URLS.ENDPOINTS.GRAPHQL}`,
     });
-    this.wsLink = new GraphQLWsLink(this.createWsClient());
-    this.splitLink = split(
+  }
+
+  private createWsClient() {
+    const token = CookiesService.get(JWTCookie.key);
+
+    return createClient({
+      url: `${URLS.MAIN_URLS.WS_API_URL}${URLS.ENDPOINTS.GRAPHQL}`,
+      connectionParams: { Authorization: `Bearer ${token}` },
+      lazy: true,
+    });
+  }
+
+  private createWsLink() {
+    if (this.wsClient) {
+      this.wsClient.dispose();
+    }
+    this.wsClient = this.createWsClient();
+    return new GraphQLWsLink(this.wsClient);
+  }
+
+  private createSplitLink(httpLink: HttpLink, wsLink: GraphQLWsLink | null) {
+    return split(
       ({ query }) => {
         const definition = getMainDefinition(query);
-        return (
-          definition.kind === 'OperationDefinition' &&
-          definition.operation === 'subscription'
-        );
+        return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
       },
-      this.wsLink,
-      this.httpLink,
+      wsLink as any,
+      httpLink,
     );
+  }
 
-    this.apolloClient = new ApolloClient({
-      link: this.splitLink,
+  private createApolloClient(splitLink: any) {
+    return new ApolloClient({
+      link: splitLink,
       cache: new InMemoryCache({
         typePolicies: {
           Query: {
@@ -62,14 +91,11 @@ class GraphQLClientService {
     });
   }
 
-  private createWsClient() {
-    const token = Cookies.get(JWTCookie.key);
-
-    // Crie o cliente WS com o token atual
-    return createClient({
-      url: `${URLS.MAIN_URLS.WS_API_URL}${URLS.ENDPOINTS.GRAPHQL}`,
-      connectionParams: { Authorization: `Bearer ${token}` },
-    });
+  private updateLinks() {
+    this.httpLink = this.createHttpLink();
+    this.wsLink = this.createWsLink();
+    this.splitLink = this.createSplitLink(this.httpLink, this.wsLink);
+    this.apolloClient = this.createApolloClient(this.splitLink);
   }
 
   getClient() {

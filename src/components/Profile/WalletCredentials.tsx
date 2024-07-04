@@ -7,6 +7,7 @@ import useGetUserProfile from '../../hooks/useGetUserProfile';
 import useWalletVerification from '../../hooks/useWalletVerification';
 import { IReduxStore } from '../../interfaces/IRedux';
 import { ITextInput } from '../../interfaces/IRHF';
+import { WarnParagraph } from '../../styles/GlobalStyles';
 import CurrencyIconAndAmount from '../CurrencyIconAndAmount';
 import Input from '../Input';
 import Modal from '../Modal';
@@ -37,7 +38,7 @@ export default function WalletCredentials({ walletInput }: { walletInput: ITextI
   );
 
   const userProfileInfo = useGetUserProfile();
-  const { handleVerifyWallet, handleCheck } = useWalletVerification();
+  const { handleVerifyWallet } = useWalletVerification();
 
   const [showVerifyWalletModal, setVerifyWalletShowModal] = useState(false);
   const [nextStep, setNextStep] = useState(false);
@@ -52,9 +53,9 @@ export default function WalletCredentials({ walletInput }: { walletInput: ITextI
     }
   };
 
-  const onCheckHandler = async () => {
-    const res = await handleCheck();
-    console.log(res);
+  const handleVerifyYourWallet = () => {
+    setNextStep(false);
+    setVerifyWalletShowModal(true);
   };
 
   return (
@@ -62,11 +63,7 @@ export default function WalletCredentials({ walletInput }: { walletInput: ITextI
       <Input {...walletInput} />
 
       {!userProfileInfo?.roninWallet.verified && userCredentials?.username === userProfileInfo?.username && (
-        <TrixelsButton
-          btnType="BLUE"
-          attributes={{ onClick: () => setVerifyWalletShowModal(true) }}
-          label={'Verify your wallet'}
-        />
+        <TrixelsButton btnType="BLUE" attributes={{ onClick: handleVerifyYourWallet }} label={'Verify your wallet'} />
       )}
 
       <Modal
@@ -82,10 +79,10 @@ export default function WalletCredentials({ walletInput }: { walletInput: ITextI
                 {`The verification process is as simple as this: When you click the 'start' button, a random minimum amount of
             CURRENCY will be generated for you to send to TRIXELS's wallet.`}
               </p>
-              <p style={{ color: 'red', fontWeight: '700' }}>
+              <WarnParagraph>
                 Your wallet will be verified and the tokens will return to you once the transaction reaches 20
                 confirmations
-              </p>
+              </WarnParagraph>
 
               <TrixelsButton btnType="CTA" label={'Verify'} attributes={{ onClick: onSubmitHandler }} />
             </VerifyWalletContainer>
@@ -100,7 +97,7 @@ export default function WalletCredentials({ walletInput }: { walletInput: ITextI
                 <input type="text" value={'TRIXELS.XYZ'} disabled />
               </div>
 
-              <TrixelsButton btnType="CTA" label={'Check'} attributes={{ onClick: onCheckHandler }} />
+              <h5>gif aqui</h5>
             </VerifyWalletContainer>
           )}
         </>

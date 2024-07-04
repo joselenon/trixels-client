@@ -13,6 +13,7 @@ import { useAvailableItemsContext } from '../contexts/ItemsAvailableContext';
 import { useScreenConfig } from '../contexts/ScreenConfigContext';
 import useCreateRaffle from '../hooks/useCreateRaffle';
 import useGetMessages from '../hooks/useGetMessages';
+import useRequireLogin from '../hooks/useRequireLogin';
 import { IRaffleCreationPayload } from '../interfaces/IRaffleCreation';
 import { Body } from '../styles/GlobalStyles';
 import RaffleCalcs from '../utils/RaffleCalcs';
@@ -85,6 +86,7 @@ export type THandleItemClickFn = (itemId: string, type: 'add' | 'remove') => voi
 
 export default function RaffleCreation() {
   const navigate = useNavigate();
+  const requireLoginFn = useRequireLogin();
   const handleCreateRaffle = useCreateRaffle();
   const { width } = useScreenConfig();
   const availableItems = useAvailableItemsContext();
@@ -100,7 +102,6 @@ export default function RaffleCreation() {
   });
   const [raffleDetails, setRaffleDetails] = useState({ prizesTotalValue: 0, ticketPrice: 0, raffleOwnerCost: 0 });
 
-  const { totalTickets, prizes, discountPercentage } = raffleConfig;
   const { prizesTotalValue, raffleOwnerCost, ticketPrice } = raffleDetails;
 
   useEffect(() => {
@@ -111,7 +112,7 @@ export default function RaffleCreation() {
 
       setRaffleDetails({ prizesTotalValue, ticketPrice, raffleOwnerCost });
     }
-  }, [prizes, availableItems, discountPercentage]);
+  }, [availableItems, raffleConfig]);
 
   const handleChangeTicketAmount = (amount: number) => {
     setRaffleConfig((prevConfig) => ({ ...prevConfig, totalTickets: amount }));
@@ -127,8 +128,8 @@ export default function RaffleCreation() {
   };
 
   const handleCreateRaffleButtonClick = async () => {
+    if (!requireLoginFn()) return;
     if (isRaffleCreationProcessing) return;
-
     if (!isRafflePayloadValid()) return;
 
     setIsRaffleCreationProcessing(true);
@@ -181,17 +182,17 @@ export default function RaffleCreation() {
               <h4>Tickets amount</h4>
               <div style={{ display: 'flex' }}>
                 <TrixelsButton
-                  btnType={totalTickets === 5 ? 'BLUE' : 'DEFAULT'}
+                  btnType={raffleConfig.totalTickets === 5 ? 'BLUE' : 'DEFAULT'}
                   label="5"
                   attributes={{ onClick: () => handleChangeTicketAmount(5) }}
                 />
                 <TrixelsButton
-                  btnType={totalTickets === 10 ? 'BLUE' : 'DEFAULT'}
+                  btnType={raffleConfig.totalTickets === 10 ? 'BLUE' : 'DEFAULT'}
                   label="10"
                   attributes={{ onClick: () => handleChangeTicketAmount(10) }}
                 />
                 <TrixelsButton
-                  btnType={totalTickets === 20 ? 'BLUE' : 'DEFAULT'}
+                  btnType={raffleConfig.totalTickets === 20 ? 'BLUE' : 'DEFAULT'}
                   label="20"
                   attributes={{ onClick: () => handleChangeTicketAmount(20) }}
                 />

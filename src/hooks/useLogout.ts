@@ -1,18 +1,14 @@
-import Cookies from 'js-cookie';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { JWTCookie } from '../config/app/CookiesConfig';
 import { IReduxStore } from '../interfaces/IRedux';
 import { IUserToFrontEnd } from '../interfaces/IUser';
-import { setToken } from '../redux/features/authSlice';
+import AuthService from '../services/AuthService';
 
 export default function useLogout() {
   const reduxDispatch = useDispatch();
 
-  const userCredentials = useSelector<IReduxStore, IUserToFrontEnd | undefined>(
-    (state) => state.auth.userCredentials,
-  );
+  const userCredentials = useSelector<IReduxStore, IUserToFrontEnd | undefined>((state) => state.auth.userCredentials);
 
   const [showLogoutWarnInfo, setShowLogoutWarnInfo] = useState<{
     showWarn: boolean;
@@ -39,10 +35,7 @@ export default function useLogout() {
   };
 
   const handleLogout = () => {
-    Cookies.remove(JWTCookie.key);
-    reduxDispatch(setToken(undefined));
-
-    return window.location.reload();
+    AuthService.logout(reduxDispatch);
   };
 
   return { handleLogout, handleCarefulLogout, showLogoutWarnInfo };

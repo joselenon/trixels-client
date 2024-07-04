@@ -1,30 +1,69 @@
-import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import React, { ReactNode, useContext } from 'react';
+import { ApolloQueryResult, OperationVariables, useQuery } from '@apollo/client';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 
 import USER_QUERIES from '../graphql/UserInfoGQL';
 import { gqlQuery, gqlSubscription } from '../hooks/useGraphQLService';
 import { IGQLResponses } from '../interfaces/IGQLResponses';
+import { JWTCookie } from '../config/app/CookiesConfig';
+import Cookies from 'universal-cookie';
+import GraphQLOptionsConfig from '../config/app/GraphQLOptionsConfig';
+import useGetToken from '../hooks/useGetToken';
 
-const BalanceContext = React.createContext<{
+interface BalanceContextType {
   balance: {
     data: { getBalance: IGQLResponses<{ balance: number }> } | undefined;
     liveData: { getLiveBalance: IGQLResponses<{ balance: number }> } | undefined;
     refetch: ((variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<any>>) | undefined;
   };
-}>({
+}
+
+const BalanceContext = React.createContext<BalanceContextType>({
   balance: { data: undefined, liveData: undefined, refetch: undefined },
 });
 
 export default function BalanceContextProvider({ children }: { children: ReactNode }) {
-  const { data, refetch } = gqlQuery<{ balance: number }, 'getBalance'>({
+  const [balanceData, setBalanceData] = useState<{ getBalance: IGQLResponses<{ balance: number }> } | undefined>(
+    undefined,
+  );
+  const [liveBalanceData, setLiveBalanceData] = useState<
+    { getLiveBalance: IGQLResponses<{ balance: number }> } | undefined
+  >(undefined);
+
+  const queryResponse = gqlQuery<{ balance: number }, 'getBalance'>({
     gql: USER_QUERIES.GET_BALANCE,
+    loginRequired: true,
   });
 
-  const { data: liveData } = gqlSubscription<{ balance: number }, 'getLiveBalance'>({
+  const subscriptionResponse = gqlSubscription<{ balance: number }, 'getLiveBalance'>({
     gql: USER_QUERIES.GET_LIVE_BALANCE,
+    loginRequired: true,
   });
 
-  return <BalanceContext.Provider value={{ balance: { data, liveData, refetch } }}>{children}</BalanceContext.Provider>;
+  useEffect(() => {
+    if (queryResponse && queryResponse.data) {
+      setBalanceData(queryResponse.data);
+    }
+  }, [queryResponse && queryResponse.data]);
+
+  useEffect(() => {
+    if (subscriptionResponse && subscriptionResponse.data) {
+      setLiveBalanceData(subscriptionResponse.data);
+    }
+  }, [subscriptionResponse && subscriptionResponse.data]);
+
+  return (
+    <BalanceContext.Provider
+      value={{
+        balance: {
+          data: balanceData,
+          liveData: liveBalanceData,
+          refetch: queryResponse?.refetch ? queryResponse.refetch : undefined,
+        },
+      }}
+    >
+      {children}
+    </BalanceContext.Provider>
+  );
 }
 
 export function useBalanceContext() {

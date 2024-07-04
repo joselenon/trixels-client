@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 import URLS from '../config/constants/URLS';
 import MyAxiosServiceInstance from '../services/MyAxiosService';
@@ -11,7 +11,7 @@ export interface IItemsInfoResponse {
 
 const AvailableItemsContext = createContext<IItemsInfoResponse | undefined>(undefined);
 
-export const AvailableItemsContextProvider: React.FC = ({ children }) => {
+export default function AvailableItemsContextProvider({ children }: { children: ReactNode }) {
   const [availableItems, setAvailableItems] = useState<IItemsInfoResponse | undefined>(undefined);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export const AvailableItemsContextProvider: React.FC = ({ children }) => {
           data: null,
         });
 
-        if (availableItemsResponse) {
+        if (availableItemsResponse && availableItemsResponse.data) {
           setAvailableItems(availableItemsResponse.data);
         }
       } catch (error) {
@@ -35,6 +35,6 @@ export const AvailableItemsContextProvider: React.FC = ({ children }) => {
   }, []);
 
   return <AvailableItemsContext.Provider value={availableItems}>{children}</AvailableItemsContext.Provider>;
-};
+}
 
 export const useAvailableItemsContext = () => useContext(AvailableItemsContext);

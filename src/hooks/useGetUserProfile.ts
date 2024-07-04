@@ -27,7 +27,7 @@ export default function useGetUserProfile() {
       endpoint: `/user?username=${usernameToQuery}`,
       data: usernameToQuery,
     });
-    if (response) {
+    if (response && response.data) {
       setUserProfileInfo(response.data);
     }
   };

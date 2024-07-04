@@ -1,5 +1,5 @@
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
-import React, { ReactNode, useContext } from 'react';
+import React, { ReactNode, useContext, useState } from 'react';
 
 import RafflesGQL from '../graphql/RafflesGQL';
 import { gqlQuery, gqlSubscription } from '../hooks/useGraphQLService';
@@ -16,15 +16,29 @@ const RafflesContext = React.createContext<{
 });
 
 export default function RafflesContextProvider({ children }: { children: ReactNode }) {
-  const { data, refetch } = gqlQuery<TGetRafflesResponseRaw, 'getRaffles'>({
+  const queryResponse = gqlQuery<TGetRafflesResponseRaw, 'getRaffles'>({
     gql: RafflesGQL.GET_RAFFLES,
+    loginRequired: false,
   });
 
-  const { data: liveData } = gqlSubscription<TGetRafflesResponseRaw, 'getLiveRaffles'>({
+  const subscriptionResponse = gqlSubscription<TGetRafflesResponseRaw, 'getLiveRaffles'>({
     gql: RafflesGQL.GET_LIVE_RAFFLES,
+    loginRequired: false,
   });
 
-  return <RafflesContext.Provider value={{ raffles: { data, liveData, refetch } }}>{children}</RafflesContext.Provider>;
+  return (
+    <RafflesContext.Provider
+      value={{
+        raffles: {
+          data: queryResponse ? queryResponse.data : undefined,
+          liveData: subscriptionResponse ? subscriptionResponse.data : undefined,
+          refetch: queryResponse ? queryResponse.refetch : undefined,
+        },
+      }}
+    >
+      {children}
+    </RafflesContext.Provider>
+  );
 }
 
 export function useRafflesContext() {

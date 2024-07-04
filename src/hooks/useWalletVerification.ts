@@ -14,7 +14,7 @@ export default function useWalletVerification() {
     return res;
   };
 
-  const handleCheck = async () => {
+  /*   const handleCheck = async () => {
     const res = await MyAxiosServiceInstance.request<{ randomValue: number }>({
       endpoint: URLS.ENDPOINTS.USER.VERIFY_WALLET_CHECK,
       method: 'get',
@@ -22,7 +22,7 @@ export default function useWalletVerification() {
     });
 
     return res;
-  };
+  }; */
 
-  return { handleCheck, handleVerifyWallet };
+  return { handleVerifyWallet };
 }

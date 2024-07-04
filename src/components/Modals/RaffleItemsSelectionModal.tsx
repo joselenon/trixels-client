@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { IItemsInfoResponse } from '../../../../contexts/ItemsAvailableContext';
-import { TRaffleCreationWinnerPrizes } from '../../../../interfaces/IRaffleCreation';
-import { THandleItemClickFn } from '../../../../pages/RaffleCreation';
-import RaffleCalcs from '../../../../utils/RaffleCalcs';
-import Modal from '../../../Modal';
-import ItemBox from './ItemBox';
+import { IItemsInfoResponse } from '../../contexts/ItemsAvailableContext';
+import { TRaffleCreationWinnerPrizes } from '../../interfaces/IRaffleCreation';
+import { THandleItemClickFn } from '../../pages/RaffleCreation';
+import RaffleCalcs from '../../utils/RaffleCalcs';
+import ItemBox from '../Games/Raffles/RaffleCreation/ItemBox';
+import Modal from '../Modal';
 
 const RaffleItemsSelectionModalContainer = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const RaffleItemsSelectionModalContainer = styled.div`
 const ItemsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.25rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
   overflow: scroll;
   max-height: 600px;
@@ -68,7 +68,12 @@ export default function RaffleItemsSelectionModal(props: IRaffleItemsSelectionMo
   };
 
   return (
-    <Modal title={`Item Selection - ${calculateTotalValue()} `} setShowModal={setShowModal} showModal={showModal}>
+    <Modal
+      contentBackground="var(--default-brown)"
+      title={`Item Selection - ${calculateTotalValue()} `}
+      setShowModal={setShowModal}
+      showModal={showModal}
+    >
       <RaffleItemsSelectionModalContainer>
         <ItemsContainer>{renderItemsElements()}</ItemsContainer>
       </RaffleItemsSelectionModalContainer>

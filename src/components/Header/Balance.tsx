@@ -2,6 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import useGetBalance from '../../hooks/useGetBalance';
+import BlurredLoadDiv from '../BlurredLoadDiv';
 import BerryIconAndAmount, { BalanceText } from '../CurrencyIconAndAmount';
 import DepositModal from '../Modals/DepositModal';
 
@@ -19,34 +20,13 @@ const BalanceDisplayContainer = styled.div`
   color: white;
 `;
 
-const BalanceAndIcon = styled.div<{ $blurred: boolean }>`
+const BalanceAndIcon = styled.div`
+  height: 100%;
   font-size: var(--default-fs);
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0 15px;
   user-select: none;
-  transition: filter 0.5s;
-
-  filter: ${({ $blurred }) => ($blurred ? 'none' : 'blur(3px)')};
-`;
-
-const BalanceUpdateContainer = styled.div<{ $animationType: string }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
-  font-weight: bold;
-  animation: ${({ $animationType }) => ($animationType === 'add' ? addAnimation : subtractAnimation)} 0.5s forwards;
-
-  span {
-    color: ${({ $animationType }) => ($animationType === 'add' ? 'var(--default-green)' : 'var(--default-red)')};
-  }
 `;
 
 const addAnimation = keyframes`
@@ -79,6 +59,24 @@ const subtractAnimation = keyframes`
   }
 `;
 
+const BalanceUpdateContainer = styled.div<{ $animationType: string; $display: boolean }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: ${({ $display }) => ($display ? 'flex' : 'none')};
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  animation: ${({ $animationType }) => ($animationType === 'add' ? addAnimation : subtractAnimation)} 0.5s forwards;
+
+  span {
+    color: ${({ $animationType }) => ($animationType === 'add' ? 'var(--default-green)' : 'var(--default-red)')};
+  }
+`;
+
 function Balance() {
   const { updatedBalance: newBalance } = useGetBalance();
   const isBalanceActive = typeof newBalance === 'number';
@@ -87,6 +85,7 @@ function Balance() {
   const [balanceUpdateInfo, setBalanceUpdateInfo] = useState<
     { type: 'add' | 'subtract'; differenceAmount: string } | undefined
   >(undefined);
+  const [showAnimation, setShowAnimation] = useState<boolean>(false);
 
   useEffect(() => {
     if (newBalance) {
@@ -94,6 +93,12 @@ function Balance() {
       const animationType = difference > 0 ? 'add' : 'subtract';
 
       setBalanceUpdateInfo({ type: animationType, differenceAmount: difference.toFixed(8) });
+      setShowAnimation(true);
+
+      // Remover a animação após o tempo definido (0.5s + um pequeno buffer)
+      setTimeout(() => {
+        setShowAnimation(false);
+      }, 600);
     }
 
     if (typeof newBalance === 'number') {
@@ -101,21 +106,20 @@ function Balance() {
     }
   }, [newBalance]);
 
-  // Gere uma chave única toda vez que balanceUpdateInfo for alterada
-  const animationKey = balanceUpdateInfo ? `${balanceUpdateInfo.type}_${Date.now()}` : '';
-
   return (
     <BalanceContainer>
       <BalanceDisplayContainer>
-        <BalanceAndIcon $blurred={isBalanceActive}>
-          <BerryIconAndAmount theme="default" currency="PIXEL" amount={isBalanceActive ? newBalance : 0} />
-        </BalanceAndIcon>
+        <BlurredLoadDiv isLoading={!isBalanceActive}>
+          <BalanceAndIcon>
+            <BerryIconAndAmount theme="default" currency="PIXEL" amount={isBalanceActive ? newBalance : 0} />
+          </BalanceAndIcon>
+        </BlurredLoadDiv>
 
         <DepositModal />
       </BalanceDisplayContainer>
 
       {balanceUpdateInfo && (
-        <BalanceUpdateContainer key={animationKey} $animationType={balanceUpdateInfo.type}>
+        <BalanceUpdateContainer $animationType={balanceUpdateInfo.type} $display={showAnimation}>
           <BalanceText $fontSize="medium" $theme="default">
             {balanceUpdateInfo.type === 'add'
               ? `+${balanceUpdateInfo.differenceAmount}`

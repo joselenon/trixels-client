@@ -5,7 +5,7 @@ import { useAvailableItemsContext } from '../../../../contexts/ItemsAvailableCon
 import { IRaffleCreationPayload } from '../../../../interfaces/IRaffleCreation';
 import FakeItemBox from './FakeItemBox';
 import ItemBox from './ItemBox';
-import RaffleItemsSelectionModal from './RaffleItemsSelectionModal';
+import RaffleItemsSelectionModal from '../../../Modals/RaffleItemsSelectionModal';
 
 const PrizesSelectionContainer = styled.div`
   gap: 1rem;

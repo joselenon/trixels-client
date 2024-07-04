@@ -1,13 +1,15 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import { AvailableItemsContextProvider } from '../contexts/ItemsAvailableContext';
 import Affiliates from '../pages/Affiliates';
+import CashoutsApprovals from '../pages/CashoutsApprovals';
 import Home from '../pages/Home';
 import RaffleCreation from '../pages/RaffleCreation';
 import Raffles from '../pages/Raffles';
 import UserProfile from '../pages/UserProfile';
 import ViewRaffle from '../pages/ViewRaffle';
+import AvailableItemsContextProvider from '../contexts/ItemsAvailableContext';
+import GoogleAuth from '../pages/GoogleAuth';
 
 export type TParams = 'username';
 
@@ -48,6 +50,8 @@ export default function AppRoutes() {
       />
       <Route path="/profile/:username" element={<UserProfile />} />
       <Route path="/affiliates" element={<Affiliates />} />
+      <Route path="/cashoutsapprovals" element={<CashoutsApprovals />} />
+      <Route path="/googleauth" element={<GoogleAuth />} />
     </Routes>
   );
 }

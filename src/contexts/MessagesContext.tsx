@@ -15,32 +15,41 @@ const MessagesContext = React.createContext<{
 });
 
 export default function MessagesContextProvider({ children }: { children: ReactNode }) {
-  const { data: liveData } = gqlSubscription<string, 'getLiveMessages'>({
+  const response = gqlSubscription<string, 'getLiveMessages'>({
     gql: USER_QUERIES.GET_LIVE_MESSAGES,
+    loginRequired: true,
   });
 
   const [filteredResponse, setFilteredResponse] = useState<IGQLResponses<any>[] | undefined>(undefined);
 
-  useEffect(() => {
-    if (liveData && liveData.getLiveMessages) {
-      let dataFiltered = liveData.getLiveMessages.data;
-      if (liveData.getLiveMessages.data) dataFiltered = JSON.parse(liveData.getLiveMessages.data);
+  const showToast = (message: IGQLResponses<string>) => {
+    if (message.success) {
+      toast.success(message.message);
+    } else {
+      toast.error(message.message);
+    }
+  };
 
-      if (liveData && liveData.getLiveMessages) {
-        if (liveData.getLiveMessages.success) {
-          toast.success(liveData.getLiveMessages.message);
-        } else {
-          toast.error(liveData.getLiveMessages.message);
+  useEffect(() => {
+    if (response && response.data && response.data.getLiveMessages) {
+      const newMessage = response.data.getLiveMessages;
+
+      let dataFiltered = newMessage.data;
+      if (newMessage.data) {
+        try {
+          dataFiltered = JSON.parse(newMessage.data);
+        } catch (error) {
+          console.error('Failed to parse message data:', error);
         }
       }
 
+      showToast(newMessage);
+
       setFilteredResponse((prev) => {
-        return prev
-          ? [...prev, { ...liveData.getLiveMessages, data: dataFiltered }]
-          : [{ ...liveData.getLiveMessages, data: dataFiltered }];
+        return prev ? [...prev, { ...newMessage, data: dataFiltered }] : [{ ...newMessage, data: dataFiltered }];
       });
     }
-  }, [liveData]);
+  }, [response && response.data]);
 
   return (
     <MessagesContext.Provider value={{ messages: { messagesData: filteredResponse, setFilteredResponse } }}>

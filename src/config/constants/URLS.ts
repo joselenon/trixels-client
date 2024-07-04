@@ -20,10 +20,11 @@ const WS_API_URL = `${WS_PROTOCOL}${SERVER_FULL_URL}${API_BASE}`;
 const ENDPOINTS = {
   AUTH: '/auth',
   USER: '/user',
-  RAFFLE: '/raffle',
   RAFFLES: '/raffles',
   GRAPHQL: '/graphql',
+  WEBHOOKS: '/webhooks',
   DEPOSIT: '/deposit',
+  TRANSACTIONS: '/transactions',
 };
 
 const API_ENDPOINTS = {
@@ -34,14 +35,18 @@ const API_ENDPOINTS = {
     },
     REGISTER: `${ENDPOINTS.AUTH}/register`,
     LOGIN: `${ENDPOINTS.AUTH}/login`,
+    GOOGLE_LOGIN: {
+      initial: `${ENDPOINTS.AUTH}/google`,
+      callback: `${ENDPOINTS.AUTH}/google/callback`,
+    },
   },
   USER: {
     GET_USER_INFO: `${ENDPOINTS.USER}`,
     GET_USER_CREDENTIALS: `${ENDPOINTS.USER}/credentials`,
     UPDATE_USER_CREDENTIALS: `${ENDPOINTS.USER}/credentials`,
-    GET_ETHEREUM_DEPOSIT_WALLET: `${ENDPOINTS.USER}/depositwallet`,
     VERIFY_WALLET: `${ENDPOINTS.USER}/verifywallet`,
     VERIFY_WALLET_CHECK: `${ENDPOINTS.USER}/verifywallet/check`,
+    GET_USER_TRANSACTIONS: `${ENDPOINTS.TRANSACTIONS}`,
   },
   RAFFLES: {
     GET_AVAILABLE_ITEMS: `${ENDPOINTS.RAFFLES}/items`,
@@ -49,9 +54,14 @@ const API_ENDPOINTS = {
     BUY_TICKETS: `${ENDPOINTS.RAFFLES}/buy`,
   },
   GRAPHQL: `${ENDPOINTS.GRAPHQL}`,
+  WEBHOOKS: {
+    SKY_MAVIS: `${ENDPOINTS.WEBHOOKS}/skymavis`,
+  },
   DEPOSIT: {
     REDEEM_CODE: `${ENDPOINTS.DEPOSIT}/redeemcode`,
+    GET_DEPOSIT_WALLET: `${ENDPOINTS.DEPOSIT}/getwallet`,
   },
+  TRANSACTIONS: {},
 };
 
 const URLS = {

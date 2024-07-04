@@ -5,6 +5,7 @@ import { useScreenConfig } from '../../../../contexts/ScreenConfigContext';
 import { IBuyRaffleTicketsPayload } from '../../../../interfaces/IBet';
 import { IRaffleToFrontEndTreated } from '../../../../interfaces/IRaffles';
 import CurrencyIconAndAmountMEDIUM from '../../../CurrencyIconAndAmount';
+import TrixelsCheckbox from '../../../TrixelsCheckbox';
 import BuyRaffleTicketButton from './BuyRaffleTicketButton';
 import TicketElement from './TicketElement';
 
@@ -29,6 +30,7 @@ const TicketPriceContainer = styled.div`
 
 const BuyButtonAndTicketPrice = styled.div`
   display: flex;
+  align-items: flex-start;
   justify-content: flex-end;
   gap: 1rem;
 `;
@@ -36,7 +38,7 @@ const BuyButtonAndTicketPrice = styled.div`
 const GraySquare = styled.div`
   width: 80px;
   height: 80px;
-  background-color: #dddddd; /* Cor cinza */
+  background-color: var(--default-middlegrey); /* Cor cinza */
 `;
 
 interface ITicketsElementsProps {
@@ -49,17 +51,15 @@ export default function TicketsElements({ raffle }: ITicketsElementsProps) {
 
   const { width } = useScreenConfig();
 
-  const [selectedTickets, setSelectedTickets] = useState<number[]>([]);
-  const [ticketsElementsRendered, setTicketsElementsRendered] = useState<JSX.Element[]>([]);
-
-  const buyRaffleTicketsPayload: IBuyRaffleTicketsPayload = {
+  const [buyRaffleTicketsPayload, setBuyRaffleTicketPayload] = useState<IBuyRaffleTicketsPayload>({
     gameId,
     info: {
       randomTicket: false,
-      quantityOfTickets: selectedTickets.length,
-      ticketNumbers: selectedTickets,
+      quantityOfTickets: 0,
+      ticketNumbers: [],
     },
-  };
+  });
+  const [ticketsElementsRendered, setTicketsElementsRendered] = useState<JSX.Element[]>([]);
 
   const getGreySquares = () => {
     const gapSize = 16;
@@ -90,7 +90,7 @@ export default function TicketsElements({ raffle }: ITicketsElementsProps) {
           key={ticketNumber}
           ticketNumber={ticketNumber}
           raffle={raffle}
-          ticketsSelection={{ selectedTickets, setSelectedTickets }}
+          buyRaffleTicketsPayloadState={{ buyRaffleTicketsPayload, setBuyRaffleTicketPayload }}
         />
       );
     });
@@ -100,9 +100,22 @@ export default function TicketsElements({ raffle }: ITicketsElementsProps) {
     return [...ticketElements, ...graySquares];
   };
 
+  const handleRandomTicketChange = () => {
+    setBuyRaffleTicketPayload((prev) => {
+      return {
+        ...prev,
+        info: {
+          ...prev.info,
+          ticketNumbers: [],
+          randomTicket: !prev.info.randomTicket,
+        },
+      };
+    });
+  };
+
   useEffect(() => {
     setTicketsElementsRendered(renderTicketsElements());
-  }, [raffle, selectedTickets, width]);
+  }, [raffle, buyRaffleTicketsPayload, width]);
 
   return (
     <TicketsElementContainer>
@@ -112,12 +125,17 @@ export default function TicketsElements({ raffle }: ITicketsElementsProps) {
           <h5>/ea</h5>
         </TicketPriceContainer>
 
-        <BuyRaffleTicketButton
-          buyRaffleTicketsPayload={buyRaffleTicketsPayload}
-          selectedTickets={selectedTickets}
-          setSelectedTickets={setSelectedTickets}
-          ticketPrice={ticketPrice}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+          <BuyRaffleTicketButton
+            buyRaffleTicketsPayloadState={{ buyRaffleTicketsPayload, setBuyRaffleTicketPayload }}
+            ticketPrice={ticketPrice}
+            raffle={raffle}
+          />
+          <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
+            <TrixelsCheckbox checked={buyRaffleTicketsPayload.info.randomTicket} onChange={handleRandomTicketChange} />
+            <h5>Random Ticket</h5>
+          </div>
+        </div>
       </BuyButtonAndTicketPrice>
 
       <TicketsContainer>{ticketsElementsRendered}</TicketsContainer>

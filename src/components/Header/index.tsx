@@ -4,13 +4,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 import { SVGLittleBox } from '../../assets/SVGIcons';
-import { useAuthModalContext } from '../../contexts/AuthModalContext';
 import { useScreenConfig } from '../../contexts/ScreenConfigContext';
 import { IReduxStore } from '../../interfaces/IRedux';
-import TrixelsButton from '../TrixelsButton';
+import AuthModal from '../Modals/AuthModal';
 import TrixelsLogo from '../TrixelsLogo';
 import Balance from './Balance';
-import SandwichMenu from './SandwichMenu';
 
 const HeaderContainer = styled.div`
   height: var(--header-height);
@@ -54,7 +52,7 @@ const MenuItemsContainer = styled.div<{ $screenWidth: number }>`
   display: ${({ $screenWidth }) => ($screenWidth > 1150 ? 'flex' : 'none')};
   justify-content: space-between;
   text-transform: uppercase;
-  color: black;
+  color: var(--default-black);
   transition: all 0.25s ease-in-out;
 `;
 
@@ -82,68 +80,47 @@ const HeaderMenuItem = styled.div<{ $isActive: boolean }>`
     padding: 20px;
   }
   h4 {
-    color: ${({ $isActive }) => ($isActive ? '#6b8dbd' : 'var(--default-grey)')};
+    color: ${({ $isActive }) => ($isActive ? 'var(--default-black)' : 'var(--default-grey)')};
   }
   svg {
-    fill: ${({ $isActive }) => ($isActive ? '#6b8dbd' : 'var(--default-grey)')};
+    fill: ${({ $isActive }) => ($isActive ? 'var(--default-black)' : 'var(--default-grey)')};
   }
 
   &:hover {
     h4 {
-      color: #6b8dbd;
+      color: var(--default-black);
     }
     svg {
-      fill: #6b8dbd;
+      fill: var(--default-black);
     }
   }
 `;
 
-export interface IHeader {
-  menuItems: { [id: string]: { element: JSX.Element | undefined; path: string } };
+export interface IHeaderMenuItems {
+  [menu: string]: string;
 }
+
+export const menuItems: IHeaderMenuItems = {
+  Home: '/',
+  Raffles: '/raffles',
+  Boxes: '/boxes',
+  Affiliates: '/affiliates',
+};
 
 const Header = () => {
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
   );
   const { width } = useScreenConfig();
-  const { setShowModal } = useAuthModalContext();
   const location = useLocation();
 
-  const menuItems: IHeader['menuItems'] = {
-    Home: {
-      element: (
-        <Link to={'/'}>
-          {SVGLittleBox()}
-          <h4>Home</h4>
-        </Link>
-      ),
-      path: '/home',
-    },
-    Raffles: {
-      element: (
-        <Link to={'/raffles'}>
-          {SVGLittleBox()}
-          <h4>Raffles</h4>
-        </Link>
-      ),
-      path: '/raffles',
-    },
-    Affiliates: {
-      element: (
-        <Link to={'/affiliates'}>
-          {SVGLittleBox()}
-          <h4>Affiliates</h4>
-        </Link>
-      ),
-      path: '/affiliates',
-    },
-  };
-
   const menuItemsElements = () => {
-    return Object.entries(menuItems).map(([item, { element, path }], i) => (
-      <HeaderMenuItem key={i} $isActive={location.pathname.includes(path)}>
-        {element}
+    return Object.entries(menuItems).map(([item, path], i) => (
+      <HeaderMenuItem key={i} $isActive={location.pathname === path}>
+        <Link to={path}>
+          {SVGLittleBox()}
+          <h4>{item}</h4>
+        </Link>
       </HeaderMenuItem>
     ));
   };
@@ -152,11 +129,9 @@ const Header = () => {
     <HeaderContainer>
       <HeaderMenusContainer>
         <div style={{ display: 'flex', height: '100%' }}>
-          <Link to={'/'}>
-            <LogoItem>
-              <TrixelsLogo />
-            </LogoItem>
-          </Link>
+          <LogoItem>
+            <TrixelsLogo />
+          </LogoItem>
 
           <MenuItemsContainer $screenWidth={width}>{menuItemsElements()}</MenuItemsContainer>
         </div>
@@ -172,16 +147,7 @@ const Header = () => {
             </Link>
           )}
 
-          {!userCredentials && width > 1150 && (
-            <TrixelsButton
-              btnType="CTA"
-              label={'Enter'}
-              attributes={{
-                onClick: () => setShowModal && setShowModal(true),
-              }}
-            />
-          )}
-          {width <= 1150 && <SandwichMenu menuItems={menuItems} />}
+          {!userCredentials && <AuthModal />}
         </AuthAndBalanceContainer>
       </HeaderMenusContainer>
     </HeaderContainer>

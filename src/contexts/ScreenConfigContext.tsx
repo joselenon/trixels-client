@@ -21,17 +21,17 @@ export function ScreenConfigProvider({ children }: { children: JSX.Element }) {
 
   const handleResize = () => {
     setScreenConfig({
-      isMobile: window.innerWidth <= 768,
+      isMobile: window.innerWidth <= 1150,
       width: window.innerWidth,
       height: window.innerHeight,
     });
   };
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', () => handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', () => handleResize);
     };
   }, []);
 

@@ -1,9 +1,8 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { useScreenConfig } from '../contexts/ScreenConfigContext';
-import { IReduxStore } from '../interfaces/IRedux';
+import { Link } from 'react-router-dom';
 
 const TrixelsText = styled.h3<{ $screenWidth: number }>`
   color: #2985ff;
@@ -16,11 +15,12 @@ const TrixelsText = styled.h3<{ $screenWidth: number }>`
   }
 `;
 
-export default function TrixelsLogo() {
-  const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
-    (state) => state.auth.userCredentials,
-  );
+export default function TrixelsLogo({ resizeble = true }: { resizeble?: boolean }) {
   const { width } = useScreenConfig();
 
-  return <TrixelsText $screenWidth={width}>{width < 1250 && userCredentials ? 'T' : 'Trixels'}</TrixelsText>;
+  return (
+    <Link to={'/'}>
+      <TrixelsText $screenWidth={width}>{width < 860 && resizeble ? 'T' : 'Trixels'}</TrixelsText>
+    </Link>
+  );
 }

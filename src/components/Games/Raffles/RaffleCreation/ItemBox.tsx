@@ -79,7 +79,7 @@ export default function ItemBox({ itemInfos, quantity = 0, handleItemClick }: II
         </QuantitySelectionContainer>
       ) : (
         <div style={{ width: '100%' }}>
-          <TrixelsButton label="Add" btnType="CTA" attributes={{ onClick: () => handleItemClick(id, 'add') }} />
+          <TrixelsButton label="Add" btnType="BLUE" attributes={{ onClick: () => handleItemClick(id, 'add') }} />
         </div>
       )}
     </ItemContainer>

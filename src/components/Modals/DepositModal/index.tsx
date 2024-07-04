@@ -1,4 +1,4 @@
-import { faPlus, faTicket } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -7,46 +7,24 @@ import { styled } from 'styled-components';
 
 import { IReduxStore } from '../../../interfaces/IRedux';
 import { IUserToFrontEnd } from '../../../interfaces/IUser';
-import { SectionTitle } from '../../../styles/GlobalStyles';
 import Modal from '../../Modal';
+import SectionSelector, { ISection } from '../../SectionSelector';
 import TrixelsButton from '../../TrixelsButton';
-import { SectionItem, SectionSelectionContainer } from '../AuthModal/AuthModal';
 import DepositInfo from './DepositInfo';
 
 export const DepositModalContainer = styled.div`
-  background: white;
-  padding: 20px;
-`;
-
-export const RedeemButtonContainer = styled.div`
   width: 100%;
-  margin-top: 1rem;
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-
-  button {
-    width: 100%;
-  }
-  svg {
-    pointer-events: none;
-  }
-`;
-
-export const HeaderContainer = styled.div`
-  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 0.5rem;
 `;
-
-type TSections = 'deposit' | 'withdraw' | 'tip';
 
 export default function DepositModal() {
   const userCredentials = useSelector<IReduxStore, IUserToFrontEnd | undefined>((state) => state.auth.userCredentials);
 
   const [isWalletVerified, setIsWalletVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [section, setSection] = useState<TSections>('deposit');
 
   useEffect(() => {
     if (userCredentials && userCredentials.roninWallet.verified) {
@@ -54,20 +32,28 @@ export default function DepositModal() {
     }
   }, [userCredentials]);
 
-  const toggleModal = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const toggleModal = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
     if (!isWalletVerified) {
-      return toast.error('You must verify you wallet first');
+      toast.error('You must verify you wallet first');
+      return;
     }
 
-    const targetElement = e.target as HTMLElement;
+    const targetElement = e.currentTarget as HTMLElement;
     if (targetElement.id === 'redeem' || targetElement.id === 'modal-background') {
       setShowModal((prevModalOpen) => !prevModalOpen);
     }
   };
 
-  const handleToggleSection = (section: TSections) => {
-    setSection(section);
-  };
+  const sections: ISection[] = [
+    { id: 'deposit', label: 'Deposit', content: <DepositInfo />, color: 'var(--default-darkgreen)' },
+    {
+      id: 'withdraw',
+      label: 'Withdraw',
+      content: <div style={{ width: '100%' }}>Withdraw Content</div>,
+      color: 'var(--default-darkblue)',
+    },
+    { id: 'tip', label: 'Tip', content: <div>SOON</div>, color: 'var(--default-awdaw)' },
+  ];
 
   return (
     <div>
@@ -75,46 +61,14 @@ export default function DepositModal() {
         <TrixelsButton
           element={<FontAwesomeIcon icon={faPlus} />}
           btnType="CTA"
-          /* ARRUMAR ESSE ERRINHO */
-          attributes={{ id: 'redeem', onClick: () => toggleModal }}
+          attributes={{ id: 'redeem', onClick: toggleModal }}
         />
       </div>
 
       {showModal && (
-        <Modal title="" showModal={showModal} setShowModal={setShowModal}>
+        <Modal contentBackground="#151515" title="Wallet" showModal={showModal} setShowModal={setShowModal}>
           <DepositModalContainer>
-            <HeaderContainer>
-              <FontAwesomeIcon icon={faTicket} />
-              <SectionTitle>Wallet</SectionTitle>
-            </HeaderContainer>
-
-            <SectionSelectionContainer>
-              <SectionItem
-                onClick={() => handleToggleSection('deposit')}
-                $isSelected={section === 'deposit'}
-                $sectionColor="green"
-              >
-                <h5>Deposit</h5>
-              </SectionItem>
-
-              <SectionItem
-                onClick={() => handleToggleSection('withdraw')}
-                $isSelected={section === 'withdraw'}
-                $sectionColor="red"
-              >
-                <h5>Withdraw</h5>
-              </SectionItem>
-
-              <SectionItem
-                onClick={() => handleToggleSection('tip')}
-                $isSelected={section === 'tip'}
-                $sectionColor="grey"
-              >
-                <h5>Tip</h5>
-              </SectionItem>
-            </SectionSelectionContainer>
-
-            {section === 'deposit' && <DepositInfo />}
+            <SectionSelector sections={sections} />
           </DepositModalContainer>
         </Modal>
       )}

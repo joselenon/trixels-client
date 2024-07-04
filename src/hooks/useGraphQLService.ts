@@ -1,26 +1,30 @@
 // Fix errors threatment
 
 import { DocumentNode, useMutation, useQuery, useSubscription } from '@apollo/client';
-import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
-
 import { JWTCookie } from '../config/app/CookiesConfig';
 import GraphQLOptionsConfig from '../config/app/GraphQLOptionsConfig';
 import ERROR_MSGS from '../config/constants/ERROR_MSGS';
 import { IGQLResponses } from '../interfaces/IGQLResponses';
+import CookiesService from '../services/CookiesService';
 
 interface IGQL {
-  query: { gql: DocumentNode };
-  mutation: { gql: DocumentNode };
-  subscription: { gql: DocumentNode };
+  query: { gql: DocumentNode; loginRequired: boolean };
+  mutation: { gql: DocumentNode; loginRequired: boolean };
+  subscription: { gql: DocumentNode; loginRequired: boolean };
 }
 
-function gqlQuery<DataType, GQLType extends string>({ gql }: IGQL['query']) {
-  const token = Cookies.get(JWTCookie.key);
+function gqlQuery<DataType, GQLType extends string>({ gql, loginRequired }: IGQL['query']) {
+  const token = CookiesService.get(JWTCookie.key);
 
   const { data, error, refetch } = useQuery(gql, {
     context: GraphQLOptionsConfig(token).context,
+    skip: loginRequired && !token,
   });
+
+  if (loginRequired && !token) {
+    return null;
+  }
 
   return {
     data: data as {
@@ -31,9 +35,10 @@ function gqlQuery<DataType, GQLType extends string>({ gql }: IGQL['query']) {
   };
 }
 
-function gqlMutation({ gql }: IGQL['mutation']) {
+function gqlMutation({ gql, loginRequired }: IGQL['mutation']) {
   try {
-    const token = Cookies.get(JWTCookie.key);
+    const token = CookiesService.get(JWTCookie.key);
+
     const [mutate] = useMutation(gql);
     const mutationFn = async (payload: any) => {
       return await mutate({
@@ -41,6 +46,11 @@ function gqlMutation({ gql }: IGQL['mutation']) {
         variables: { payload: payload },
       });
     };
+
+    if (loginRequired && !token) {
+      return null;
+    }
+
     return mutationFn;
   } catch (err: any) {
     toast.error(ERROR_MSGS.SERVER_OFFLINE_MSG);
@@ -48,13 +58,18 @@ function gqlMutation({ gql }: IGQL['mutation']) {
 }
 
 let errorMessageAlreadyDisplayed = false;
-function gqlSubscription<DataType, GQLType extends string>(props: IGQL['subscription']) {
+function gqlSubscription<DataType, GQLType extends string>({ gql, loginRequired }: IGQL['subscription']) {
   try {
-    const { gql } = props;
-    const token = Cookies.get(JWTCookie.key);
+    const token = CookiesService.get(JWTCookie.key);
+
     const { data, error } = useSubscription(gql, {
       context: GraphQLOptionsConfig(token).context,
+      skip: loginRequired && !token,
     });
+
+    if (loginRequired && !token) {
+      return null;
+    }
 
     if (error) throw new Error(error.message);
 

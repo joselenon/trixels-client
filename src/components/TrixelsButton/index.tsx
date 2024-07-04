@@ -13,7 +13,7 @@ export type IButtonTypeConfig = {
 export interface ITrixelsButtonAtributtes {
   id?: string;
   type?: 'button' | 'submit' | undefined;
-  onClick?: (() => Promise<void>) | (() => void) | undefined;
+  onClick?: ((e: React.MouseEvent<any>) => Promise<void>) | ((e: React.MouseEvent<any>) => void) | undefined;
 }
 
 const ButtonTypes: IButtonTypeConfig = {
@@ -55,7 +55,6 @@ const ButtonStyle = styled.button`
   border: none;
   background: none;
   width: 100%;
-  height: 40px;
   border: none;
   position: relative;
 

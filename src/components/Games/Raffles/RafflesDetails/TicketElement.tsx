@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { styled } from 'styled-components';
 
 import { raffleAnimationAlreadyEndedFn } from '../../../../config/app/RaffleConfig';
+import { IBuyRaffleTicketsPayload } from '../../../../interfaces/IBet';
 import { IRaffleToFrontEndTreated } from '../../../../interfaces/IRaffles';
 import UserAvatarElement from '../../../UserAvatarElement';
 
@@ -24,7 +25,6 @@ const TicketContainer = styled.div<ITicketContainerProps>`
     if ($isSelected) return '4px solid var(--default-yellow)';
     return 'none';
   }};
-  transition: all 0.05s;
   overflow: hidden;
 
   h3 {
@@ -45,9 +45,10 @@ const AbsoluteAvatarContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 100%;
 
   img {
-    transition: all 0.1s;
     opacity: 0.5;
     width: 80px;
     height: 80px;
@@ -62,27 +63,27 @@ const AbsoluteAvatarContainer = styled.div`
 
 interface ITicketElementProps {
   ticketNumber: number;
-  ticketsSelection: {
-    selectedTickets: number[];
-    setSelectedTickets: React.Dispatch<React.SetStateAction<number[]>>;
+  buyRaffleTicketsPayloadState: {
+    buyRaffleTicketsPayload: IBuyRaffleTicketsPayload;
+    setBuyRaffleTicketPayload: React.Dispatch<React.SetStateAction<IBuyRaffleTicketsPayload>>;
   };
   raffle: IRaffleToFrontEndTreated;
 }
 
-export default function TicketElement({ ticketNumber, raffle, ticketsSelection }: ITicketElementProps) {
-  const { selectedTickets, setSelectedTickets } = ticketsSelection;
+export default function TicketElement({ ticketNumber, raffle, buyRaffleTicketsPayloadState }: ITicketElementProps) {
+  const { buyRaffleTicketsPayload, setBuyRaffleTicketPayload } = buyRaffleTicketsPayloadState;
 
   const { finishedAt, info } = raffle;
   const { bets, winnersBetsInfo } = info;
 
-  const { alreadyEnded, timeLeft } = raffleAnimationAlreadyEndedFn(finishedAt);
+  const { alreadyEnded } = raffleAnimationAlreadyEndedFn(finishedAt);
 
-  const getBetOwnerPhoto = (ticketNumber: number): string | undefined => {
+  const getBetterUsernameAndAvatar = (ticketNumber: number): { username: string; avatar: string } | undefined => {
     const bet = bets.find((bet) => bet.info.tickets.includes(ticketNumber));
-    return bet ? bet.userRef.avatar : undefined;
+    return bet ? { username: bet.userRef.username, avatar: bet.userRef.avatar } : undefined;
   };
 
-  const betterAvatar = getBetOwnerPhoto(ticketNumber);
+  const betterUsernameAndAvatar = getBetterUsernameAndAvatar(ticketNumber);
 
   const checkIfNumberIsAWinner = (ticketNumber: number) => {
     if (!winnersBetsInfo) return false;
@@ -97,11 +98,19 @@ export default function TicketElement({ ticketNumber, raffle, ticketsSelection }
       return console.log('Abrir info do jogador, ou ir para perfil');
     }
 
-    setSelectedTickets((prev) => {
-      if (prev.includes(ticketNumber)) {
-        return prev.filter((ticketAdded) => ticketAdded !== ticketNumber);
+    setBuyRaffleTicketPayload((prev) => {
+      const selectedTicketNumbers = prev.info.ticketNumbers;
+      if (selectedTicketNumbers.includes(ticketNumber)) {
+        const updatedSelectedTicketNumbers = selectedTicketNumbers.filter(
+          (ticketAdded) => ticketAdded !== ticketNumber,
+        );
+
+        return { ...prev, info: { ...prev.info, randomTicket: false, ticketNumbers: updatedSelectedTicketNumbers } };
       }
-      return [...prev, ticketNumber];
+      return {
+        ...prev,
+        info: { ...prev.info, randomTicket: false, ticketNumbers: [...selectedTicketNumbers, ticketNumber] },
+      };
     });
   };
 
@@ -120,14 +129,22 @@ export default function TicketElement({ ticketNumber, raffle, ticketsSelection }
     <TicketContainer
       onClick={() => handleTicketClick(ticketNumber)}
       key={ticketNumber}
-      $isSelected={selectedTickets.includes(ticketNumber)}
+      $isSelected={buyRaffleTicketsPayload.info.ticketNumbers.includes(ticketNumber)}
       $isWinner={checkIfNumberIsAWinner(ticketNumber)}
       $alreadyEnded={alreadyEnded}
       ref={TicketRef}
     >
       <h3>{ticketNumber}</h3>
 
-      <AbsoluteAvatarContainer>{betterAvatar && <UserAvatarElement url={betterAvatar} />}</AbsoluteAvatarContainer>
+      {/* FIX */}
+      <AbsoluteAvatarContainer>
+        {betterUsernameAndAvatar && (
+          <UserAvatarElement
+            userInfo={{ username: betterUsernameAndAvatar?.username, url: betterUsernameAndAvatar?.avatar }}
+            clickable={true}
+          />
+        )}
+      </AbsoluteAvatarContainer>
     </TicketContainer>
   );
 }

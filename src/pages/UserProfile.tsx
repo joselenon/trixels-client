@@ -12,6 +12,7 @@ import useGetUserInfo from '../hooks/useGetUserProfile';
 import { IReduxStore } from '../interfaces/IRedux';
 import { TParams } from '../routes/AppRoutes';
 import { Body } from '../styles/GlobalStyles';
+import UserMenus from '../components/Profile/UserMenus';
 
 const UserProfileContainer = styled.div`
   display: flex;
@@ -19,12 +20,17 @@ const UserProfileContainer = styled.div`
   gap: 1rem;
 `;
 
-const FormContainer = styled.div`
+const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  background-color: var(--secondary-bg-color);
+  background-color: var(--default-lightgrey);
   padding: var(--default-pdn);
+
+  h2,
+  h4 {
+    color: var(--default-black);
+  }
 `;
 
 export const InputsContainer = styled.div`
@@ -39,10 +45,6 @@ const NameAndAvatar = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-
-  img {
-    border: var(--default-blueborder);
-  }
 `;
 
 export interface IUpdateUserCredentialsPayload {
@@ -66,16 +68,18 @@ export default function UserProfile() {
     <Body>
       <Reveal width="100%">
         <UserProfileContainer>
-          <FormContainer>
+          {isCurrentUser && <LogoutButton />}
+
+          <MainContainer>
             <NameAndAvatar>
-              <UserAvatarElement url={userProfileInfo?.avatar ? userProfileInfo?.avatar : ''} sizeInPx={60} />
+              <UserAvatarElement userInfo={{ url: userProfileInfo?.avatar }} sizeInPx={60} />
               <h2>{userProfileInfo?.username}</h2>
             </NameAndAvatar>
 
             <UserProfileForm />
-          </FormContainer>
+          </MainContainer>
 
-          {isCurrentUser && <LogoutButton />}
+          {userLoggedCredentials && <UserMenus />}
         </UserProfileContainer>
       </Reveal>
     </Body>

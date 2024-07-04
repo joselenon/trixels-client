@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoCopySharp } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
+import useGetDepositMethodWallet from '../../../hooks/useGetDepositMethodWallet';
 import { IReduxStore } from '../../../interfaces/IRedux';
-import { BERRYIcon } from '../../CurrenciesIcons';
+import { EmphasizedParagraph } from '../../../styles/GlobalStyles';
+import BlurredLoadDiv from '../../BlurredLoadDiv';
+import NetworkSelection from '../../NetworkSelection';
 import TokenSelection from '../../TokenSelection';
 import MiniSquareButton from '../../TrixelsButton/MiniSquareButton';
 
 const DepositInfoContainer = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 1rem;
-  max-width: 500px;
+  gap: 2rem;
+
+  input {
+    font-family: var(--kemco-font);
+    font-weight: 700;
+  }
 `;
 
 const DepositWalletContainer = styled.div`
@@ -28,69 +36,139 @@ const WalletAndCopyButtonContainer = styled.div`
 `;
 
 const CurrencyAndNetworkContainer = styled.div`
+  width: 100%;
   display: flex;
   gap: 1rem;
 `;
 
-export interface ISelectedTokenStateProps {
-  symbol: 'BERRY' | 'AXS';
-  Element: JSX.Element;
-}
+const SelectorsContainer = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
 
 export default function DepositInfo() {
+  const testdepositMethodsSymbols = ['PIXEL', 'RON'];
+  const testdepositMethodsNetworks = ['Ronin', 'Ethereum'];
+
+  const getDepositMethodWallet = useGetDepositMethodWallet();
+
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
   );
-
-  const [selectedToken, setSelectedToken] = useState<ISelectedTokenStateProps>({
-    symbol: 'BERRY',
-    Element: (
-      <>
-        {BERRYIcon}
-        <h4>BERRY</h4>
-      </>
-    ),
-  });
-  const [inputValue, setInputValue] = useState<string>('TRIXELS.RON');
-
   const isUserVerified = userCredentials?.email?.verified && userCredentials.roninWallet.verified;
+
+  const [isGettingWallet, setIsGettingWallet] = useState(false);
+  const [depositMethodWalletInfo, setDepositMethodWalletInfo] = useState<
+    { value: string; minimumDeposit: number } | undefined
+  >(undefined);
+  const [selectedMethod, setSelectedMethod] = useState({ symbol: 'PIXEL', network: 'Ronin' });
+
+  const handleChangeToken = (symbol: string) => {
+    setSelectedMethod((prev) => {
+      return { ...prev, symbol };
+    });
+  };
+
+  const handleChangeNetwork = (network: string) => {
+    setSelectedMethod((prev) => {
+      return { ...prev, network };
+    });
+  };
+
+  useEffect(() => {
+    const getWallet = async () => {
+      setIsGettingWallet(true);
+      const depositWalletRes = await getDepositMethodWallet(selectedMethod);
+
+      if (depositWalletRes) {
+        setIsGettingWallet(false);
+        switch (depositWalletRes.success) {
+          case true:
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            setDepositMethodWalletInfo({
+              value: depositWalletRes.data!.walletAddress!,
+              minimumDeposit: depositWalletRes.data!.minimumDeposit!,
+            });
+            break;
+          case false:
+            setDepositMethodWalletInfo(undefined);
+            break;
+        }
+      }
+    };
+
+    getWallet();
+  }, [selectedMethod]);
 
   return (
     <DepositInfoContainer>
       {!isUserVerified ? (
         <>
           <CurrencyAndNetworkContainer>
-            <div>
-              <h5>Currency</h5>
+            <SelectorsContainer>
+              <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--default-grey)' }}>
+                Currency
+              </p>
+              <TokenSelection
+                selectedMethodSymbol={selectedMethod['symbol']}
+                options={testdepositMethodsSymbols}
+                handleChangeToken={handleChangeToken}
+              />
+            </SelectorsContainer>
 
-              <TokenSelection selectedToken={selectedToken} setSelectedToken={setSelectedToken} />
-            </div>
-
-            <div>
-              <h5>Network</h5>
-
-              <TokenSelection selectedToken={selectedToken} setSelectedToken={setSelectedToken} />
-            </div>
+            <SelectorsContainer>
+              <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--default-grey)' }}>
+                Network
+              </p>
+              <NetworkSelection
+                selectedMethodNetwork={selectedMethod['network']}
+                options={testdepositMethodsNetworks}
+                handleChangeNetwork={handleChangeNetwork}
+              />
+            </SelectorsContainer>
           </CurrencyAndNetworkContainer>
 
           <DepositWalletContainer>
-            <h5>Deposit Wallet</h5>
+            <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--default-grey)' }}>
+              Deposit Wallet
+            </p>
 
-            <WalletAndCopyButtonContainer>
-              <input type="text" value={'TRIXELS.RON'} disabled onChange={(e) => setInputValue(e.target.value)} />
+            <BlurredLoadDiv isLoading={isGettingWallet}>
+              <WalletAndCopyButtonContainer>
+                <input type="text" value={depositMethodWalletInfo ? depositMethodWalletInfo.value : ''} disabled />
 
-              <MiniSquareButton
-                btnType="DEFAULT"
-                element={<IoCopySharp />}
-                attributes={{
-                  onClick: () => navigator.clipboard.writeText(inputValue),
-                }}
-              />
-            </WalletAndCopyButtonContainer>
+                <MiniSquareButton
+                  btnType="WHITE"
+                  element={<IoCopySharp />}
+                  attributes={{
+                    onClick: () =>
+                      navigator.clipboard.writeText(depositMethodWalletInfo ? depositMethodWalletInfo.value : ''),
+                  }}
+                />
+              </WalletAndCopyButtonContainer>
+            </BlurredLoadDiv>
           </DepositWalletContainer>
 
-          <p style={{ fontWeight: 700 }}>Only send $BERRY to this address.</p>
-          <h5>Min. Deposit: 1 $BERRY. It only takes 20 confirmations.</h5>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+            <EmphasizedParagraph>
+              Minimum {depositMethodWalletInfo && depositMethodWalletInfo.minimumDeposit}$ after fees, depositing less
+              may result in loss.
+            </EmphasizedParagraph>
+
+            <p
+              style={{
+                textAlign: 'center',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                fontSize: 12,
+                color: 'var(--default-grey)',
+              }}
+            >
+              It only takes X confirmations.
+            </p>
+          </div>
         </>
       ) : (
         <>

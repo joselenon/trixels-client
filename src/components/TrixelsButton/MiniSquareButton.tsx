@@ -4,7 +4,7 @@ import React from 'react';
 import { IconType } from 'react-icons/lib';
 import { styled } from 'styled-components';
 
-export type TButtonTypes = 'TEXT' | 'CTA' | 'DANGER' | 'ELEMENT' | 'DEFAULT' | 'BLUE';
+export type TButtonTypes = 'TEXT' | 'CTA' | 'DANGER' | 'ELEMENT' | 'DEFAULT' | 'BLUE' | 'WHITE';
 
 export type IButtonTypeConfig = {
   [key in TButtonTypes]: React.CSSProperties;
@@ -28,6 +28,11 @@ const ButtonTypes: IButtonTypeConfig = {
   DEFAULT: {
     padding: '14px 10px',
     background: 'var(--default-lightgrey)',
+  },
+
+  WHITE: {
+    padding: '14px 10px',
+    background: 'white',
   },
 
   TEXT: {

@@ -11,9 +11,9 @@ import {
   WheelAnimationTime,
 } from '../../../../config/app/RaffleConfig';
 import { IRaffleToFrontEndTreated } from '../../../../interfaces/IRaffles';
-import AvatarItem from './AvatarItem';
 import PreRollScreen from './PreRollScreen';
 import RenderAvatars from './RenderAvatars';
+import UserAvatarElement from '../../../UserAvatarElement';
 
 const WheelContainer = styled.div`
   width: 100%;
@@ -67,6 +67,12 @@ const WheelPointer = styled.div<{ $nowTime: number; $timerEnded: boolean; $finis
   }};
 `;
 
+const AvatarItemContainer = styled.div`
+  width: 80px;
+  height: 80px;
+  border: 1.5px solid grey;
+`;
+
 interface IWheelProps {
   raffle: IRaffleToFrontEndTreated;
 }
@@ -84,7 +90,11 @@ export default function Wheel({ raffle }: IWheelProps) {
 
   const getJSXAvatars = (avatarsArray: string[]) => {
     return avatarsArray.map((avatarURL) => {
-      return <AvatarItem avatarUrl={avatarURL} key={v4()} />;
+      return (
+        <AvatarItemContainer>
+          <UserAvatarElement clickable={false} sizeInPx={80} userInfo={{ url: avatarURL }} />
+        </AvatarItemContainer>
+      );
     });
   };
 

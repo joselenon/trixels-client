@@ -3,69 +3,41 @@ import 'react-toastify/dist/ReactToastify.css';
 import React, { useEffect, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 
-import Header from './components/Header/Header';
-import Modal from './components/Modal';
-import AuthModal from './components/Modals/AuthModal/AuthModal';
-import { useAuthModalContext } from './contexts/AuthModalContext';
+import { useScreenConfig } from './contexts/ScreenConfigContext';
+import GlobalStyles from './styles/GlobalStyles';
 import BalanceContextProvider from './contexts/BalanceContext';
 import MessagesContextProvider from './contexts/MessagesContext';
 import RafflesContextProvider from './contexts/RafflesContext';
-import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
-import useGetUserCredentials from './hooks/useGetUserCredentials';
+import Header from './components/Header';
 import AppRoutes from './routes/AppRoutes';
-import GlobalStyles from './styles/GlobalStyles';
+import MobileMenu from './components/MobileMenu';
+import Footer from './components/Footer';
+import { useDispatch } from 'react-redux';
+import AuthService from './services/AuthService';
 
 function App() {
-  const { setShowModal, showModal } = useAuthModalContext();
-  const fetchLoggedUserCredentials = useGetUserCredentials(); // Renomeie para algo mais descritivo
+  const { isMobile } = useScreenConfig();
+  const reduxDispatch = useDispatch();
 
-  const [credentials, setCredentials] = useState<any>(undefined);
-
-  useEffect(() => {
-    const fetchCredentials = async () => {
-      const userCredentials = await fetchLoggedUserCredentials();
-
-      if (userCredentials) {
-        setCredentials(userCredentials);
-      }
-    };
-
-    fetchCredentials();
-  }, []);
+  AuthService.getUserCredentials(reduxDispatch);
 
   return (
     <>
-      <ScreenConfigProvider>
-        <>
-          {/* ARRUMAR ESSA SAFADEZA AQUI */}
-          {credentials ? (
-            <RafflesContextProvider>
-              <MessagesContextProvider>
-                <BalanceContextProvider>
-                  <Header />
-                  <AppRoutes />
-                </BalanceContextProvider>
-              </MessagesContextProvider>
-            </RafflesContextProvider>
-          ) : (
-            <>
-              <RafflesContextProvider>
-                <Header />
-                <AppRoutes />
-              </RafflesContextProvider>
-            </>
-          )}
-
-          <Modal title="" setShowModal={setShowModal} showModal={showModal}>
-            <AuthModal />
-          </Modal>
-        </>
-      </ScreenConfigProvider>
+      <BalanceContextProvider>
+        <MessagesContextProvider>
+          <RafflesContextProvider>
+            <Header />
+            {isMobile && <MobileMenu />}
+            <AppRoutes />
+            <Footer />
+          </RafflesContextProvider>
+        </MessagesContextProvider>
+      </BalanceContextProvider>
 
       <GlobalStyles />
       <ToastContainer
         position="bottom-right"
-        autoClose={3000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

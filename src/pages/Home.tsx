@@ -20,9 +20,7 @@ export default function Home() {
       <HomeBanner />
 
       <Reveal>
-        <Body>
-          <HomeRaffles />
-        </Body>
+        <Body>{/* <HomeRaffles /> */}</Body>
       </Reveal>
     </HomeContainer>
   );
