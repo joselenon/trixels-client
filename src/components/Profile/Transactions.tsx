@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
 import useGetUserTransactions, { IGetUserTransactionsPayload } from '../../hooks/useGetUserTransactions';
 import { ITransactionToFrontendBase, TTransactionsToFrontend } from '../../interfaces/ITransaction';
-import styled from 'styled-components';
-import CurrencyIconAndAmount from '../CurrencyIconAndAmount';
 import { DateSpan } from '../../styles/GlobalStyles';
-import PageSelectButtons from '../TrixelsButton/PageSelectButtons';
+import CurrencyIconAndAmount from '../CurrencyIconAndAmount';
 import PageSelectButtonsCustomToggler from '../TrixelsButton/PageSelectButtonsCustomToggler';
 
 const TransactionsContainer = styled.div``;

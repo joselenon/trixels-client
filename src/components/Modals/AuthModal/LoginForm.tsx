@@ -1,74 +1,46 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+
 import useLogin from '../../../hooks/useLogin';
+import useLoginThroughGoogle from '../../../hooks/useLoginThroughGoogle';
 import { ICreateInput } from '../../../interfaces/IRHF';
+import { IUserToFrontEnd } from '../../../interfaces/IUser';
+import AuthService from '../../../services/AuthService';
+import isUsernameValid from '../../../utils/isUsernameValid';
 import Form from '../../Form';
 import TrixelsButton from '../../TrixelsButton';
-import URLS from '../../../config/constants/URLS';
-import MyAxiosServiceInstance from '../../../services/MyAxiosService';
-import AuthService from '../../../services/AuthService';
-import { useDispatch } from 'react-redux';
-import { v4 } from 'uuid';
-import { IUserToFrontEnd } from '../../../interfaces/IUser';
 
 export interface IGoogleAuthResponse {
   userCredentials: IUserToFrontEnd;
-  token: string;
   state: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
-export default function LoginForm() {
+const LoginForm = () => {
   const reduxDispatch = useDispatch();
+
   const handleEnterButtonClick = useLogin();
 
-  const [popup, setPopup] = useState<Window | null>(null);
-  /* state - Unique identifier for a secure communication between windows events */
-  const [state, setState] = useState<string | null>(null);
-
-  const handleMessage = useCallback(
-    (event: MessageEvent) => {
-      if (event.origin === 'http://localhost:3000' && event.data.state === state) {
-        console.log(event);
-
-        const data = event.data as IGoogleAuthResponse;
-        AuthService.applyUserCredentials(reduxDispatch, data);
-      }
+  const { initiateGoogleAuth } = useLoginThroughGoogle({
+    onMessageReceived: (data: IGoogleAuthResponse) => {
+      AuthService.applyUserCredentials(reduxDispatch, data);
     },
-    [popup, reduxDispatch],
-  );
-
-  useEffect(() => {
-    window.addEventListener('message', handleMessage);
-
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, [handleMessage]);
-
-  const auth = async () => {
-    const stateAuth = v4();
-    setState(stateAuth);
-
-    const res = await MyAxiosServiceInstance.request<{ authorizeUrl: string }>({
-      method: 'post',
-      endpoint: URLS.ENDPOINTS.AUTH.GOOGLE_LOGIN.initial,
-      data: { stateAuth },
-    });
-
-    if (res && res.data) {
-      const newPopup = window.open(res.data.authorizeUrl, '_blank', 'width=600,height=400');
-
-      if (newPopup) {
-        newPopup.focus();
-        setPopup(newPopup);
-      }
-    }
-  };
+  });
 
   const usernameInput: ICreateInput = {
     componentKey: 'username',
     id: 'username',
     options: { type: 'text', required: true },
     label: 'Username',
+    rhfConfig: {
+      rhfValidationFn: (value: string) => {
+        if (!isUsernameValid(value)) {
+          return { valid: false, errorMsg: 'Minimum of 5 characters. No symbols, spaces or special characters' };
+        }
+        return { valid: true, errorMsg: '' };
+      },
+    },
   };
 
   const passwordInput: ICreateInput = {
@@ -92,9 +64,11 @@ export default function LoginForm() {
         btnType="CTA"
         label="Login through Google"
         attributes={{
-          onClick: auth,
+          onClick: initiateGoogleAuth,
         }}
       />
     </>
   );
-}
+};
+
+export default LoginForm;

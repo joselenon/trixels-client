@@ -1,6 +1,6 @@
-import { FieldErrors } from 'react-hook-form/dist/types/errors';
-import { FieldValues } from 'react-hook-form/dist/types/fields';
-import { UseFormRegister, UseFormSetValue } from 'react-hook-form/dist/types/form';
+import { FieldErrors } from 'react-hook-form';
+import { FieldValues } from 'react-hook-form';
+import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
 export interface IForm {
   // Function that will be used when form submits
@@ -33,7 +33,7 @@ export interface ICreateInput {
   options: IInputAttributes;
   label: string;
   rhfConfig?: {
-    rhfValidationFn: (value: any) => { valid: boolean; errorMsg: string };
+    rhfValidationFn: (value: any, getValues?: UseFormGetValues<FieldValues>) => { valid: boolean; errorMsg: string };
   };
 }
 /*
@@ -42,7 +42,7 @@ Captions
   type: used to define input type
   multiple: used when input type is file and there's the option of uploading more than one file
   defaultValue: used to start the input with a specific value (for it to not start empty)
-  label: used to create a "h3", with the value received, above the input]
+  label: used to create a "h3", with the value received, above the input
   required: used to define if the input fill is required
   validationFn: used to validate input value before being sent (if there's any error, it sets and returns the message to 'errorMsg')
 */
@@ -55,18 +55,20 @@ export interface ITextInput {
   rhfConfig: {
     rhfRegister: UseFormRegister<FieldValues>;
     rhfErrors: FieldErrors;
-    rhfValidationFn?: (value: any) => { valid: boolean; errorMsg: string };
+    rhfValidationFn?: (value: any, getValues?: UseFormGetValues<FieldValues>) => { valid: boolean; errorMsg: string };
+    getValues: UseFormGetValues<FieldValues>;
   };
 }
 
 export interface IFileInput {
+  componentKey: ICreateInput['componentKey'];
   id: ICreateInput['id'];
   options: IInputAttributes;
   label: ICreateInput['label'];
   rhfConfig: {
     rhfRegister: UseFormRegister<FieldValues>;
     rhfErrors: FieldErrors;
-    rhfValidationFn?: (value: any) => { valid: boolean; errorMsg: string };
+    rhfValidationFn?: (value: any, getValues?: UseFormGetValues<FieldValues>) => { valid: boolean; errorMsg: string };
   };
   setValue: UseFormSetValue<FieldValues>;
   resetCalled: boolean;

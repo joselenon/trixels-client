@@ -1,7 +1,8 @@
-import React, { useState, useEffect, createContext, ReactNode, useContext } from 'react';
 import { ApolloProvider } from '@apollo/client';
-import GraphQLClientService from '../services/GraphQLClientService';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
+
 import CookiesService from '../services/CookiesService';
+import GraphQLClientService from '../services/GraphQLClientService';
 
 export const ApolloClientContext = createContext(GraphQLClientService.getClient());
 

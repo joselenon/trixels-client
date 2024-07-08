@@ -1,5 +1,4 @@
 import Cookies from 'universal-cookie';
-import { JWTCookie } from '../config/app/CookiesConfig';
 
 class CookiesService {
   private cookies: Cookies;

@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 import { SVGLittleBox } from '../../assets/SVGIcons';
+import { useScreenConfig } from '../../contexts/ScreenConfigContext';
 import { menuItems } from '../Header';
 
 const MobileMenuContainer = styled.div`
@@ -63,10 +64,11 @@ const ItemContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  text-align: center; /* Centraliza o texto */
+  text-align: center;
 `;
 
 export default function MobileMenu() {
+  const { isMobile } = useScreenConfig();
   const location = useLocation();
 
   const menuItemsElements = () => {
@@ -84,9 +86,9 @@ export default function MobileMenu() {
     });
   };
 
-  return (
+  return isMobile ? (
     <MobileMenuContainer>
       <BarContainer>{menuItemsElements()}</BarContainer>
     </MobileMenuContainer>
-  );
+  ) : null;
 }

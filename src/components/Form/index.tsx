@@ -19,6 +19,7 @@ export default function Form(props: IForm) {
     handleSubmit,
     formState: { errors },
     setValue,
+    getValues, // Adicione getValues aqui
   } = useForm();
 
   const onSubmitHandler: SubmitHandler<FieldValues> = async (info) => {
@@ -49,6 +50,7 @@ export default function Form(props: IForm) {
           rhfValidationFn: input.rhfConfig?.rhfValidationFn,
           rhfRegister: register,
           rhfErrors: errors,
+          getValues, // Passe getValues aqui
         }}
       />
     );

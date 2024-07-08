@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
+import blankAvatar from '../../assets/images/blankavatar.jpg';
 import { SVGLittleBox } from '../../assets/SVGIcons';
 import { useScreenConfig } from '../../contexts/ScreenConfigContext';
 import { IReduxStore } from '../../interfaces/IRedux';
@@ -61,6 +62,10 @@ const AuthAndBalanceContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 3rem;
+
+  a {
+    display: flex;
+  }
 `;
 
 const HeaderMenuItem = styled.div<{ $isActive: boolean }>`
@@ -103,7 +108,7 @@ export interface IHeaderMenuItems {
 export const menuItems: IHeaderMenuItems = {
   Home: '/',
   Raffles: '/raffles',
-  Boxes: '/boxes',
+  /*   Boxes: '/boxes', */
   Affiliates: '/affiliates',
 };
 
@@ -141,9 +146,11 @@ const Header = () => {
 
         <AuthAndBalanceContainer>
           {userCredentials && width > 1150 && <Balance />}
-          {userCredentials && width > 1150 && (
+
+          {userCredentials /*  && width > 1150 */ && (
             <Link to={`/profile/${userCredentials?.username}`}>
-              <h3>{userCredentials?.username}</h3>
+              {/* <h3>{userCredentials?.username}</h3> */}
+              <img width={40} alt="palyer-avatar" src={userCredentials.avatar ? userCredentials.avatar : blankAvatar} />
             </Link>
           )}
 

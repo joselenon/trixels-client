@@ -29,6 +29,11 @@ export type TWinnerBetsInRedis = TWinnerBetInRedis[];
 export interface IRaffleToFrontEnd {
   gameId: string;
   createdAt: string;
+  createdBy: {
+    avatar: string;
+    username: string;
+    userId: string;
+  };
   finishedAt?: string;
   type: 'raffles';
   description: string;
@@ -49,6 +54,11 @@ export interface IRaffleToFrontEnd {
 
 export interface IRaffleToFrontEndTreated {
   createdAt: number;
+  createdBy: {
+    avatar?: string;
+    username: string;
+    userId: string;
+  };
   finishedAt?: number;
   gameId: string;
   type: 'raffles';

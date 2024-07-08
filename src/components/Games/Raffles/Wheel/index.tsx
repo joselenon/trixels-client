@@ -11,9 +11,9 @@ import {
   WheelAnimationTime,
 } from '../../../../config/app/RaffleConfig';
 import { IRaffleToFrontEndTreated } from '../../../../interfaces/IRaffles';
+import UserAvatarElement from '../../../UserAvatarElement';
 import PreRollScreen from './PreRollScreen';
 import RenderAvatars from './RenderAvatars';
-import UserAvatarElement from '../../../UserAvatarElement';
 
 const WheelContainer = styled.div`
   width: 100%;
@@ -89,9 +89,9 @@ export default function Wheel({ raffle }: IWheelProps) {
   const [renderedAvatars, setRenderedAvatars] = useState<JSX.Element[] | undefined>(undefined);
 
   const getJSXAvatars = (avatarsArray: string[]) => {
-    return avatarsArray.map((avatarURL) => {
+    return avatarsArray.map((avatarURL, i) => {
       return (
-        <AvatarItemContainer>
+        <AvatarItemContainer key={i}>
           <UserAvatarElement clickable={false} sizeInPx={80} userInfo={{ url: avatarURL }} />
         </AvatarItemContainer>
       );

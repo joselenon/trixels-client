@@ -20,7 +20,7 @@ export const DepositMethodsContextProvider: React.FC = ({ children }) => {
     const fetchDepositMethods = async () => {
       try {
         const depositMethodsResponse = await MyAxiosServiceInstance.request<IDepositMethods>({
-          endpoint: URLS.ENDPOINTS.DEPOSIT.GET_DEPOSIT_METHODS,
+          url: URLS.ENDPOINTS.DEPOSIT.GET_DEPOSIT_METHODS,
           method: 'get',
           data: null,
         });

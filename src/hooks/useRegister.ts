@@ -1,48 +1,31 @@
 import React from 'react';
-import Cookies from 'universal-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { JWTCookie } from '../config/app/CookiesConfig';
+import URLS from '../config/constants/URLS';
+import { IAuthResponse } from '../interfaces/IAuth';
 import { IReduxStore } from '../interfaces/IRedux';
-import { IAuthResponse, setToken } from '../redux/features/authSlice';
+import AuthService from '../services/AuthService';
 import MyAxiosServiceInstance from '../services/MyAxiosService';
 
 const useRegister = () => {
-  const CookiesInstance = new Cookies();
   const reduxDispatch = useDispatch();
   const auth = useSelector<IReduxStore, IReduxStore['auth']>((state) => state.auth);
 
-  const finishEnteringProcess = (authResponse: IAuthResponse) => {
-    const { token } = authResponse;
-
-    CookiesInstance.set(JWTCookie.key, token, JWTCookie.config);
-    reduxDispatch(setToken(authResponse));
-    /*     setShowModal && setShowModal(false); */
-
-    /* ARRUMAR ISSO (COLOCADO PARA QUE O BALANCE ATUALIZE) */
-    window.location.reload();
-  };
-
   const handleEnterButtonClick = async (payload: { username: string; password: string }) => {
-    try {
-      if (auth.userCredentials) {
-        toast.error("You're already logged.");
-        return;
-      }
+    if (auth.userCredentials) {
+      toast.error("You're already logged.");
+      return;
+    }
 
-      const response = await MyAxiosServiceInstance.request<IAuthResponse>({
-        endpoint: '/auth/register',
-        method: 'post',
-        data: { ...payload },
-      });
+    const response = await MyAxiosServiceInstance.request<IAuthResponse>({
+      requestConfig: { url: URLS.ENDPOINTS.AUTH.REGISTER, method: 'post', data: { ...payload } },
+      showToastMessage: true,
+    });
 
-      if (response && response.data) {
-        finishEnteringProcess(response.data);
-      } else {
-        toast.error('Something went wrong.');
-      }
-    } catch (err) {
+    if (response && response.data) {
+      AuthService.applyUserCredentials(reduxDispatch, response.data);
+    } else {
       toast.error('Something went wrong.');
     }
   };

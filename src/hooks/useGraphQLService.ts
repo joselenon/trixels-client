@@ -2,6 +2,7 @@
 
 import { DocumentNode, useMutation, useQuery, useSubscription } from '@apollo/client';
 import { toast } from 'react-toastify';
+
 import { JWTCookie } from '../config/app/CookiesConfig';
 import GraphQLOptionsConfig from '../config/app/GraphQLOptionsConfig';
 import ERROR_MSGS from '../config/constants/ERROR_MSGS';

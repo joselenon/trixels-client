@@ -35,6 +35,9 @@ const API_ENDPOINTS = {
     },
     REGISTER: `${ENDPOINTS.AUTH}/register`,
     LOGIN: `${ENDPOINTS.AUTH}/login`,
+    LOGOUT: `${ENDPOINTS.AUTH}/logout`,
+    REFRESH_ACCESS_TOKEN: `${ENDPOINTS.AUTH}/accesstoken/refresh`,
+    VALIDATE_ACCESS_TOKEN: `${ENDPOINTS.AUTH}/accesstoken/validate`,
     GOOGLE_LOGIN: {
       initial: `${ENDPOINTS.AUTH}/google`,
       callback: `${ENDPOINTS.AUTH}/google/callback`,

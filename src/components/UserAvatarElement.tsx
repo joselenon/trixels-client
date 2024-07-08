@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import blankAvatar from '../assets/images/blankavatar.jpg';
-import { Link } from 'react-router-dom';
 
 const UserAvatarElementContainer = styled.div<{ $sizeInPx?: number }>`
   width: ${({ $sizeInPx }) => `${$sizeInPx ? `${$sizeInPx}px` : '100%'}`};

@@ -2,10 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import blankAvatar from '../../../assets/images/blankavatar.jpg';
 import { IRaffleToFrontEndTreated } from '../../../interfaces/IRaffles';
 import { TruncatedText } from '../../../styles/GlobalStyles';
 import CurrencyIconAndAmount from '../../CurrencyIconAndAmount';
 import TrixelsButton from '../../TrixelsButton';
+import UserAvatarElement from '../../UserAvatarElement';
 import Prizes from './RafflesDetails/PrizesElement';
 
 const RaffleBoxContainer = styled.div`
@@ -115,7 +117,7 @@ const DateContainer = styled.div`
 `;
 
 export default function RaffleBox({ raffleInfo }: { width: '100%' | undefined; raffleInfo: IRaffleToFrontEndTreated }) {
-  const { createdAt, info, gameId, description } = raffleInfo;
+  const { createdAt, info, gameId, description, createdBy } = raffleInfo;
 
   const { prizes, totalTickets, ticketPrice, prizesTotalValue } = info;
 
@@ -135,10 +137,10 @@ export default function RaffleBox({ raffleInfo }: { width: '100%' | undefined; r
             alignItems: 'center',
           }}
         >
-          <img
-            src="https://avatars.cloudflare.steamstatic.com/f7f5f5bab2c11f600daa99e84b9164057808620f_full.jpg"
-            alt=""
-            width={40}
+          <UserAvatarElement
+            clickable={true}
+            userInfo={{ url: createdBy.avatar, username: createdBy.username }}
+            sizeInPx={40}
           />
         </div>
 

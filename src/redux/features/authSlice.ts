@@ -5,12 +5,10 @@ import { IUserToFrontEnd } from '../../interfaces/IUser';
 
 export interface IAuthResponse {
   userCredentials: IUserToFrontEnd;
-  token: string;
 }
 
 const initialState: IReduxStore['auth'] = {
   userCredentials: undefined,
-  token: undefined,
 };
 
 const authSlice = createSlice({
@@ -22,7 +20,6 @@ const authSlice = createSlice({
 
       const authPayload = action.payload;
       state.userCredentials = authPayload.userCredentials;
-      state.token = authPayload.token;
     },
   },
 });

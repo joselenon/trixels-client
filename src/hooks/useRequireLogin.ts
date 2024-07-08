@@ -8,7 +8,7 @@ export default function useRequireLogin() {
     (state) => state.auth.userCredentials,
   );
 
-  const requireLogin = (showMessage: boolean = true): boolean => {
+  const requireLogin = (showMessage = true): boolean => {
     if (!userCredentials) {
       showMessage && toast.error('You should log in first');
       return false;

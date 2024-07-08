@@ -1,38 +1,39 @@
 import 'react-toastify/dist/ReactToastify.css';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 
-import { useScreenConfig } from './contexts/ScreenConfigContext';
-import GlobalStyles from './styles/GlobalStyles';
+import Footer from './components/Footer';
+import Header from './components/Header';
+import MobileMenu from './components/MobileMenu';
 import BalanceContextProvider from './contexts/BalanceContext';
 import MessagesContextProvider from './contexts/MessagesContext';
-import RafflesContextProvider from './contexts/RafflesContext';
-import Header from './components/Header';
+import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
 import AppRoutes from './routes/AppRoutes';
-import MobileMenu from './components/MobileMenu';
-import Footer from './components/Footer';
-import { useDispatch } from 'react-redux';
 import AuthService from './services/AuthService';
+import GlobalStyles from './styles/GlobalStyles';
 
 function App() {
-  const { isMobile } = useScreenConfig();
   const reduxDispatch = useDispatch();
-
   AuthService.getUserCredentials(reduxDispatch);
 
   return (
     <>
-      <BalanceContextProvider>
-        <MessagesContextProvider>
-          <RafflesContextProvider>
-            <Header />
-            {isMobile && <MobileMenu />}
-            <AppRoutes />
-            <Footer />
-          </RafflesContextProvider>
-        </MessagesContextProvider>
-      </BalanceContextProvider>
+      <MessagesContextProvider>
+        <ScreenConfigProvider>
+          <>
+            <BalanceContextProvider>
+              <Header />
+            </BalanceContextProvider>
+
+            <MobileMenu />
+          </>
+        </ScreenConfigProvider>
+
+        <AppRoutes />
+        <Footer />
+      </MessagesContextProvider>
 
       <GlobalStyles />
       <ToastContainer

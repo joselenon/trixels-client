@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 import URLS from '../config/constants/URLS';
 import MyAxiosServiceInstance from '../services/MyAxiosService';
@@ -18,9 +18,7 @@ export default function AvailableItemsContextProvider({ children }: { children: 
     const fetchItems = async () => {
       try {
         const availableItemsResponse = await MyAxiosServiceInstance.request<IItemsInfoResponse>({
-          endpoint: URLS.ENDPOINTS.RAFFLES.GET_AVAILABLE_ITEMS,
-          method: 'get',
-          data: null,
+          requestConfig: { url: URLS.ENDPOINTS.RAFFLES.GET_AVAILABLE_ITEMS, method: 'get', data: null },
         });
 
         if (availableItemsResponse && availableItemsResponse.data) {

@@ -1,13 +1,9 @@
-import { ApolloQueryResult, OperationVariables, useQuery } from '@apollo/client';
+import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
 
 import USER_QUERIES from '../graphql/UserInfoGQL';
 import { gqlQuery, gqlSubscription } from '../hooks/useGraphQLService';
 import { IGQLResponses } from '../interfaces/IGQLResponses';
-import { JWTCookie } from '../config/app/CookiesConfig';
-import Cookies from 'universal-cookie';
-import GraphQLOptionsConfig from '../config/app/GraphQLOptionsConfig';
-import useGetToken from '../hooks/useGetToken';
 
 interface BalanceContextType {
   balance: {

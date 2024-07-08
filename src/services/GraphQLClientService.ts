@@ -2,49 +2,70 @@ import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { Client, createClient } from 'graphql-ws';
+
 import { JWTCookie } from '../config/app/CookiesConfig';
 import URLS from '../config/constants/URLS';
 import CookiesService from './CookiesService';
 
 class GraphQLClientService {
   private httpLink: HttpLink;
+  private wsClient: Client | null = null;
   private wsLink: GraphQLWsLink | null = null;
   private splitLink: any;
   private apolloClient: ApolloClient<any>;
-  private wsClient: Client | null = null;
 
   constructor() {
     this.httpLink = this.createHttpLink();
-    this.wsLink = new GraphQLWsLink(this.createWsClient());
+    this.wsLink = this.createWsLink();
     this.splitLink = this.createSplitLink(this.httpLink, this.wsLink);
 
     this.apolloClient = this.createApolloClient(this.splitLink);
 
-    CookiesService.addChangeListener(() => this.updateLinks());
+    // Adiciona um listener para mudanças nos cookies JWT
+    CookiesService.addChangeListener(() => this.handleCookieChange());
+  }
+
+  private handleCookieChange() {
+    // Atualiza o httpLink com o novo token JWT
+    this.httpLink = this.createHttpLink();
+
+    // Recria o wsClient e wsLink com o novo token JWT
+    this.wsLink = this.createWsLink();
+
+    // Recria o splitLink com os links atualizados
+    this.splitLink = this.createSplitLink(this.httpLink, this.wsLink);
+
+    // Recria o Apollo Client com o novo splitLink
+    this.apolloClient = this.createApolloClient(this.splitLink);
   }
 
   private createHttpLink() {
+    const token = CookiesService.get(JWTCookie.key);
+
     return new HttpLink({
       uri: `${URLS.MAIN_URLS.API_URL}${URLS.ENDPOINTS.GRAPHQL}`,
+      headers: {
+        Authorization: token ? token : '',
+      },
     });
   }
 
-  private createWsClient() {
-    const token = CookiesService.get(JWTCookie.key);
-
+  private createWsClient(token: string) {
     return createClient({
       url: `${URLS.MAIN_URLS.WS_API_URL}${URLS.ENDPOINTS.GRAPHQL}`,
-      connectionParams: { Authorization: `Bearer ${token}` },
+      connectionParams: { Authorization: token ? token : '' },
       lazy: true,
     });
   }
 
   private createWsLink() {
-    if (this.wsClient) {
-      this.wsClient.dispose();
+    const token = CookiesService.get(JWTCookie.key);
+
+    if (token) {
+      this.wsClient = this.createWsClient(token);
     }
-    this.wsClient = this.createWsClient();
-    return new GraphQLWsLink(this.wsClient);
+
+    return new GraphQLWsLink(this.wsClient as Client);
   }
 
   private createSplitLink(httpLink: HttpLink, wsLink: GraphQLWsLink | null) {
@@ -89,13 +110,6 @@ class GraphQLClientService {
         },
       }),
     });
-  }
-
-  private updateLinks() {
-    this.httpLink = this.createHttpLink();
-    this.wsLink = this.createWsLink();
-    this.splitLink = this.createSplitLink(this.httpLink, this.wsLink);
-    this.apolloClient = this.createApolloClient(this.splitLink);
   }
 
   getClient() {

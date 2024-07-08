@@ -5,10 +5,11 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { styled } from 'styled-components';
 
-import useGetUserProfile from '../../hooks/useGetUserProfile';
+import { TUserProfileInfo } from '../../hooks/useGetUserProfile';
 import useRequireLogin from '../../hooks/useRequireLogin';
 import useUpdateUserInfo from '../../hooks/useUpdateUserInfo';
 import { ITextInput } from '../../interfaces/IRHF';
+import { IUserToFrontEnd } from '../../interfaces/IUser';
 import { TParams } from '../../routes/AppRoutes';
 import validateEmail from '../../utils/validateEmail';
 import Input from '../Input';
@@ -31,10 +32,13 @@ const SaveButtonContainer = styled.div`
   margin-top: var(--default-btn-mt);
 `;
 
-export default function UserProfileForm() {
+interface IUserProfileFormProps {
+  userProfileInfo: TUserProfileInfo;
+}
+
+export default function UserProfileForm({ userProfileInfo }: IUserProfileFormProps) {
   const requireLoginFn = useRequireLogin();
   const handleUpdateUserInfo = useUpdateUserInfo();
-  const userProfileInfo = useGetUserProfile();
 
   const loginRequiredFn = useRequireLogin();
 
@@ -46,6 +50,7 @@ export default function UserProfileForm() {
     handleSubmit,
     formState: { errors },
     setValue,
+    getValues,
   } = useForm();
 
   const emailInput: ITextInput = {
@@ -62,6 +67,7 @@ export default function UserProfileForm() {
       rhfValidationFn: (value: string) => validateEmail(value),
       rhfRegister: register,
       rhfErrors: errors,
+      getValues,
     },
   };
 
@@ -73,11 +79,18 @@ export default function UserProfileForm() {
       defaultValue: userProfileInfo?.roninWallet?.value,
       required: false,
     },
-    label: `Ronin Wallet (${userProfileInfo?.roninWallet.verified ? 'Verified' : 'Not Verified'})`,
+    label: `Ronin Wallet ${
+      userProfileInfo && typeof userProfileInfo.roninWallet.verified === 'boolean'
+        ? userProfileInfo.roninWallet.verified
+          ? '(Verified)'
+          : '(Not Verified)'
+        : ''
+    }`,
     rhfConfig: {
       rhfValidationFn: undefined,
       rhfRegister: register,
       rhfErrors: errors,
+      getValues,
     },
   };
 
@@ -118,7 +131,7 @@ export default function UserProfileForm() {
         <InputsContainer>
           <Input {...emailInput} />
 
-          <WalletCredentials walletInput={walletInput} />
+          <WalletCredentials userProfileInfo={userProfileInfo} walletInput={walletInput} />
         </InputsContainer>
 
         {loginRequiredFn(false) && saveButton}

@@ -1,79 +1,87 @@
-import { Dispatch } from 'redux';
-import Cookies from 'universal-cookie';
 import { toast } from 'react-toastify';
+import { Dispatch } from 'redux';
 
 import { JWTCookie } from '../config/app/CookiesConfig';
-import { IAuthResponse, setToken } from '../redux/features/authSlice';
-import MyAxiosServiceInstance from './MyAxiosService';
-import CookiesService from './CookiesService';
+import URLS from '../config/constants/URLS';
+import { IAuthResponse } from '../interfaces/IAuth';
 import { IUserToFrontEnd } from '../interfaces/IUser';
+import { setToken } from '../redux/features/authSlice';
+import CookiesService from './CookiesService';
+import MyAxiosServiceInstance from './MyAxiosService';
 
 class AuthService {
+  async refreshAccessToken(): Promise<void> {
+    try {
+      await MyAxiosServiceInstance.request<void>({
+        requestConfig: {
+          url: `${URLS.ENDPOINTS.AUTH.REFRESH_ACCESS_TOKEN}`,
+          method: 'post',
+        },
+      });
+      await MyAxiosServiceInstance.request<void>({
+        requestConfig: {
+          url: `${URLS.ENDPOINTS.AUTH.VALIDATE_ACCESS_TOKEN}`,
+          method: 'get',
+        },
+      });
+    } catch (err) {
+      toast.error('Failed to refresh token. Please login again.');
+      throw err;
+    }
+  }
+
   applyUserCredentials(reduxDispatch: Dispatch, payload: IAuthResponse) {
-    const { token, userCredentials } = payload;
-    if (!token) return;
+    const { accessToken, userCredentials } = payload;
+    if (!accessToken) return;
 
-    const tokena = CookiesService.get(JWTCookie.key);
-    console.log('tokena', tokena);
-    if (!tokena) return console.log('Token undefined viado...');
-    const bearerToken = `Bearer ${tokena}`;
-
-    console.log('Setting cookies config... TYPE 1');
-    MyAxiosServiceInstance.setHeaders({ Authorization: bearerToken });
-    /* CookiesService.set(JWTCookie.key, bearerToken.replace('Bearer ', ''), JWTCookie.config); */
-
-    reduxDispatch(setToken({ userCredentials, token: bearerToken }));
+    reduxDispatch(setToken({ userCredentials }));
   }
 
   async getUserCredentials(reduxDispatch: Dispatch): Promise<void> {
-    const tokenInCookies = CookiesService.get(JWTCookie.key);
-    if (!tokenInCookies) {
-      return;
-    }
+    const token = CookiesService.get(JWTCookie.key);
 
-    const bearerToken = `Bearer ${tokenInCookies}`;
-    MyAxiosServiceInstance.setHeaders({ Authorization: bearerToken });
+    if (token) {
+      await MyAxiosServiceInstance.request<null>({
+        requestConfig: { url: URLS.ENDPOINTS.AUTH.VALIDATE_ACCESS_TOKEN, method: 'get', data: null },
+      });
 
-    const authResponse = await MyAxiosServiceInstance.request<IUserToFrontEnd>({
-      endpoint: '/user',
-      method: 'get',
-      data: null,
-    });
+      const userCredentialsRes = await MyAxiosServiceInstance.request<IUserToFrontEnd>({
+        requestConfig: { url: URLS.ENDPOINTS.USER.GET_USER_CREDENTIALS, method: 'get', data: null },
+      });
 
-    console.log('Setting cookies config... TYPE 2');
-    if (authResponse && authResponse.data) {
-      CookiesService.set(JWTCookie.key, bearerToken.replace('Bearer ', ''), JWTCookie.config);
-      reduxDispatch(setToken({ userCredentials: authResponse.data, token: bearerToken }));
+      if (userCredentialsRes && userCredentialsRes.data) {
+        reduxDispatch(setToken({ userCredentials: userCredentialsRes.data }));
+      }
     }
   }
 
   async login(reduxDispatch: Dispatch, payload: { username: string; password: string }) {
     const response = await MyAxiosServiceInstance.request<IAuthResponse>({
-      endpoint: '/auth/login',
-      method: 'post',
-      data: { ...payload },
+      requestConfig: { url: URLS.ENDPOINTS.AUTH.LOGIN, method: 'post', data: { ...payload } },
+      showToastMessage: true,
     });
 
     if (!response || !response.data) throw new Error('No response'); /* FIX */
 
     const { data } = response;
-    const bearerToken = `Bearer ${data.token}`;
-
-    console.log('Setting cookies config... TYPE 3');
-    MyAxiosServiceInstance.setHeaders({ Authorization: bearerToken });
-    CookiesService.set(JWTCookie.key, bearerToken.replace('Bearer ', ''), JWTCookie.config);
-    reduxDispatch(setToken({ userCredentials: data.userCredentials, token: bearerToken }));
+    reduxDispatch(setToken({ userCredentials: data.userCredentials }));
   }
 
-  logout(reduxDispatch: Dispatch) {
-    CookiesService.remove(JWTCookie.key);
+  async logout() {
+    try {
+      await MyAxiosServiceInstance.request<void>({
+        requestConfig: {
+          url: `${URLS.ENDPOINTS.AUTH.LOGOUT}`,
+          method: 'post',
+        },
+      });
 
-    MyAxiosServiceInstance.setHeaders({ Authorization: '' });
-    reduxDispatch(setToken(undefined));
+      window.location.href = '/'; /* Arrumar isso já que não tem como puxar o redux pra ca */
+    } catch (err: unknown) {
+      console.error('Failed to refresh token:', err);
+    }
+
     toast.success('You have been logged out.');
-
-    console.log('LOGGED OUT');
-    window.location.href = '/'; /* FIX */
   }
 }
 

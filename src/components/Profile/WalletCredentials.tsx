@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
-import useGetUserProfile from '../../hooks/useGetUserProfile';
+import { TUserProfileInfo } from '../../hooks/useGetUserProfile';
 import useWalletVerification from '../../hooks/useWalletVerification';
 import { IReduxStore } from '../../interfaces/IRedux';
 import { ITextInput } from '../../interfaces/IRHF';
+import { IUserToFrontEnd } from '../../interfaces/IUser';
 import { WarnParagraph } from '../../styles/GlobalStyles';
 import CurrencyIconAndAmount from '../CurrencyIconAndAmount';
 import Input from '../Input';
@@ -32,12 +32,16 @@ const VerifyWalletContainer = styled.div`
   }
 `;
 
-export default function WalletCredentials({ walletInput }: { walletInput: ITextInput }) {
+interface IWalletCredentialsProps {
+  walletInput: ITextInput;
+  userProfileInfo: TUserProfileInfo;
+}
+
+export default function WalletCredentials({ walletInput, userProfileInfo }: IWalletCredentialsProps) {
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
   );
 
-  const userProfileInfo = useGetUserProfile();
   const { handleVerifyWallet } = useWalletVerification();
 
   const [showVerifyWalletModal, setVerifyWalletShowModal] = useState(false);
@@ -47,7 +51,7 @@ export default function WalletCredentials({ walletInput }: { walletInput: ITextI
   const onSubmitHandler = async () => {
     const res = await handleVerifyWallet();
 
-    if (res) {
+    if (res?.data) {
       setNextStep(true);
       setRandomValue({ value: res.data.randomValue });
     }
@@ -66,12 +70,7 @@ export default function WalletCredentials({ walletInput }: { walletInput: ITextI
         <TrixelsButton btnType="BLUE" attributes={{ onClick: handleVerifyYourWallet }} label={'Verify your wallet'} />
       )}
 
-      <Modal
-        width={600}
-        title={'Verify Your Wallet'}
-        showModal={showVerifyWalletModal}
-        setShowModal={setVerifyWalletShowModal}
-      >
+      <Modal title={'Verify Your Wallet'} showModal={showVerifyWalletModal} setShowModal={setVerifyWalletShowModal}>
         <>
           {!nextStep && (
             <VerifyWalletContainer>

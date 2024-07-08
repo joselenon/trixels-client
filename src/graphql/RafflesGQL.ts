@@ -7,6 +7,11 @@ const GET_RAFFLES = gql`
       message
       data {
         activeRaffles {
+          createdBy {
+            avatar
+            userId
+            username
+          }
           createdAt
           finishedAt
           type
@@ -37,6 +42,11 @@ const GET_RAFFLES = gql`
         }
 
         endedRaffles {
+          createdBy {
+            avatar
+            userId
+            username
+          }
           createdAt
           finishedAt
           type
@@ -95,6 +105,11 @@ export const GET_LIVE_RAFFLES = gql`
       message
       data {
         activeRaffles {
+          createdBy {
+            avatar
+            userId
+            username
+          }
           createdAt
           finishedAt
           type
@@ -125,6 +140,11 @@ export const GET_LIVE_RAFFLES = gql`
         }
 
         endedRaffles {
+          createdBy {
+            avatar
+            userId
+            username
+          }
           createdAt
           finishedAt
           type

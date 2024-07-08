@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
 
 import AuthService from '../services/AuthService';
 

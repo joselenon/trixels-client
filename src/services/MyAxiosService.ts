@@ -1,13 +1,11 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
-import Cookies from 'universal-cookie';
-import { JWTCookie } from '../config/app/CookiesConfig';
+
 import URLS from '../config/constants/URLS';
+import AuthService from './AuthService';
 
 export interface IRequestProps {
-  endpoint: string;
-  method: 'get' | 'post' | 'put';
-  data: unknown;
+  requestConfig: AxiosRequestConfig;
   showToastMessage?: boolean;
 }
 
@@ -18,58 +16,101 @@ export interface IMyAPIResponse<T = null> {
 }
 
 class MyAxiosServiceClass {
-  private tokenCookie: string | undefined;
+  private trixelsAPI: AxiosInstance;
   private headers: Record<string, string> = {};
+  private isRefreshing = false;
+  private failedRequests: Array<() => void> = [];
 
   constructor() {
-    const CookiesInstance = new Cookies();
-    this.tokenCookie = CookiesInstance.get(JWTCookie.key);
+    this.trixelsAPI = axios.create({
+      baseURL: `${URLS.MAIN_URLS.API_URL}`,
+      withCredentials: true,
+      headers: { ...this.headers },
+    });
+
+    this.trixelsAPI.interceptors.response.use(
+      (response) => response,
+      async (error) => await this.handleResponseError(error),
+      { synchronous: true },
+    );
   }
 
   setHeaders(headers: Record<string, string>): void {
     this.headers = headers;
   }
 
-  async request<T>({
-    endpoint,
-    method = 'get',
-    data,
-    showToastMessage = false,
-  }: IRequestProps): Promise<IMyAPIResponse<T | null> | null> {
+  async request<T>(requestProps: IRequestProps): Promise<IMyAPIResponse<T | null> | null> {
     try {
-      const response: AxiosResponse<IMyAPIResponse<T>> = await axios({
-        url: `${URLS.MAIN_URLS.API_URL}${endpoint}`,
-        method,
-        data,
-        headers: {
-          ...this.headers,
-        },
+      const { requestConfig, showToastMessage } = requestProps;
+
+      const response: AxiosResponse<IMyAPIResponse<T>> = await this.trixelsAPI.request({
+        ...requestConfig,
       });
 
-      if (response.data.success && showToastMessage) toast.success(response.data.message);
+      if (response.data.success && showToastMessage) {
+        toast.success(response.data.message);
+      }
+
       return response.data;
     } catch (err: unknown) {
       const axiosError = err as AxiosError<IMyAPIResponse>;
-      if (axiosError.response) {
-        return axiosError.response.data;
+
+      console.error('Axios Error:', axiosError);
+      if (axiosError.response && requestProps.showToastMessage) {
+        console.error('Response Data:', axiosError.response.data);
+        toast.error(axiosError.response.data.message);
       }
 
-      toast.error('You connection may have dropped...');
-      return null;
+      throw err;
     }
+  }
+
+  private async handleResponseError(error: AxiosError): Promise<AxiosResponse | void> {
+    const { config } = error;
+    if (!config) {
+      return Promise.reject(error);
+    }
+
+    const { method, data, url } = config;
+    const originalRequest = { method, data: data && JSON.parse(data), url };
+
+    if (error.response?.status === 401 && originalRequest) {
+      if (!this.isRefreshing) {
+        this.isRefreshing = true;
+
+        try {
+          await AuthService.refreshAccessToken();
+          this.isRefreshing = false;
+          this.failedRequests.forEach((callback) => callback());
+          this.failedRequests = [];
+
+          const res = await this.trixelsAPI({ ...originalRequest });
+          return res;
+        } catch (err: unknown) {
+          const axiosError = err as AxiosError<unknown, any>;
+
+          if (axiosError.response?.status === 401) {
+            toast.error('Failed to refresh token. Please login again.');
+            this.isRefreshing = false;
+            this.failedRequests = [];
+            AuthService.logout();
+          }
+
+          return Promise.reject(err);
+        }
+      } else {
+        return new Promise((resolve) => {
+          this.failedRequests.push(() => {
+            resolve(this.trixelsAPI(originalRequest));
+          });
+        });
+      }
+    }
+
+    return Promise.reject(error);
   }
 }
 
-// Uso da classe
 const MyAxiosServiceInstance = new MyAxiosServiceClass();
-
-// Exemplo de como mudar os headers após o usuário se autenticar
-/* const authHeaders = {
-  'Custom-Header': 'value',
-  // Adicione outros headers conforme necessário
-};
-
-myAxiosService.setHeaders(authHeaders);
-*/
 
 export default MyAxiosServiceInstance;

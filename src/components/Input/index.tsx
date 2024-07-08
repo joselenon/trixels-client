@@ -34,6 +34,7 @@ export default function Input(props: ITextInput) {
         errorMsg: '',
       };
     },
+    getValues, // Desestruture getValues de rhfConfig
   } = rhfConfig;
 
   const [validationValue, setValidationValue] = useState({
@@ -42,12 +43,11 @@ export default function Input(props: ITextInput) {
   });
 
   const validation = (value: any) => {
-    const validate = rhfValidationFn(value);
+    const validate = rhfValidationFn(value, getValues); // Passe getValues para rhfValidationFn
     setValidationValue(validate);
     return validate;
   };
 
-  // rhfRegister is responsible to set the payload keys with the id and the input submittion options (ex: validate)
   const { ...registerProps } = rhfRegister(id, {
     valueAsNumber: type === 'number',
     validate: (value: any) => {

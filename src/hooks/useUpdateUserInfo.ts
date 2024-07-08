@@ -6,9 +6,7 @@ import MyAxiosServiceInstance from '../services/MyAxiosService';
 export default function useUpdateUserInfo() {
   const postUpdateUserInfo = async (payload: IUpdateUserCredentialsPayload) => {
     const response = await MyAxiosServiceInstance.request<null>({
-      method: 'put',
-      endpoint: '/user/credentials',
-      data: payload,
+      requestConfig: { method: 'put', url: '/user/credentials', data: payload },
     });
 
     return response;

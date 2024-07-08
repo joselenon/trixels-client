@@ -8,9 +8,7 @@ export interface IRedeemCodePayload {
 export default function useRedeemCode() {
   const handleRedeemCode = async (payload: IRedeemCodePayload) => {
     const res = await MyAxiosServiceInstance.request({
-      endpoint: URLS.ENDPOINTS.DEPOSIT.REDEEM_CODE,
-      data: payload,
-      method: 'post',
+      requestConfig: { url: URLS.ENDPOINTS.DEPOSIT.REDEEM_CODE, data: payload, method: 'post' },
     });
     return res;
   };
