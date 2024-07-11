@@ -11,13 +11,13 @@ export default function sentryBeforeSendConfig(event: any) {
       \n Value: ${exception.value}
       \n Stack Trace: ${
         exception.stacktrace && exception.stacktrace.frames
-          ? exception.stacktrace.frames.map((frame) => `${frame.filename}:${frame.lineno}`).join('\n')
+          ? exception.stacktrace.frames.map((frame: any) => `${frame.filename}:${frame.lineno}`).join('\n')
           : 'N/A'
       }
       `,
     );
 
-    const shouldFilter = event.exception.values.some((value) => {
+    const shouldFilter = event.exception.values.some((value: any) => {
       return (
         value.type?.includes('Client Error') ||
         /*         value.value?.includes(

@@ -159,7 +159,7 @@ export default function RaffleBox({ raffleInfo }: { width: '100%' | undefined; r
       </div>
 
       <div style={{}}>
-        <Prizes prizes={prizes} slidesPerView={1} />
+        <Prizes prizes={prizes} />
       </div>
 
       <DetailsContainer>

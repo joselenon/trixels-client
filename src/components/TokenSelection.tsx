@@ -16,12 +16,12 @@ export default function TokenSelection({ options, handleChangeToken, selectedMet
       options={options as string[]}
       onSelect={handleChangeToken}
       renderOption={(option) => {
-        const currencyInfo = CurrenciesInfo[option as keyof ICurrenciesInfoObjProps];
+        const currencyInfo = CurrenciesInfo[option];
 
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {currencyInfo.icon}
-            <h4>{currencyInfo.symbol}</h4>
+            <h4>{currencyInfo.label}</h4>
           </div>
         );
       }}
@@ -31,7 +31,7 @@ export default function TokenSelection({ options, handleChangeToken, selectedMet
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {selectedCurrencyInfo.icon}
-            <h4>{selectedCurrencyInfo.symbol}</h4>
+            <h4>{selectedCurrencyInfo.label}</h4>
           </div>
         );
       }}

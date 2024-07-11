@@ -7,7 +7,11 @@ const pixelInfo = {
 };
 const ronInfo = { label: 'RON', icon: <img alt="cur-pixel" src={cur_ron} width={20} height={20} /> };
 
-const CurrenciesInfo: { [symbol: string]: { label: string; icon: JSX.Element } } = {
+export interface ICurrenciesInfoObjProps {
+  [symbol: string]: { label: string; icon: JSX.Element };
+}
+
+const CurrenciesInfo: ICurrenciesInfoObjProps = {
   PIXEL: pixelInfo,
   RON: ronInfo,
 };

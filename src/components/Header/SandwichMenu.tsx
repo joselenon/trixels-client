@@ -6,8 +6,7 @@ import { styled } from 'styled-components';
 import { SVGLittleBox, SVGRoundedSandwichMenu } from '../../assets/SVGIcons';
 import { ROUTES } from '../../config/constants/CLIENT_ROUTES';
 import { IReduxStore } from '../../interfaces/IRedux';
-import AuthModal from '../Modals/AuthModal';
-import { IHeader } from '.';
+import { IHeaderMenuItems } from '.';
 
 const SandwichMenuContainer = styled.div`
   display: flex;
@@ -84,7 +83,7 @@ const CustomEnterButton = styled.div`
   }
 `;
 
-const SandwichMenu = ({ menuItems }: IHeader) => {
+/* const SandwichMenu = ({ menuItems }: IHeaderMenuItems) => {
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
   );
@@ -92,7 +91,7 @@ const SandwichMenu = ({ menuItems }: IHeader) => {
 
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
-  const mobileMenuItems: IHeader['menuItems'] = {
+  const mobileMenuItems: IHeaderMenuItems['menuItems'] = {
     ...menuItems,
     'Profile ': {
       element: userCredentials ? (
@@ -133,3 +132,4 @@ const SandwichMenu = ({ menuItems }: IHeader) => {
 };
 
 export default SandwichMenu;
+ */
