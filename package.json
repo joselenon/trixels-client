@@ -30,7 +30,6 @@
     "framer-motion": "^11.0.24",
     "graphql-ws": "^5.14.0",
     "jwt-decode": "^4.0.0",
-    "pm2": "^5.4.2",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-cookie": "^7.1.4",
