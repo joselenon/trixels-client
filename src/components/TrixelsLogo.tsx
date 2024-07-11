@@ -1,8 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useScreenConfig } from '../contexts/ScreenConfigContext';
-import { Link } from 'react-router-dom';
 
 const TrixelsText = styled.h3<{ $screenWidth: number }>`
   color: #2985ff;
@@ -20,7 +20,7 @@ export default function TrixelsLogo({ resizeble = true }: { resizeble?: boolean 
 
   return (
     <Link to={'/'}>
-      <TrixelsText $screenWidth={width}>{width < 860 && resizeble ? 'T' : 'Trixels'}</TrixelsText>
+      <TrixelsText $screenWidth={width}>{width < 1150 && resizeble ? 'T' : 'Trixels'}</TrixelsText>
     </Link>
   );
 }

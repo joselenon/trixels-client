@@ -14,7 +14,7 @@ const ScreenConfigContext = createContext<ScreenConfigContextProps>({
 
 export function ScreenConfigProvider({ children }: { children: JSX.Element }) {
   const [screenConfig, setScreenConfig] = useState<ScreenConfigContextProps>({
-    isMobile: window.innerWidth <= 768,
+    isMobile: window.innerWidth <= 1150,
     width: window.innerWidth,
     height: window.innerHeight,
   });

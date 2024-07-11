@@ -29,16 +29,17 @@ export interface IUserJWTPayload {
 
 export interface IUserToFrontEnd {
   username: string;
-  avatar?: string;
+  avatar: string;
   balance?: number;
   email?: {
     value: string;
     verified: boolean;
     lastEmail: string;
     updatedAt: number;
+    googleSub: string | null;
   };
   roninWallet: {
-    value: string;
+    value?: string;
     verified?: boolean;
   };
   createdAt: number;

@@ -6,7 +6,7 @@ import { IUserToFrontEnd } from '../interfaces/IUser';
 import AuthService from '../services/AuthService';
 
 export default function useLogout() {
-  const reduxDispatch = useDispatch();
+  /*   const reduxDispatch = useDispatch(); */
 
   const userCredentials = useSelector<IReduxStore, IUserToFrontEnd | undefined>((state) => state.auth.userCredentials);
 
@@ -22,7 +22,7 @@ export default function useLogout() {
     if (userCredentials) {
       const { email } = userCredentials;
 
-      if (!email || !email.verified) {
+      if (!email?.googleSub) {
         if (!showLogoutWarnInfo.warnAlreadyShowed) {
           return setShowLogoutWarnInfo({ showWarn: true, warnAlreadyShowed: true });
         } else {
@@ -35,7 +35,7 @@ export default function useLogout() {
   };
 
   const handleLogout = () => {
-    AuthService.logout(reduxDispatch);
+    AuthService.logout();
   };
 
   return { handleLogout, handleCarefulLogout, showLogoutWarnInfo };

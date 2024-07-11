@@ -7,9 +7,8 @@ import useGetDepositMethodWallet from '../../../hooks/useGetDepositMethodWallet'
 import { IReduxStore } from '../../../interfaces/IRedux';
 import { EmphasizedParagraph } from '../../../styles/GlobalStyles';
 import BlurredLoadDiv from '../../BlurredLoadDiv';
-import NetworkSelection from '../../NetworkSelection';
-import TokenSelection from '../../TokenSelection';
 import MiniSquareButton from '../../TrixelsButton/MiniSquareButton';
+import CurrencyAndNetworkSelect from './CurrencyAndNetworkSelect';
 
 const DepositInfoContainer = styled.div`
   width: 100%;
@@ -24,45 +23,26 @@ const DepositInfoContainer = styled.div`
   }
 `;
 
-const DepositWalletContainer = styled.div`
+export const DepositWalletContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 `;
 
-const WalletAndCopyButtonContainer = styled.div`
+export const WalletAndCopyButtonContainer = styled.div`
   display: flex;
-`;
-
-const CurrencyAndNetworkContainer = styled.div`
   width: 100%;
-  display: flex;
-  gap: 1rem;
-`;
-
-const SelectorsContainer = styled.div`
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
 `;
 
 export default function DepositInfo() {
-  const testdepositMethodsSymbols = ['PIXEL', 'RON'];
-  const testdepositMethodsNetworks = ['Ronin', 'Ethereum'];
-
-  const getDepositMethodWallet = useGetDepositMethodWallet();
+  const { depositMethodWalletInfo, handleGetDepositMethodWallet, isGettingWallet } = useGetDepositMethodWallet();
 
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
   );
   const isUserVerified = userCredentials?.email?.verified && userCredentials.roninWallet.verified;
 
-  const [isGettingWallet, setIsGettingWallet] = useState(false);
-  const [depositMethodWalletInfo, setDepositMethodWalletInfo] = useState<
-    { value: string; minimumDeposit: number } | undefined
-  >(undefined);
   const [selectedMethod, setSelectedMethod] = useState({ symbol: 'PIXEL', network: 'Ronin' });
 
   const handleChangeToken = (symbol: string) => {
@@ -78,57 +58,19 @@ export default function DepositInfo() {
   };
 
   useEffect(() => {
-    const getWallet = async () => {
-      setIsGettingWallet(true);
-      const depositWalletRes = await getDepositMethodWallet(selectedMethod);
-
-      if (depositWalletRes) {
-        setIsGettingWallet(false);
-        switch (depositWalletRes.success) {
-          case true:
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            setDepositMethodWalletInfo({
-              value: depositWalletRes.data!.walletAddress!,
-              minimumDeposit: depositWalletRes.data!.minimumDeposit!,
-            });
-            break;
-          case false:
-            setDepositMethodWalletInfo(undefined);
-            break;
-        }
-      }
-    };
-
-    getWallet();
+    handleGetDepositMethodWallet(selectedMethod);
   }, [selectedMethod]);
 
   return (
     <DepositInfoContainer>
       {!isUserVerified ? (
         <>
-          <CurrencyAndNetworkContainer>
-            <SelectorsContainer>
-              <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--default-grey)' }}>
-                Currency
-              </p>
-              <TokenSelection
-                selectedMethodSymbol={selectedMethod['symbol']}
-                options={testdepositMethodsSymbols}
-                handleChangeToken={handleChangeToken}
-              />
-            </SelectorsContainer>
-
-            <SelectorsContainer>
-              <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--default-grey)' }}>
-                Network
-              </p>
-              <NetworkSelection
-                selectedMethodNetwork={selectedMethod['network']}
-                options={testdepositMethodsNetworks}
-                handleChangeNetwork={handleChangeNetwork}
-              />
-            </SelectorsContainer>
-          </CurrencyAndNetworkContainer>
+          <CurrencyAndNetworkSelect
+            tokenSelected={selectedMethod['symbol']}
+            networkSelected={selectedMethod['network']}
+            handleChangeToken={handleChangeToken}
+            handleChangeNetwork={handleChangeNetwork}
+          />
 
           <DepositWalletContainer>
             <p style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--default-grey)' }}>

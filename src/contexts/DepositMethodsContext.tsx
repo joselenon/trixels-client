@@ -1,7 +1,7 @@
 /* import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import URLS from '../config/constants/URLS';
-import MyAxiosServiceInstance from '../services/MyAxiosService';
+import TrixelsAxiosServiceInstance from '../services/TrixelsAxiosService';
 
 export type TMethodInfo = {
   networks: { description: string; walletAddress: string; minimumAmount: number }[];
@@ -19,7 +19,7 @@ export const DepositMethodsContextProvider: React.FC = ({ children }) => {
   useEffect(() => {
     const fetchDepositMethods = async () => {
       try {
-        const depositMethodsResponse = await MyAxiosServiceInstance.request<IDepositMethods>({
+        const depositMethodsResponse = await TrixelsAxiosServiceInstance.request<IDepositMethods>({
           url: URLS.ENDPOINTS.DEPOSIT.GET_DEPOSIT_METHODS,
           method: 'get',
           data: null,

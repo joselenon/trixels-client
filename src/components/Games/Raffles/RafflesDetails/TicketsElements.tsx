@@ -25,20 +25,28 @@ const TicketsContainer = styled.div`
 
 const TicketPriceContainer = styled.div`
   display: flex;
-  align-items: center;
-`;
-
-const BuyButtonAndTicketPrice = styled.div`
-  display: flex;
-  align-items: flex-start;
   justify-content: flex-end;
-  gap: 1rem;
+  align-items: center;
 `;
 
 const GraySquare = styled.div`
   width: 80px;
   height: 80px;
-  background-color: var(--default-middlegrey); /* Cor cinza */
+  background-color: var(--default-middlegrey);
+`;
+
+const RandomTicketContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
+const BuyContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
 `;
 
 interface ITicketsElementsProps {
@@ -119,24 +127,25 @@ export default function TicketsElements({ raffle }: ITicketsElementsProps) {
 
   return (
     <TicketsElementContainer>
-      <BuyButtonAndTicketPrice>
-        <TicketPriceContainer>
-          <CurrencyIconAndAmountMEDIUM theme="default" amount={ticketPrice} />
-          <h5>/ea</h5>
-        </TicketPriceContainer>
+      <BuyContainer>
+        <RandomTicketContainer>
+          <TrixelsCheckbox checked={buyRaffleTicketsPayload.info.randomTicket} onChange={handleRandomTicketChange} />
+          <h5>Random</h5>
+        </RandomTicketContainer>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-          <BuyRaffleTicketButton
-            buyRaffleTicketsPayloadState={{ buyRaffleTicketsPayload, setBuyRaffleTicketPayload }}
-            ticketPrice={ticketPrice}
-            raffle={raffle}
-          />
-          <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-            <TrixelsCheckbox checked={buyRaffleTicketsPayload.info.randomTicket} onChange={handleRandomTicketChange} />
-            <h5>Random Ticket</h5>
-          </div>
+        <BuyRaffleTicketButton
+          buyRaffleTicketsPayloadState={{ buyRaffleTicketsPayload, setBuyRaffleTicketPayload }}
+          ticketPrice={ticketPrice}
+          raffle={raffle}
+        />
+      </BuyContainer>
+
+      <TicketPriceContainer>
+        <div style={{ display: 'flex', alignItems: 'center', background: 'white', paddingRight: '.5rem' }}>
+          <CurrencyIconAndAmountMEDIUM theme="white" amount={ticketPrice} fontSize="medium" />
+          <h5>/ea</h5>
         </div>
-      </BuyButtonAndTicketPrice>
+      </TicketPriceContainer>
 
       <TicketsContainer>{ticketsElementsRendered}</TicketsContainer>
     </TicketsElementContainer>

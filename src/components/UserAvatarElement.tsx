@@ -11,6 +11,8 @@ const UserAvatarElementContainer = styled.div<{ $sizeInPx?: number }>`
   img {
     width: 100%;
     height: 100%;
+    min-width: ${({ $sizeInPx }) => `${$sizeInPx ? `${$sizeInPx}px` : '100%'}`};
+    max-width: ${({ $sizeInPx }) => `${$sizeInPx ? `${$sizeInPx}px` : '100%'}`};
   }
 `;
 

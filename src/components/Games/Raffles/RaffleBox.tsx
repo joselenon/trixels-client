@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import blankAvatar from '../../../assets/images/blankavatar.jpg';
+import useBuyTickets from '../../../hooks/useBuyTickets';
 import { IRaffleToFrontEndTreated } from '../../../interfaces/IRaffles';
 import { TruncatedText } from '../../../styles/GlobalStyles';
 import CurrencyIconAndAmount from '../../CurrencyIconAndAmount';
@@ -117,6 +117,7 @@ const DateContainer = styled.div`
 `;
 
 export default function RaffleBox({ raffleInfo }: { width: '100%' | undefined; raffleInfo: IRaffleToFrontEndTreated }) {
+  const buyTicketsFn = useBuyTickets();
   const { createdAt, info, gameId, description, createdBy } = raffleInfo;
 
   const { prizes, totalTickets, ticketPrice, prizesTotalValue } = info;
@@ -189,7 +190,21 @@ export default function RaffleBox({ raffleInfo }: { width: '100%' | undefined; r
           </Link>
 
           <BuyContainer>
-            <TrixelsButton btnType="CTA" label={'Buy 1'} />
+            <TrixelsButton
+              btnType="CTA"
+              label={'Buy 1'}
+              attributes={{
+                onClick: () =>
+                  buyTicketsFn({
+                    gameId,
+                    info: {
+                      randomTicket: true,
+                      quantityOfTickets: 0,
+                      ticketNumbers: [],
+                    },
+                  }),
+              }}
+            />
           </BuyContainer>
         </ViewAndBuyContainer>
 

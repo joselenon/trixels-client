@@ -1,15 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { styled } from 'styled-components';
 
 import { TUserProfileInfo } from '../../hooks/useGetUserProfile';
 import useRequireLogin from '../../hooks/useRequireLogin';
 import useUpdateUserInfo from '../../hooks/useUpdateUserInfo';
 import { ITextInput } from '../../interfaces/IRHF';
-import { IUserToFrontEnd } from '../../interfaces/IUser';
 import { TParams } from '../../routes/AppRoutes';
 import validateEmail from '../../utils/validateEmail';
 import Input from '../Input';
@@ -40,10 +38,10 @@ export default function UserProfileForm({ userProfileInfo }: IUserProfileFormPro
   const requireLoginFn = useRequireLogin();
   const handleUpdateUserInfo = useUpdateUserInfo();
 
-  const loginRequiredFn = useRequireLogin();
-
   const urlParams = useParams<TParams>();
   const { username: usernameToQuery } = urlParams;
+
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const {
     register,
@@ -107,20 +105,21 @@ export default function UserProfileForm({ userProfileInfo }: IUserProfileFormPro
   }, [userProfileInfo]);
 
   const onSubmitHandler: SubmitHandler<FieldValues> = async (info) => {
-    if (!requireLoginFn()) return;
+    try {
+      if (!requireLoginFn()) return;
 
-    const res = await handleUpdateUserInfo({ ...info });
-    if (res?.success) {
-      toast.success(res.message);
-    } else {
-      toast.error(res?.message);
+      setIsProcessing(true);
+      await handleUpdateUserInfo({ ...info });
+      setIsProcessing(false);
+    } catch (err) {
+      setIsProcessing(false);
     }
   };
 
   const saveButton = (
     <SaveButtonContainer>
       <div>
-        <TrixelsButton btnType="CTA" label="Save" attributes={{ type: 'submit' }} />
+        <TrixelsButton isPending={isProcessing} btnType={'CTA'} label="Save" attributes={{ type: 'submit' }} />
       </div>
     </SaveButtonContainer>
   );
@@ -134,7 +133,7 @@ export default function UserProfileForm({ userProfileInfo }: IUserProfileFormPro
           <WalletCredentials userProfileInfo={userProfileInfo} walletInput={walletInput} />
         </InputsContainer>
 
-        {loginRequiredFn(false) && saveButton}
+        {requireLoginFn(false) && saveButton}
       </form>
     </div>
   );

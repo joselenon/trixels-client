@@ -13,6 +13,7 @@ import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
 import AppRoutes from './routes/AppRoutes';
 import AuthService from './services/AuthService';
 import GlobalStyles from './styles/GlobalStyles';
+import ScrollToTop from './utils/scrollToTop';
 
 function App() {
   const reduxDispatch = useDispatch();
@@ -20,6 +21,8 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
+
       <MessagesContextProvider>
         <ScreenConfigProvider>
           <>

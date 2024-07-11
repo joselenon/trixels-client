@@ -36,6 +36,7 @@ export interface IRaffleToFrontEnd {
   };
   finishedAt?: string;
   type: 'raffles';
+  status: 'active' | 'cancelled' | 'ended';
   description: string;
   info: {
     bets: IBetToFrontEnd[];

@@ -2,15 +2,6 @@ import { FieldErrors } from 'react-hook-form';
 import { FieldValues } from 'react-hook-form';
 import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
-export interface IForm {
-  // Function that will be used when form submits
-  axiosCallHook: (payload: any) => any;
-  // In order to have custom style on inputs container
-  InputContainer?: React.ComponentType<{ children: React.ReactNode }>;
-  inputArray: ICreateInput[];
-  submitButton: JSX.Element;
-}
-
 /*
 Captions
   axiosCallHook: used to pass hook responsible for sending the data to the server-side

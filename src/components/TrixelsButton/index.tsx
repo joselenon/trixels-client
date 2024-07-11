@@ -2,9 +2,9 @@ import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { IconType } from 'react-icons/lib';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
-export type TButtonTypes = 'TEXT' | 'CTA' | 'CTA_PENDING' | 'DANGER' | 'ELEMENT' | 'DEFAULT' | 'BLUE';
+export type TButtonTypes = 'TEXT' | 'CTA' | 'DANGER' | 'ELEMENT' | 'DEFAULT' | 'BLUE';
 
 export type IButtonTypeConfig = {
   [key in TButtonTypes]: React.CSSProperties;
@@ -21,50 +21,50 @@ const ButtonTypes: IButtonTypeConfig = {
     padding: '14px 10px',
     background: 'var(--default-grey)',
   },
-
   TEXT: {
     background: 'none',
   },
-
   CTA: {
     padding: '14px 10px',
     background: 'var(--default-green)',
   },
-
-  CTA_PENDING: {
-    padding: '14px 10px',
-    background: 'var(--default-darkgreen)',
-  },
-
   DANGER: {
     padding: '14px 10px',
     background: 'var(--default-red)',
   },
-
   ELEMENT: {
     width: '100%',
   },
-
   BLUE: {
     padding: '14px 10px',
     background: 'var(--default-blue)',
   },
 };
 
-const ButtonStyle = styled.button`
+interface IPendingProps {
+  $isPending: boolean | undefined;
+}
+
+const ButtonStyle = styled.button<IPendingProps>`
   border: none;
   background: none;
   width: 100%;
-  border: none;
   position: relative;
+  cursor: ${({ $isPending }) => ($isPending ? 'not-allowed' : 'pointer')};
+  pointer-events: ${({ $isPending }) => ($isPending ? 'none' : 'auto')};
 
   &:hover {
-    filter: brightness(0.95);
+    filter: ${({ $isPending }) => ($isPending ? 'none' : 'brightness(0.95)')};
   }
 
   &:active {
     box-shadow: none;
     transform: translateY(1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 
   svg {
@@ -79,12 +79,7 @@ const ButtonStyle = styled.button`
   }
 `;
 
-interface IPendingProps {
-  $isPending: boolean | undefined;
-}
-
 const ButtonElementsContainer = styled.div<IPendingProps>`
-  display: flex;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -175,7 +170,13 @@ export default function TrixelsButton(props: ITrixelsButton): JSX.Element {
 
   return (
     <div style={{ width: width }}>
-      <ButtonStyle {...attributes} style={btnStyles} type={attributes?.type ? attributes.type : 'button'}>
+      <ButtonStyle
+        {...attributes}
+        style={btnStyles}
+        type={attributes?.type ? attributes.type : 'button'}
+        $isPending={isPending}
+        disabled={isPending}
+      >
         <ButtonElementsContainer $isPending={isPending}>
           {iconElement() || null}
           {label ? typeof label === 'string' ? <span>{label.toUpperCase()}</span> : label : ''}

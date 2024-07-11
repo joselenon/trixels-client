@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import URLS from '../config/constants/URLS';
-import { IAuthResponse } from '../interfaces/IAuth';
 import { IReduxStore } from '../interfaces/IRedux';
+import { IAuthResponse } from '../redux/features/authSlice';
 import AuthService from '../services/AuthService';
-import MyAxiosServiceInstance from '../services/MyAxiosService';
+import TrixelsAxiosServiceInstance from '../services/TrixelsAxiosService';
 
 const useRegister = () => {
   const reduxDispatch = useDispatch();
@@ -18,7 +18,7 @@ const useRegister = () => {
       return;
     }
 
-    const response = await MyAxiosServiceInstance.request<IAuthResponse>({
+    const response = await TrixelsAxiosServiceInstance.request<IAuthResponse>({
       requestConfig: { url: URLS.ENDPOINTS.AUTH.REGISTER, method: 'post', data: { ...payload } },
       showToastMessage: true,
     });

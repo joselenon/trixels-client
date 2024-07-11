@@ -102,7 +102,7 @@ export default function MiniSquareButton(props: IButton): JSX.Element {
   };
 
   return (
-    <ButtonStyle {...attributes} style={btnStyles}>
+    <ButtonStyle {...attributes} type="button" style={btnStyles}>
       {iconElement() || null}
       {label ? typeof label === 'string' ? <span>{label.toUpperCase()}</span> : label : ''}
       {element && element}

@@ -4,7 +4,6 @@ import useRegister from '../../../hooks/useRegister';
 import { ICreateInput } from '../../../interfaces/IRHF';
 import isUsernameValid from '../../../utils/isUsernameValid';
 import Form from '../../Form';
-import TrixelsButton from '../../TrixelsButton';
 
 export default function RegisterForm() {
   const handleEnterButtonClick = useRegister();
@@ -45,13 +44,11 @@ export default function RegisterForm() {
     },
   };
 
-  const registerButton = <TrixelsButton btnType={'BLUE'} label={'REGISTER'} attributes={{ type: 'submit' }} />;
-
   return (
     <Form
       inputArray={[usernameInput, passwordInput, confirmPasswordInput]}
       axiosCallHook={handleEnterButtonClick}
-      submitButton={registerButton}
+      buttonConfig={{ btnType: 'BLUE', label: 'REGISTER' }}
     />
   );
 }

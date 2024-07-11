@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 
-import { IForm } from '../../interfaces/IRHF';
+import { ICreateInput } from '../../interfaces/IRHF';
 import Input from '../Input';
+import TrixelsButton, { ITrixelsButton } from '../TrixelsButton';
 
 const DefaultContainer = styled.div`
   display: flex;
@@ -11,8 +12,17 @@ const DefaultContainer = styled.div`
   gap: 2rem;
 `;
 
+export interface IForm {
+  // Function that will be used when form submits
+  axiosCallHook: (payload: any) => any;
+  // In order to have custom style on inputs container
+  InputContainer?: React.ComponentType<{ children: React.ReactNode }>;
+  inputArray: ICreateInput[];
+  buttonConfig: ITrixelsButton;
+}
+
 export default function Form(props: IForm) {
-  const { axiosCallHook, InputContainer, inputArray, submitButton } = props;
+  const { axiosCallHook, InputContainer, inputArray, buttonConfig } = props;
 
   const {
     register,
@@ -22,8 +32,16 @@ export default function Form(props: IForm) {
     getValues, // Adicione getValues aqui
   } = useForm();
 
+  const [isPending, setIsPending] = useState(false);
+
   const onSubmitHandler: SubmitHandler<FieldValues> = async (info) => {
-    await axiosCallHook({ ...info });
+    try {
+      setIsPending(true);
+      await axiosCallHook({ ...info });
+      setIsPending(false);
+    } catch (err) {
+      setIsPending(false);
+    }
   };
 
   useEffect(() => {
@@ -62,7 +80,7 @@ export default function Form(props: IForm) {
         {InputContainer && <InputContainer>{inputArrayHTML}</InputContainer>}
         {!InputContainer && inputArrayHTML}
 
-        {submitButton}
+        <TrixelsButton {...buttonConfig} isPending={isPending} attributes={{ type: 'submit' }} />
       </DefaultContainer>
     </form>
   );

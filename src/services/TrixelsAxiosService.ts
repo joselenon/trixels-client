@@ -15,7 +15,7 @@ export interface IMyAPIResponse<T = null> {
   data?: T;
 }
 
-class MyAxiosServiceClass {
+class TrixelsAxiosServiceClass {
   private trixelsAPI: AxiosInstance;
   private headers: Record<string, string> = {};
   private isRefreshing = false;
@@ -39,7 +39,7 @@ class MyAxiosServiceClass {
     this.headers = headers;
   }
 
-  async request<T>(requestProps: IRequestProps): Promise<IMyAPIResponse<T | null> | null> {
+  async request<T>(requestProps: IRequestProps): Promise<IMyAPIResponse<T | null>> {
     try {
       const { requestConfig, showToastMessage } = requestProps;
 
@@ -47,7 +47,7 @@ class MyAxiosServiceClass {
         ...requestConfig,
       });
 
-      if (response.data.success && showToastMessage) {
+      if (showToastMessage) {
         toast.success(response.data.message);
       }
 
@@ -111,6 +111,6 @@ class MyAxiosServiceClass {
   }
 }
 
-const MyAxiosServiceInstance = new MyAxiosServiceClass();
+const TrixelsAxiosServiceInstance = new TrixelsAxiosServiceClass();
 
-export default MyAxiosServiceInstance;
+export default TrixelsAxiosServiceInstance;

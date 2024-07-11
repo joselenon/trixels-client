@@ -51,14 +51,23 @@ export default function AppRoutes() {
       <Route
         path="/raffle/:gameId"
         element={
-          <RafflesContextProvider>
-            <AvailableItemsContextProvider>
-              <ViewRaffle />
-            </AvailableItemsContextProvider>
-          </RafflesContextProvider>
+          <ScreenConfigProvider>
+            <RafflesContextProvider>
+              <AvailableItemsContextProvider>
+                <ViewRaffle />
+              </AvailableItemsContextProvider>
+            </RafflesContextProvider>
+          </ScreenConfigProvider>
         }
       />
-      <Route path="/profile/:username" element={<UserProfile />} />
+      <Route
+        path="/profile/:username"
+        element={
+          <ScreenConfigProvider>
+            <UserProfile />
+          </ScreenConfigProvider>
+        }
+      />
       <Route path="/affiliates" element={<Affiliates />} />
       <Route path="/cashoutsapprovals" element={<CashoutsApprovals />} />
       <Route path="/googleauth" element={<GoogleAuth />} />

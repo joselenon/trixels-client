@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 import URLS from '../config/constants/URLS';
-import MyAxiosServiceInstance from '../services/MyAxiosService';
+import TrixelsAxiosServiceInstance from '../services/TrixelsAxiosService';
 
 export type TItemInfos = { id: string; img: string; name: string; price: number };
 
@@ -17,7 +17,7 @@ export default function AvailableItemsContextProvider({ children }: { children: 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const availableItemsResponse = await MyAxiosServiceInstance.request<IItemsInfoResponse>({
+        const availableItemsResponse = await TrixelsAxiosServiceInstance.request<IItemsInfoResponse>({
           requestConfig: { url: URLS.ENDPOINTS.RAFFLES.GET_AVAILABLE_ITEMS, method: 'get', data: null },
         });
 

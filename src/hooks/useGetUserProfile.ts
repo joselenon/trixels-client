@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { IReduxStore } from '../interfaces/IRedux';
 import { IUserToFrontEnd } from '../interfaces/IUser';
 import { TParams } from '../routes/AppRoutes';
-import MyAxiosServiceInstance from '../services/MyAxiosService';
+import TrixelsAxiosServiceInstance from '../services/TrixelsAxiosService';
 
 export type TUserProfileInfo = IUserToFrontEnd | undefined | null;
 
@@ -16,16 +16,17 @@ export default function useGetUserProfile() {
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
   );
+  const isCurrentUser = userCredentials?.username === usernameToQuery;
 
   const [userProfileInfo, setUserProfileInfo] = useState<TUserProfileInfo>(undefined);
 
   const queryUsername = async () => {
     try {
-      if (usernameToQuery === userCredentials?.username) {
+      if (isCurrentUser) {
         return setUserProfileInfo(userCredentials);
       }
 
-      const response = await MyAxiosServiceInstance.request<IUserToFrontEnd>({
+      const response = await TrixelsAxiosServiceInstance.request<IUserToFrontEnd>({
         requestConfig: { method: 'get', url: `/user?username=${usernameToQuery}`, data: { usernameToQuery } },
       });
 

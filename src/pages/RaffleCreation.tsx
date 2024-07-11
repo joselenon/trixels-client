@@ -98,7 +98,6 @@ export default function RaffleCreation() {
     isProcessing: false,
     gameId: undefined,
   });
-  const [raffleAlreadyArrived, setRaffleAlreadyArrived] = useState(false);
   const [raffleConfig, setRaffleConfig] = useState<IRaffleCreationPayload>({
     totalTickets: 10,
     discountPercentage: 0,
@@ -136,7 +135,6 @@ export default function RaffleCreation() {
   const handleCreateRaffleButtonClick = async () => {
     try {
       if (!requireLoginFn()) return;
-      if (isRaffleCreationProcessing.isProcessing) return;
       if (!isRafflePayloadValid()) return;
 
       setIsRaffleCreationProcessing((prev) => {

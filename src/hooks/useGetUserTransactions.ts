@@ -2,7 +2,7 @@ import React from 'react';
 
 import URLS from '../config/constants/URLS';
 import { TTransactionsToFrontend } from '../interfaces/ITransaction';
-import MyAxiosServiceInstance from '../services/MyAxiosService';
+import TrixelsAxiosServiceInstance from '../services/TrixelsAxiosService';
 import useRequireLogin from './useRequireLogin';
 
 export interface IGetUserTransactionsPayload {
@@ -16,7 +16,7 @@ export default function useGetUserTransactions() {
   const handleGetUserTransactions = async ({ forward, startAfterDocTimestamp }: IGetUserTransactionsPayload) => {
     if (!requireLoginFn()) return;
 
-    const res = await MyAxiosServiceInstance.request<TTransactionsToFrontend>({
+    const res = await TrixelsAxiosServiceInstance.request<TTransactionsToFrontend>({
       requestConfig: {
         url: URLS.ENDPOINTS.USER.GET_USER_TRANSACTIONS,
         method: 'post',

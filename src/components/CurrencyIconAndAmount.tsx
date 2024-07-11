@@ -1,20 +1,15 @@
 import React from 'react';
 import { styled } from 'styled-components';
 
-import { PIXELIcon } from './CurrenciesIcons';
-
-interface ICurrencyIconAndAmountProps {
-  amount: number;
-  currency?: 'PIXEL';
-  theme: 'default' | 'transparent';
-  fontSize?: 'small' | 'medium' | 'big';
-}
+import CurrenciesInfo from '../assets/CurrenciesInfo';
 
 const BerryIconAndAmountContainer = styled.div<{ $theme: ICurrencyIconAndAmountProps['theme'] }>`
   background-color: ${({ $theme }) => {
     if ($theme === 'default') return 'var(--default-lightgrey)';
+    if ($theme === 'white') return 'white';
     if ($theme === 'transparent') return 'none';
   }};
+  width: 100%;
   height: 100%;
   position: relative;
   padding: 5px 15px;
@@ -47,21 +42,30 @@ export const BalanceText = styled.span<{
   font-weight: 800;
 `;
 
+interface ICurrencyIconAndAmountProps {
+  amount: number;
+  currency?: 'PIXEL';
+  theme: 'default' | 'transparent' | 'white';
+  fontSize?: 'small' | 'medium' | 'big';
+  showFullAmount?: boolean;
+}
+
 export default function CurrencyIconAndAmount({
   currency = 'PIXEL',
   amount,
   theme = 'default',
   fontSize = 'medium',
+  showFullAmount = false,
 }: ICurrencyIconAndAmountProps) {
   if (typeof amount !== 'number') return null;
 
-  const toFixed2Amount = amount.toFixed(2);
+  const filteredAmount = showFullAmount ? amount : amount.toFixed(2);
 
   return (
     <BerryIconAndAmountContainer $theme={theme}>
-      {currency === 'PIXEL' && PIXELIcon}
+      {currency === 'PIXEL' && CurrenciesInfo.PIXEL.icon}
       <BalanceText $theme={theme} $fontSize={fontSize}>
-        {toFixed2Amount}
+        {filteredAmount}
       </BalanceText>
     </BerryIconAndAmountContainer>
   );

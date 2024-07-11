@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import CurrencyIconAndAmount from '../components/CurrencyIconAndAmount';
 import Prizes from '../components/Games/Raffles/RafflesDetails/PrizesElement';
+import RaffleTotalPrize from '../components/Games/Raffles/RafflesDetails/RaffleTotalPrize';
 import TicketsElements from '../components/Games/Raffles/RafflesDetails/TicketsElements';
 import Wheel from '../components/Games/Raffles/Wheel';
 import TrixelsButton from '../components/TrixelsButton';
@@ -29,21 +30,6 @@ const RaffleCaption = styled.div`
 
   h4 {
     color: var(--default-grey);
-  }
-`;
-
-const PulsingPrizeBox = styled.div`
-  background-color: #4cc043;
-  width: 100%;
-  animation: pulse 2s infinite alternate;
-
-  @keyframes pulse {
-    from {
-      background-color: var(--default-green);
-    }
-    to {
-      background-color: var(--default-lightgreen);
-    }
   }
 `;
 
@@ -119,13 +105,9 @@ export default function ViewRaffle() {
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
               <Wheel raffle={raffleSelected} />
-
-              <div style={{ width: 280 }}>
-                <PulsingPrizeBox>
-                  <CurrencyIconAndAmount theme="transparent" amount={prizesTotalValue} />
-                </PulsingPrizeBox>
-
-                <Prizes prizes={prizes} slidesPerView={2} />
+              <div>
+                <RaffleTotalPrize prizesTotalValue={prizesTotalValue} />
+                <Prizes prizes={prizes} />
               </div>
             </div>
 

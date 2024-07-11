@@ -24,7 +24,7 @@ const LoginForm = () => {
 
   const { initiateGoogleAuth } = useLoginThroughGoogle({
     onMessageReceived: (data: IGoogleAuthResponse) => {
-      AuthService.applyUserCredentials(reduxDispatch, data);
+      AuthService.applyUserCredentials(reduxDispatch, { userCredentials: data.userCredentials });
     },
   });
 
@@ -50,14 +50,12 @@ const LoginForm = () => {
     label: 'Password',
   };
 
-  const loginButton = <TrixelsButton btnType={'CTA'} label={'LOGIN'} attributes={{ type: 'submit' }} />;
-
   return (
     <>
       <Form
         inputArray={[usernameInput, passwordInput]}
         axiosCallHook={handleEnterButtonClick}
-        submitButton={loginButton}
+        buttonConfig={{ btnType: 'CTA', label: 'LOGIN' }}
       />
 
       <TrixelsButton

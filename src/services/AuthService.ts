@@ -3,22 +3,21 @@ import { Dispatch } from 'redux';
 
 import { JWTCookie } from '../config/app/CookiesConfig';
 import URLS from '../config/constants/URLS';
-import { IAuthResponse } from '../interfaces/IAuth';
 import { IUserToFrontEnd } from '../interfaces/IUser';
-import { setToken } from '../redux/features/authSlice';
+import { IAuthResponse, setToken } from '../redux/features/authSlice';
 import CookiesService from './CookiesService';
-import MyAxiosServiceInstance from './MyAxiosService';
+import TrixelsAxiosServiceInstance from './TrixelsAxiosService';
 
 class AuthService {
   async refreshAccessToken(): Promise<void> {
     try {
-      await MyAxiosServiceInstance.request<void>({
+      await TrixelsAxiosServiceInstance.request<void>({
         requestConfig: {
           url: `${URLS.ENDPOINTS.AUTH.REFRESH_ACCESS_TOKEN}`,
           method: 'post',
         },
       });
-      await MyAxiosServiceInstance.request<void>({
+      await TrixelsAxiosServiceInstance.request<void>({
         requestConfig: {
           url: `${URLS.ENDPOINTS.AUTH.VALIDATE_ACCESS_TOKEN}`,
           method: 'get',
@@ -31,9 +30,7 @@ class AuthService {
   }
 
   applyUserCredentials(reduxDispatch: Dispatch, payload: IAuthResponse) {
-    const { accessToken, userCredentials } = payload;
-    if (!accessToken) return;
-
+    const { userCredentials } = payload;
     reduxDispatch(setToken({ userCredentials }));
   }
 
@@ -41,11 +38,11 @@ class AuthService {
     const token = CookiesService.get(JWTCookie.key);
 
     if (token) {
-      await MyAxiosServiceInstance.request<null>({
+      await TrixelsAxiosServiceInstance.request<null>({
         requestConfig: { url: URLS.ENDPOINTS.AUTH.VALIDATE_ACCESS_TOKEN, method: 'get', data: null },
       });
 
-      const userCredentialsRes = await MyAxiosServiceInstance.request<IUserToFrontEnd>({
+      const userCredentialsRes = await TrixelsAxiosServiceInstance.request<IUserToFrontEnd>({
         requestConfig: { url: URLS.ENDPOINTS.USER.GET_USER_CREDENTIALS, method: 'get', data: null },
       });
 
@@ -56,7 +53,7 @@ class AuthService {
   }
 
   async login(reduxDispatch: Dispatch, payload: { username: string; password: string }) {
-    const response = await MyAxiosServiceInstance.request<IAuthResponse>({
+    const response = await TrixelsAxiosServiceInstance.request<IAuthResponse>({
       requestConfig: { url: URLS.ENDPOINTS.AUTH.LOGIN, method: 'post', data: { ...payload } },
       showToastMessage: true,
     });
@@ -69,7 +66,7 @@ class AuthService {
 
   async logout() {
     try {
-      await MyAxiosServiceInstance.request<void>({
+      await TrixelsAxiosServiceInstance.request<void>({
         requestConfig: {
           url: `${URLS.ENDPOINTS.AUTH.LOGOUT}`,
           method: 'post',
