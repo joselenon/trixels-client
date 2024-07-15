@@ -93,9 +93,8 @@ export default function TicketElement({ ticketNumber, raffle, buyRaffleTicketsPa
   };
 
   const handleTicketClick = (ticketNumber: number) => {
-    /* Arrumar isso daqui */
     if (bets.some((bet) => bet.info.tickets.includes(ticketNumber))) {
-      return console.log('Abrir info do jogador, ou ir para perfil');
+      return;
     }
 
     setBuyRaffleTicketPayload((prev) => {

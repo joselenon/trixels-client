@@ -21,7 +21,6 @@ export default function useGetUserProfile() {
   const [userProfileInfo, setUserProfileInfo] = useState<TUserProfileInfo>(undefined);
 
   const queryUsername = async () => {
-    console.log('cahnged', userCredentials);
     try {
       if (isCurrentUser) {
         return setUserProfileInfo(userCredentials);

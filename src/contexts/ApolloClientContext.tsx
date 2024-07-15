@@ -11,7 +11,6 @@ export function ApolloClientProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     function updateApolloClient() {
-      console.log('Cookie changed');
       setApolloClient(GraphQLClientService.getClient());
     }
 

@@ -56,18 +56,14 @@ export default function VerifyWalletModal({ showModal, setShowModal }: IVerifyWa
 
   useEffect(() => {
     if (walletVerificationMessages.length > 0) {
-      console.log(request);
-      console.log(walletVerificationMessages);
       const verificationMessage = walletVerificationMessages.find((wvm) => wvm.request === request);
 
       if (verificationMessage && verificationMessage.success && userCredentials) {
-        console.log('entrastes');
         reduxDispatch(
           setToken({
             userCredentials: { ...userCredentials, roninWallet: { ...userCredentials.roninWallet, verified: true } },
           }),
         );
-        toast.success(verificationMessage.message);
         setShowModal(false);
       }
     }
