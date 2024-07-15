@@ -34,9 +34,9 @@ export interface IRaffleToFrontEnd {
     username: string;
     userId: string;
   };
+  status: 'active' | 'cancelled' | 'ended';
   finishedAt?: string;
   type: 'raffles';
-  status: 'active' | 'cancelled' | 'ended';
   description: string;
   info: {
     bets: IBetToFrontEnd[];
@@ -50,6 +50,7 @@ export interface IRaffleToFrontEnd {
     };
     prizes: string /* MUDADO PARA STRING (JSON) MOMENTANEAMENTE, DEVIDO A VARIABILIDADE DE QUANTIDADE DE PREMIOS - GRAPHQL */;
     winnersBetsInfo?: TWinnerBetsInRedis;
+    maxTicketsPerUser?: number;
   };
 }
 
@@ -75,5 +76,6 @@ export interface IRaffleToFrontEndTreated {
     };
     prizes: TRaffleWinnersPrizes;
     winnersBetsInfo?: TWinnerBetsInRedis;
+    maxTicketsPerUser?: number;
   };
 }

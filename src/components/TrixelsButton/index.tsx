@@ -143,7 +143,7 @@ export interface ITrixelsButton {
   element?: JSX.Element;
   attributes?: ITrixelsButtonAtributtes;
   isPending?: boolean;
-  width?: 'auto' | '100%';
+  width?: 'auto' | '100%' | string;
 }
 
 export default function TrixelsButton(props: ITrixelsButton): JSX.Element {

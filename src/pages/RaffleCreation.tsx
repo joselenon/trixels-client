@@ -106,6 +106,7 @@ export default function RaffleCreation() {
     prizes: {},
     description: 'This is a fun raffle!',
     request: v4(),
+    maxTicketsPerUser: undefined,
   });
   const [raffleDetails, setRaffleDetails] = useState({ prizesTotalValue: 0, ticketPrice: 0, raffleOwnerCost: 0 });
 
@@ -123,6 +124,10 @@ export default function RaffleCreation() {
 
   const handleChangeTicketAmount = (amount: number) => {
     setRaffleConfig((prevConfig) => ({ ...prevConfig, totalTickets: amount }));
+  };
+
+  const handleChangemaxTicketsPerUser = (amount?: number) => {
+    setRaffleConfig((prevConfig) => ({ ...prevConfig, maxTicketsPerUser: amount }));
   };
 
   const isRafflePayloadValid = () => {
@@ -205,28 +210,61 @@ export default function RaffleCreation() {
           <PrivacyConfigElement raffleConfig={raffleConfig} setRaffleConfig={setRaffleConfig} />
         </SubHeaderContainer>
 
+        {privacy.type === 'private' && (
+          <PrivacySettings raffleConfig={raffleConfig} setRaffleConfig={setRaffleConfig} />
+        )}
+
         <PreferencesContainer>
           <TicketsAmountAndPrices>
-            <TicketsAmountContainer>
-              <h4>Tickets amount</h4>
-              <div style={{ display: 'flex' }}>
-                <TrixelsButton
-                  btnType={raffleConfig.totalTickets === 5 ? 'BLUE' : 'DEFAULT'}
-                  label="5"
-                  attributes={{ onClick: () => handleChangeTicketAmount(5) }}
-                />
-                <TrixelsButton
-                  btnType={raffleConfig.totalTickets === 10 ? 'BLUE' : 'DEFAULT'}
-                  label="10"
-                  attributes={{ onClick: () => handleChangeTicketAmount(10) }}
-                />
-                <TrixelsButton
-                  btnType={raffleConfig.totalTickets === 20 ? 'BLUE' : 'DEFAULT'}
-                  label="20"
-                  attributes={{ onClick: () => handleChangeTicketAmount(20) }}
-                />
-              </div>
-            </TicketsAmountContainer>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <TicketsAmountContainer>
+                <h4>Tickets amount</h4>
+                <div style={{ display: 'flex' }}>
+                  <TrixelsButton
+                    width="40px"
+                    btnType={raffleConfig.totalTickets === 5 ? 'BLUE' : 'DEFAULT'}
+                    label="5"
+                    attributes={{ onClick: () => handleChangeTicketAmount(5) }}
+                  />
+                  <TrixelsButton
+                    width="40px"
+                    btnType={raffleConfig.totalTickets === 10 ? 'BLUE' : 'DEFAULT'}
+                    label="10"
+                    attributes={{ onClick: () => handleChangeTicketAmount(10) }}
+                  />
+                  <TrixelsButton
+                    width="40px"
+                    btnType={raffleConfig.totalTickets === 20 ? 'BLUE' : 'DEFAULT'}
+                    label="20"
+                    attributes={{ onClick: () => handleChangeTicketAmount(20) }}
+                  />
+                </div>
+              </TicketsAmountContainer>
+
+              <TicketsAmountContainer>
+                <h4>Buy Limit</h4>
+                <div style={{ display: 'flex' }}>
+                  <TrixelsButton
+                    width="40px"
+                    btnType={raffleConfig.maxTicketsPerUser === 2 ? 'BLUE' : 'DEFAULT'}
+                    label="2"
+                    attributes={{ onClick: () => handleChangemaxTicketsPerUser(2) }}
+                  />
+                  <TrixelsButton
+                    width="40px"
+                    btnType={raffleConfig.maxTicketsPerUser === 5 ? 'BLUE' : 'DEFAULT'}
+                    label="5"
+                    attributes={{ onClick: () => handleChangemaxTicketsPerUser(5) }}
+                  />
+                  <TrixelsButton
+                    width="40px"
+                    btnType={raffleConfig.maxTicketsPerUser === undefined ? 'BLUE' : 'DEFAULT'}
+                    label="∞"
+                    attributes={{ onClick: () => handleChangemaxTicketsPerUser(undefined) }}
+                  />
+                </div>
+              </TicketsAmountContainer>
+            </div>
 
             <PricesContainer $screenWidth={width}>
               <TextValueHorizontal>
@@ -241,10 +279,6 @@ export default function RaffleCreation() {
             </PricesContainer>
           </TicketsAmountAndPrices>
         </PreferencesContainer>
-
-        {privacy.type === 'private' && (
-          <PrivacySettings raffleConfig={raffleConfig} setRaffleConfig={setRaffleConfig} />
-        )}
 
         <SelectPrizesElement raffleConfig={raffleConfig} setRaffleConfig={setRaffleConfig} />
 

@@ -17,6 +17,10 @@ const DiscountContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+
+  input {
+    cursor: grab;
+  }
 `;
 
 const ParticipantsContainer = styled.div`
