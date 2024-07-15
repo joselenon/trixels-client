@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useEffect } from 'react';
 import { IoCopySharp } from 'react-icons/io5';
 import styled from 'styled-components';
 
 import useGetDepositMethodWallet from '../../../hooks/useGetDepositMethodWallet';
-import useWalletVerification from '../../../hooks/useWalletVerification';
+import { IWalletVerificationInRedis } from '../../../hooks/useWalletVerification';
 import BlurredLoadDiv from '../../BlurredLoadDiv';
 import CurrencyIconAndAmount from '../../CurrencyIconAndAmount';
 import MiniSquareButton from '../../TrixelsButton/MiniSquareButton';
@@ -16,19 +17,17 @@ const ValueAndDepositWalletContainer = styled.div`
   gap: 1rem;
 `;
 
-export default function NextStep() {
+export default function NextStep({ walletVerificationInfo }: { walletVerificationInfo: IWalletVerificationInRedis }) {
   const { depositMethodWalletInfo, handleGetDepositMethodWallet, isGettingWallet } = useGetDepositMethodWallet();
-  const { walletVerificationInfo } = useWalletVerification();
-
-  const onSubmitHandler = async () => {
-    if (walletVerificationInfo) {
-      await handleGetDepositMethodWallet({ network: 'Ronin', symbol: 'PIXEL' });
-    }
-  };
+  const { randomValue } = walletVerificationInfo;
 
   useEffect(() => {
     onSubmitHandler();
-  }, [walletVerificationInfo]);
+  }, []);
+
+  const onSubmitHandler = async () => {
+    await handleGetDepositMethodWallet({ network: 'Ronin', symbol: 'PIXEL' });
+  };
 
   return (
     <VerifyWalletContainer>
@@ -48,12 +47,31 @@ export default function NextStep() {
           </p>
 
           <WalletAndCopyButtonContainer>
-            {walletVerificationInfo ? (
+            <div style={{ display: 'flex', width: '100%' }}>
+              <div style={{ width: '100%' }}>
+                <CurrencyIconAndAmount
+                  theme="white"
+                  amount={parseFloat(randomValue.toString())}
+                  showFullAmount={true}
+                />
+              </div>
+
+              <div>
+                <MiniSquareButton
+                  btnType="WHITE"
+                  element={<IoCopySharp />}
+                  attributes={{
+                    onClick: () => navigator.clipboard.writeText(randomValue.toString()),
+                  }}
+                />
+              </div>
+            </div>
+            {/*             {walletVerificationInfo ? (
               <div style={{ display: 'flex', width: '100%' }}>
                 <div style={{ width: '100%' }}>
                   <CurrencyIconAndAmount
                     theme="white"
-                    amount={parseFloat(walletVerificationInfo.randomValue.toString())}
+                    amount={parseFloat(randomValue.toString())}
                     showFullAmount={true}
                   />
                 </div>
@@ -87,7 +105,7 @@ export default function NextStep() {
                   />
                 </div>
               </BlurredLoadDiv>
-            )}
+            )} */}
           </WalletAndCopyButtonContainer>
         </DepositWalletContainer>
 

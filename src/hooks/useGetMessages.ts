@@ -7,6 +7,8 @@ interface IUseGetMessages {
   messagesData: IGQLResponses<any>[] | undefined;
   raffleCreationMessages: IGQLResponses<any>[];
   setRaffleCreationMessages: React.Dispatch<React.SetStateAction<IGQLResponses<any>[]>>;
+  walletVerificationMessages: IGQLResponses<any>[];
+  setWalletVerificationMessages: React.Dispatch<React.SetStateAction<IGQLResponses<any>[]>>;
 }
 
 export default function useGetMessages(): IUseGetMessages {
@@ -14,6 +16,7 @@ export default function useGetMessages(): IUseGetMessages {
   const { messagesData, setFilteredResponse } = messages;
 
   const [raffleCreationMessages, setRaffleCreationMessages] = useState<IGQLResponses<any>[]>([]);
+  const [walletVerificationMessages, setWalletVerificationMessages] = useState<IGQLResponses<any>[]>([]);
 
   const removeMessage = (id: string) => {
     if (setFilteredResponse) {
@@ -24,7 +27,10 @@ export default function useGetMessages(): IUseGetMessages {
   useEffect(() => {
     if (messagesData) {
       const createRaffleMessages = messagesData.filter((m) => m.type === 'CREATE_RAFFLE');
-      setRaffleCreationMessages(createRaffleMessages);
+      if (createRaffleMessages.length > 0) setRaffleCreationMessages(createRaffleMessages);
+
+      const walletVerificationMessages = messagesData.filter((m) => m.type === 'WALLET_VERIFICATION');
+      if (walletVerificationMessages.length > 0) setRaffleCreationMessages(walletVerificationMessages);
 
       createRaffleMessages.forEach((raffle) => removeMessage(raffle.request));
     }
@@ -34,5 +40,7 @@ export default function useGetMessages(): IUseGetMessages {
     messagesData,
     raffleCreationMessages,
     setRaffleCreationMessages,
+    walletVerificationMessages,
+    setWalletVerificationMessages,
   };
 }

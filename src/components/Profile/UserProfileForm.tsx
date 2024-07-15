@@ -32,9 +32,10 @@ const SaveButtonContainer = styled.div`
 
 interface IUserProfileFormProps {
   userProfileInfo: TUserProfileInfo;
+  isCurrentUser: boolean;
 }
 
-export default function UserProfileForm({ userProfileInfo }: IUserProfileFormProps) {
+export default function UserProfileForm({ userProfileInfo, isCurrentUser }: IUserProfileFormProps) {
   const requireLoginFn = useRequireLogin();
   const handleUpdateUserInfo = useUpdateUserInfo();
 
@@ -58,7 +59,7 @@ export default function UserProfileForm({ userProfileInfo }: IUserProfileFormPro
       type: 'text',
       defaultValue: userProfileInfo?.email?.value,
       required: false,
-      //disabled: userInfo?.email?.value ? true : false,
+      disabled: !isCurrentUser,
     },
     label: 'E-mail',
     rhfConfig: {
@@ -76,6 +77,7 @@ export default function UserProfileForm({ userProfileInfo }: IUserProfileFormPro
       type: 'text',
       defaultValue: userProfileInfo?.roninWallet?.value,
       required: false,
+      disabled: !isCurrentUser,
     },
     label: `Ronin Wallet ${
       userProfileInfo && typeof userProfileInfo.roninWallet.verified === 'boolean'
@@ -116,14 +118,6 @@ export default function UserProfileForm({ userProfileInfo }: IUserProfileFormPro
     }
   };
 
-  const saveButton = (
-    <SaveButtonContainer>
-      <div>
-        <TrixelsButton isPending={isProcessing} btnType={'CTA'} label="Save" attributes={{ type: 'submit' }} />
-      </div>
-    </SaveButtonContainer>
-  );
-
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmitHandler)} noValidate>
@@ -133,7 +127,11 @@ export default function UserProfileForm({ userProfileInfo }: IUserProfileFormPro
           <WalletCredentials userProfileInfo={userProfileInfo} walletInput={walletInput} />
         </InputsContainer>
 
-        {requireLoginFn(false) && saveButton}
+        {requireLoginFn(false) && isCurrentUser && (
+          <SaveButtonContainer>
+            <TrixelsButton isPending={isProcessing} btnType={'CTA'} label="Save" attributes={{ type: 'submit' }} />
+          </SaveButtonContainer>
+        )}
       </form>
     </div>
   );

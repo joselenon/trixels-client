@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import { IGoogleAuthResponse } from '../components/Modals/AuthModal/LoginForm';
+import URLS from '../config/constants/URLS';
 import { Body } from '../styles/GlobalStyles';
 
 const GoogleAuth = () => {
@@ -10,7 +12,10 @@ const GoogleAuth = () => {
 
     if (data) {
       const googleAuthResponse: IGoogleAuthResponse = JSON.parse(decodeURIComponent(data));
-      window.opener.postMessage(googleAuthResponse, 'http://localhost:3000');
+      window.opener.postMessage(googleAuthResponse, URLS.MAIN_URLS.CLIENT_FULL_URL);
+      window.close();
+    } else {
+      toast.error('Something went wrong');
       window.close();
     }
   }, []);

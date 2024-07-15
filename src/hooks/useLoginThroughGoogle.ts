@@ -17,7 +17,7 @@ const useLoginThroughGoogle = ({ onMessageReceived }: IUseLoginThroughGoogleProp
     (event: MessageEvent) => {
       const { origin, data } = event;
 
-      if (origin === `http://localhost:3000` && data?.state === stateAuth) {
+      if (origin === URLS.MAIN_URLS.CLIENT_FULL_URL && data?.state === stateAuth) {
         onMessageReceived(data as IGoogleAuthResponse);
       }
     },

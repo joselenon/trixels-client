@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { v4 } from 'uuid';
 
 import URLS from '../config/constants/URLS';
 import TrixelsAxiosServiceInstance from '../services/TrixelsAxiosService';
@@ -15,11 +16,8 @@ export interface IWalletVerificationInRedis {
 
 export default function useWalletVerification() {
   const { userCredentials } = useGetUserCredentials();
-  const [walletVerificationInfo, setWalletVerificationInfo] = useState<IWalletVerificationInRedis | undefined>(
-    undefined,
-  );
 
-  const handleVerifyWallet = async () => {
+  const handleVerifyWallet = async (request: string) => {
     if (userCredentials) {
       if (!userCredentials?.roninWallet.value) {
         toast.error('You should add a wallet first');
@@ -27,19 +25,13 @@ export default function useWalletVerification() {
       }
 
       const res = await TrixelsAxiosServiceInstance.request<IWalletVerificationInRedis>({
-        requestConfig: { url: URLS.ENDPOINTS.USER.VERIFY_WALLET, method: 'post', data: null },
+        requestConfig: { url: URLS.ENDPOINTS.USER.VERIFY_WALLET, method: 'post', data: { request } },
         showToastMessage: true,
       });
 
-      if (res.data) {
-        setWalletVerificationInfo(res.data);
-      }
+      return res;
     }
   };
 
-  useEffect(() => {
-    handleVerifyWallet();
-  }, [userCredentials]);
-
-  return { walletVerificationInfo };
+  return { handleVerifyWallet };
 }

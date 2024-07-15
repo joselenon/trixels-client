@@ -89,10 +89,10 @@ export default function UserProfile() {
                   </TruncatedText>
                 </NameAndAvatar>
 
-                <UserProfileForm userProfileInfo={userProfileInfo} />
+                <UserProfileForm userProfileInfo={userProfileInfo} isCurrentUser={isCurrentUser} />
               </MainContainer>
 
-              {userCredentials && <UserMenus />}
+              {userCredentials && isCurrentUser && <UserMenus />}
             </UserProfileContainer>
           )}
         </>

@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { styled } from 'styled-components';
+import { v4 } from 'uuid';
 
+import useGetMessages from '../../../hooks/useGetMessages';
 import useGetUserCredentials from '../../../hooks/useGetUserCredentials';
+import useWalletVerification, { IWalletVerificationInRedis } from '../../../hooks/useWalletVerification';
 import { WarnParagraph } from '../../../styles/GlobalStyles';
 import Modal from '../../Modal';
 import TrixelsButton from '../../TrixelsButton';
@@ -27,24 +30,40 @@ interface IVerifyWalletModalProps {
 }
 
 export default function VerifyWalletModal({ showModal, setShowModal }: IVerifyWalletModalProps) {
-  const { userCredentials } = useGetUserCredentials();
-  const [nextStep, setNextStep] = useState(false);
+  const { handleVerifyWallet } = useWalletVerification();
+  const { walletVerificationMessages } = useGetMessages();
 
-  const toggleNextPage = () => {
-    if (userCredentials) {
-      if (!userCredentials.roninWallet.value) {
-        toast.error('You should add a wallet first');
-        return;
-      }
+  const request = v4();
 
-      setNextStep(true);
+  const [walletVerificationInfo, setWalletVerificationInfo] = useState<IWalletVerificationInRedis | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    setWalletVerificationInfo(undefined);
+  }, []);
+
+  const toggleNextPage = async () => {
+    const res = await handleVerifyWallet(request);
+
+    if (res?.success && res.data) {
+      setWalletVerificationInfo(res.data);
     }
   };
+
+  useEffect(() => {
+    if (walletVerificationMessages.length > 0) {
+      const verificationMessage = walletVerificationMessages.find((wvm) => wvm.request === request);
+      if (verificationMessage && verificationMessage.success) {
+        toast.success(verificationMessage.message);
+      }
+    }
+  }, [walletVerificationMessages]);
 
   return (
     <Modal title={'Verify Your Wallet'} showModal={showModal} setShowModal={setShowModal}>
       <>
-        {!nextStep && (
+        {!walletVerificationInfo && (
           <VerifyWalletContainer>
             <p style={{ fontWeight: '700' }}>
               {`The verification process is as simple as this: When you click the 'start' button, a random minimum amount of
@@ -59,7 +78,7 @@ export default function VerifyWalletModal({ showModal, setShowModal }: IVerifyWa
           </VerifyWalletContainer>
         )}
 
-        {nextStep && <NextStep />}
+        {walletVerificationInfo && <NextStep walletVerificationInfo={walletVerificationInfo} />}
       </>
     </Modal>
   );

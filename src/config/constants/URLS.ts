@@ -1,21 +1,25 @@
 import ENVIRONMENT from './ENVIRONMENT';
 
-export const HTTP_PROTOCOL = ENVIRONMENT.VITE_APP_HTTPS ? 'https://' : 'http://';
-export const WS_PROTOCOL = ENVIRONMENT.VITE_APP_HTTPS ? 'wss://' : 'ws://';
+const PROTOCOL = ENVIRONMENT.VITE_APP_HTTPS ? 'https://' : 'http://';
 
-// 'localhost' | 'jds.gamblance'
-const SERVER_DOMAIN = `${ENVIRONMENT.VITE_APP_SERVER_DOMAIN}`;
-
-// '4000'
+/* __SERVER__ */
+/* https://serverdomain.com OU http://localhost */
+const SERVER_URL = `${PROTOCOL}${ENVIRONMENT.VITE_APP_SERVER_SUBDOMAIN_DOMAIN}`;
+/* SERVER PORT */
 const SERVER_PORT = ENVIRONMENT.VITE_APP_SERVER_PORT;
-
-// 'http://localhost:4000' | 'https://jds.gamblance.com'
-const SERVER_FULL_URL =
-  ENVIRONMENT.VITE_APP_MODE === 'PRODUCTION' ? `${SERVER_DOMAIN}` : `${SERVER_DOMAIN}:${SERVER_PORT}`;
-
+/* https://serverdomain.com OU http://localhost:PORT */
+const SERVER_FULL_URL = ENVIRONMENT.VITE_APP_MODE === 'DEVELOPMENT' ? `${SERVER_URL}:${SERVER_PORT}` : SERVER_URL;
+/* https://serverdomain.com/api OU http://localhost:PORT/api */
 export const API_BASE = '/api';
-const API_URL = `${HTTP_PROTOCOL}${SERVER_FULL_URL}${API_BASE}`;
-const WS_API_URL = `${WS_PROTOCOL}${SERVER_FULL_URL}${API_BASE}`;
+export const API_URL = `${SERVER_FULL_URL}${API_BASE}`;
+
+/* __CLIENT__ */
+/* https://clientdomain.com OU http://localhost */
+const CLIENT_URL = `${PROTOCOL}${ENVIRONMENT.VITE_APP_CLIENT_SUBDOMAIN_DOMAIN}`;
+/* CLIENT PORT */
+const CLIENT_PORT = ENVIRONMENT.VITE_APP_CLIENT_PORT;
+/* https://client.domain.com OU http://localhost:PORT */
+export const CLIENT_FULL_URL = ENVIRONMENT.VITE_APP_MODE === 'PRODUCTION' ? CLIENT_URL : `${CLIENT_URL}:${CLIENT_PORT}`;
 
 const ENDPOINTS = {
   AUTH: '/auth',
@@ -68,8 +72,16 @@ const API_ENDPOINTS = {
 };
 
 const URLS = {
+  MAIN_URLS: {
+    CLIENT_PORT,
+    CLIENT_URL,
+    SERVER_PORT,
+    SERVER_URL,
+    API_URL,
+    CLIENT_FULL_URL,
+    SERVER_FULL_URL,
+  },
   ENDPOINTS: API_ENDPOINTS,
-  MAIN_URLS: { SERVER_DOMAIN, API_URL, WS_API_URL },
 };
 
 export default URLS;
