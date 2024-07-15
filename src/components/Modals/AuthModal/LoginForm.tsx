@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
+import google_icon_white from '../../../assets/images/google_icon_white.jpg';
 import useLogin from '../../../hooks/useLogin';
 import useLoginThroughGoogle from '../../../hooks/useLoginThroughGoogle';
 import { ICreateInput } from '../../../interfaces/IRHF';
@@ -9,6 +11,19 @@ import AuthService from '../../../services/AuthService';
 import isUsernameValid from '../../../utils/isUsernameValid';
 import Form from '../../Form';
 import TrixelsButton from '../../TrixelsButton';
+
+const LoginFormContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2rem;
+
+  form {
+    width: 100%;
+  }
+`;
 
 export interface IGoogleAuthResponse {
   userCredentials: IUserToFrontEnd;
@@ -51,7 +66,7 @@ const LoginForm = () => {
   };
 
   return (
-    <>
+    <LoginFormContainer>
       <Form
         inputArray={[usernameInput, passwordInput]}
         axiosCallHook={handleEnterButtonClick}
@@ -60,12 +75,18 @@ const LoginForm = () => {
 
       <TrixelsButton
         btnType="CTA"
-        label="Login through Google"
+        width="100%"
+        element={
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+            <img src={google_icon_white} alt="google_icon" width={20} style={{ borderRadius: '4px' }} />
+            <h4 style={{ color: 'white' }}>Login through Google</h4>
+          </div>
+        }
         attributes={{
           onClick: initiateGoogleAuth,
         }}
       />
-    </>
+    </LoginFormContainer>
   );
 };
 

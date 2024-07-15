@@ -57,6 +57,8 @@ export default function MessagesContextProvider({ children }: { children: ReactN
         }
       }
 
+      showToast(newMessage);
+
       setFilteredResponse((prev) => {
         return prev ? [...prev, { ...newMessage, data: dataFiltered }] : [{ ...newMessage, data: dataFiltered }];
       });

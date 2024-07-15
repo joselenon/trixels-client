@@ -18,25 +18,21 @@ export interface ITrixelsButtonAtributtes {
 
 const ButtonTypes: IButtonTypeConfig = {
   DEFAULT: {
-    padding: '14px 10px',
     background: 'var(--default-grey)',
   },
   TEXT: {
     background: 'none',
   },
   CTA: {
-    padding: '14px 10px',
     background: 'var(--default-green)',
   },
   DANGER: {
-    padding: '14px 10px',
     background: 'var(--default-red)',
   },
   ELEMENT: {
     width: '100%',
   },
   BLUE: {
-    padding: '14px 10px',
     background: 'var(--default-blue)',
   },
 };
