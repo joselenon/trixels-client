@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import LogoutButton from '../components/LogoutButton';
+import NotFoundMessage from '../components/NotFoundMessage';
 import UserMenus from '../components/Profile/UserMenus';
 import UserProfileForm from '../components/Profile/UserProfileForm';
 import Reveal from '../components/Reveal';
@@ -74,9 +75,7 @@ export default function UserProfile() {
       <Reveal width="100%">
         <>
           {userProfileInfo === null ? (
-            <div style={{ height: 500, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <h1 style={{ color: 'var(--default-middlegrey)' }}>User not found</h1>
-            </div>
+            <NotFoundMessage label="User not found" />
           ) : (
             <UserProfileContainer>
               {isCurrentUser && <LogoutButton />}

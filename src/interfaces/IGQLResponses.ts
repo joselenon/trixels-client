@@ -9,11 +9,27 @@ export interface IPubSubCreateRaffleData {
   gameId: string;
 }
 
-export type TGQLResponsesTypes = 'CREATE_RAFFLE' | 'GET_LIVE_RAFFLES' | 'GET_LIVE_BALANCE';
+export type TGQLResponsesTypes =
+  | 'CREATE_RAFFLE'
+  | 'GET_LIVE_RAFFLES'
+  | 'GET_LIVE_BALANCE'
+  | 'GET_AVAILABLE_ITEMS'
+  | 'BUY_RAFFLE_TICKET'
+  | 'REGISTER_USER'
+  | 'LOG_USER'
+  | 'GET_USER_INFO'
+  | 'UPDATE_USER_CREDENTIALS'
+  | 'GET_BALANCE'
+  | 'GET_USER_TRANSACTIONS'
+  | 'REDEEM_CODE'
+  | 'REFRESH_ACCESS_TOKEN'
+  | 'WALLET_VERIFICATION'
+  | 'GET_DEPOSIT_METHODS';
 
 export interface IGQLResponses<D> {
   success: boolean;
   type: TGQLResponsesTypes;
+  request: string;
   message: TMessages;
   data?: D;
 }

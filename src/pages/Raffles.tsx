@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import RaffleBox from '../components/Games/Raffles/RaffleBox';
 import Reveal from '../components/Reveal';
 import TrixelsButton from '../components/TrixelsButton';
+import { useRafflesContext } from '../contexts/RafflesContext';
 import { useScreenConfig } from '../contexts/ScreenConfigContext';
-import useGetRaffles from '../hooks/useGetRaffles';
 import { IReduxStore } from '../interfaces/IRedux';
 import { Body } from '../styles/GlobalStyles';
 
@@ -35,15 +35,21 @@ export default function Raffles() {
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
   );
-  const { updatedRaffles } = useGetRaffles();
+  const { activeRaffles, endedRaffles } = useRafflesContext();
 
   const [aRafflesElements, setARafflesElements] = useState<JSX.Element[]>([]);
   const [eRafflesElements, setERafflesElements] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
-    if (updatedRaffles) {
-      const { endedRaffles, activeRaffles } = updatedRaffles;
+    if (activeRaffles) {
+      activeRaffles.sort((raffle1, raffle2) => raffle2.createdAt - raffle1.createdAt);
+      const aRaffles = activeRaffles.map((raffle) => (
+        <RaffleBox width="100%" key={raffle.gameId} raffleInfo={raffle} />
+      ));
+      setARafflesElements(aRaffles);
+    }
 
+    if (endedRaffles) {
       endedRaffles.sort((raffle1, raffle2) => raffle2.createdAt - raffle1.createdAt);
       const eRaffles = endedRaffles.map((raffle) => (
         <Reveal key={raffle.gameId}>
@@ -51,14 +57,8 @@ export default function Raffles() {
         </Reveal>
       ));
       setERafflesElements(eRaffles);
-
-      activeRaffles.sort((raffle1, raffle2) => raffle2.createdAt - raffle1.createdAt);
-      const aRaffles = activeRaffles.map((raffle) => (
-        <RaffleBox width="100%" key={raffle.gameId} raffleInfo={raffle} />
-      ));
-      setARafflesElements(aRaffles);
     }
-  }, [updatedRaffles]);
+  }, [activeRaffles, endedRaffles]);
 
   return (
     <Body>

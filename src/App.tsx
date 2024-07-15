@@ -9,6 +9,7 @@ import Header from './components/Header';
 import MobileMenu from './components/MobileMenu';
 import BalanceContextProvider from './contexts/BalanceContext';
 import MessagesContextProvider from './contexts/MessagesContext';
+import RafflesContextProvider from './contexts/RafflesContext';
 import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
 import AppRoutes from './routes/AppRoutes';
 import AuthService from './services/AuthService';
@@ -34,7 +35,9 @@ function App() {
           </>
         </ScreenConfigProvider>
 
-        <AppRoutes />
+        <RafflesContextProvider>
+          <AppRoutes />
+        </RafflesContextProvider>
         <Footer />
       </MessagesContextProvider>
 

@@ -49,6 +49,7 @@ export const GET_LIVE_MESSAGES = gql`
       message
       data
       type
+      request
     }
   }
 `;

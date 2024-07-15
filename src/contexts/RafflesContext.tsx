@@ -2,17 +2,21 @@ import React, { ReactNode, useContext, useEffect, useState } from 'react';
 
 import RafflesGQL from '../graphql/RafflesGQL';
 import { gqlQuery, gqlSubscription } from '../hooks/useGraphQLService';
-import { TGetRafflesResponseRaw, TGetRafflesResponseTreated } from '../interfaces/IGQLResponses';
+import { TGetRafflesResponseRaw } from '../interfaces/IGQLResponses';
 import { IRaffleToFrontEndTreated, TRaffleWinnersPrizes } from '../interfaces/IRaffles';
 
 const RafflesContext = React.createContext<{
-  updatedRaffles: TGetRafflesResponseTreated | undefined;
+  activeRaffles: IRaffleToFrontEndTreated[] | null;
+  endedRaffles: IRaffleToFrontEndTreated[] | null;
 }>({
-  updatedRaffles: undefined,
+  activeRaffles: null,
+  endedRaffles: null,
 });
 
 export default function RafflesContextProvider({ children }: { children: ReactNode }) {
-  const [updatedRaffles, setUpdatedRaffles] = useState<TGetRafflesResponseTreated | undefined>(undefined);
+  const [activeRaffles, setActiveRaffles] = useState<IRaffleToFrontEndTreated[] | null>(null);
+  const [endedRaffles, setEndedRaffles] = useState<IRaffleToFrontEndTreated[] | null>(null);
+  const [initialQueryDone, setInitialQueryDone] = useState(false);
 
   const queryResponse = gqlQuery<TGetRafflesResponseRaw, 'getRaffles'>({
     gql: RafflesGQL.GET_RAFFLES,
@@ -24,42 +28,45 @@ export default function RafflesContextProvider({ children }: { children: ReactNo
     loginRequired: false,
   });
 
+  const handleData = (data: TGetRafflesResponseRaw) => {
+    const activeRafflesTreated: IRaffleToFrontEndTreated[] = data.activeRaffles.map((raffle) => ({
+      ...raffle,
+      createdAt: parseInt(raffle.createdAt),
+      finishedAt: raffle.finishedAt ? parseInt(raffle.finishedAt) : undefined,
+      info: {
+        ...raffle.info,
+        prizes: JSON.parse(raffle.info.prizes) as TRaffleWinnersPrizes,
+      },
+    }));
+
+    const endedRafflesTreated: IRaffleToFrontEndTreated[] = data.endedRaffles.map((raffle) => ({
+      ...raffle,
+      createdAt: parseInt(raffle.createdAt),
+      finishedAt: raffle.finishedAt ? parseInt(raffle.finishedAt) : undefined,
+      info: {
+        ...raffle.info,
+        prizes: JSON.parse(raffle.info.prizes) as TRaffleWinnersPrizes,
+      },
+    }));
+
+    setActiveRaffles(activeRafflesTreated);
+    setEndedRaffles(endedRafflesTreated);
+  };
+
   useEffect(() => {
-    const handleData = (data: TGetRafflesResponseRaw) => {
-      const activeRafflesTreated: IRaffleToFrontEndTreated[] = data.activeRaffles.map((raffle) => ({
-        ...raffle,
-        createdAt: parseInt(raffle.createdAt),
-        finishedAt: raffle.finishedAt ? parseInt(raffle.finishedAt) : undefined,
-        info: {
-          ...raffle.info,
-          prizes: JSON.parse(raffle.info.prizes) as TRaffleWinnersPrizes,
-        },
-      }));
-
-      const endedRafflesTreated: IRaffleToFrontEndTreated[] = data.endedRaffles.map((raffle) => ({
-        ...raffle,
-        createdAt: parseInt(raffle.createdAt),
-        finishedAt: raffle.finishedAt ? parseInt(raffle.finishedAt) : undefined,
-        info: {
-          ...raffle.info,
-          prizes: JSON.parse(raffle.info.prizes) as TRaffleWinnersPrizes,
-        },
-      }));
-
-      setUpdatedRaffles({
-        activeRaffles: activeRafflesTreated,
-        endedRaffles: endedRafflesTreated,
-      });
-    };
-
-    if (subscriptionResponse?.data?.getLiveRaffles?.data) {
-      handleData(subscriptionResponse.data.getLiveRaffles.data);
-    } else if (queryResponse?.data?.getRaffles?.data) {
+    if (!initialQueryDone && queryResponse?.data?.getRaffles?.data) {
       handleData(queryResponse.data.getRaffles.data);
+      setInitialQueryDone(true);
     }
-  }, [queryResponse?.data, subscriptionResponse?.data]);
+  }, [queryResponse?.data, initialQueryDone]);
 
-  return <RafflesContext.Provider value={{ updatedRaffles }}>{children}</RafflesContext.Provider>;
+  useEffect(() => {
+    if (initialQueryDone && subscriptionResponse?.data?.getLiveRaffles?.data) {
+      handleData(subscriptionResponse.data.getLiveRaffles.data);
+    }
+  }, [subscriptionResponse?.data, initialQueryDone]);
+
+  return <RafflesContext.Provider value={{ activeRaffles, endedRaffles }}>{children}</RafflesContext.Provider>;
 }
 
 export function useRafflesContext() {

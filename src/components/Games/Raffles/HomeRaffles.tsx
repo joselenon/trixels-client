@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { EffectCards } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import useGetRaffles from '../../../hooks/useGetRaffles';
+import { useRafflesContext } from '../../../contexts/RafflesContext';
 import RaffleBox from './RaffleBox';
 
 const HomeRafflesContainer = styled.div`
@@ -68,21 +68,19 @@ const TextsContainer = styled.div`
 const SwiperContainer = styled.div``;
 
 export default function HomeRaffles() {
-  const { updatedRaffles } = useGetRaffles();
+  const { activeRaffles } = useRafflesContext();
 
   const [aRafflesElements, setARafflesElements] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
-    if (updatedRaffles) {
-      const { activeRaffles } = updatedRaffles;
-
+    if (activeRaffles) {
       activeRaffles.sort((raffle1, raffle2) => raffle2.createdAt - raffle1.createdAt);
       const aRaffles = activeRaffles.map((raffle) => (
         <RaffleBox width="100%" key={raffle.gameId} raffleInfo={raffle} />
       ));
       setARafflesElements(aRaffles);
     }
-  }, [updatedRaffles]);
+  }, [activeRaffles]);
 
   return (
     <HomeRafflesContainer>

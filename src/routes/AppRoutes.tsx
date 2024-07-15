@@ -2,7 +2,6 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import AvailableItemsContextProvider from '../contexts/ItemsAvailableContext';
-import RafflesContextProvider from '../contexts/RafflesContext';
 import { ScreenConfigProvider } from '../contexts/ScreenConfigContext';
 import Affiliates from '../pages/Affiliates';
 import CashoutsApprovals from '../pages/CashoutsApprovals';
@@ -31,32 +30,26 @@ export default function AppRoutes() {
       <Route
         path="/raffles"
         element={
-          <RafflesContextProvider>
-            <AvailableItemsContextProvider>
-              <Raffles />
-            </AvailableItemsContextProvider>
-          </RafflesContextProvider>
+          <AvailableItemsContextProvider>
+            <Raffles />
+          </AvailableItemsContextProvider>
         }
       />
       <Route
         path="/raffles/create"
         element={
-          <RafflesContextProvider>
-            <AvailableItemsContextProvider>
-              <RaffleCreation />
-            </AvailableItemsContextProvider>
-          </RafflesContextProvider>
+          <AvailableItemsContextProvider>
+            <RaffleCreation />
+          </AvailableItemsContextProvider>
         }
       />
       <Route
         path="/raffle/:gameId"
         element={
           <ScreenConfigProvider>
-            <RafflesContextProvider>
-              <AvailableItemsContextProvider>
-                <ViewRaffle />
-              </AvailableItemsContextProvider>
-            </RafflesContextProvider>
+            <AvailableItemsContextProvider>
+              <ViewRaffle />
+            </AvailableItemsContextProvider>
           </ScreenConfigProvider>
         }
       />

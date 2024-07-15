@@ -7,8 +7,9 @@ import Prizes from '../components/Games/Raffles/RafflesDetails/PrizesElement';
 import RaffleTotalPrize from '../components/Games/Raffles/RafflesDetails/RaffleTotalPrize';
 import TicketsElements from '../components/Games/Raffles/RafflesDetails/TicketsElements';
 import Wheel from '../components/Games/Raffles/Wheel';
+import NotFoundMessage from '../components/NotFoundMessage';
 import TrixelsButton from '../components/TrixelsButton';
-import useGetActiveRaffles from '../hooks/useGetRaffles';
+import { useRafflesContext } from '../contexts/RafflesContext';
 import { IRaffleToFrontEndTreated } from '../interfaces/IRaffles';
 import { Body, TruncatedText } from '../styles/GlobalStyles';
 
@@ -34,89 +35,69 @@ const RaffleCaption = styled.div`
 `;
 
 export default function ViewRaffle() {
-  const { gameId } = useParams();
-  const { updatedRaffles } = useGetActiveRaffles();
-
+  const { gameId } = useParams<{ gameId: string }>();
+  const { activeRaffles } = useRafflesContext();
   const [raffleSelected, setRaffleSelected] = useState<IRaffleToFrontEndTreated | undefined | null>(undefined);
 
   useEffect(() => {
-    if (updatedRaffles) {
-      const activeRaffles = updatedRaffles.activeRaffles;
-      const endedRaffles = updatedRaffles.endedRaffles;
-
-      const allRaffles = [...activeRaffles, ...endedRaffles];
-
-      const raffleFound = allRaffles.find((raffle) => raffle.gameId === gameId);
-      if (raffleFound) {
-        setRaffleSelected(raffleFound);
-      } else {
-        setRaffleSelected(null);
-      }
+    if (activeRaffles) {
+      const raffleFound = activeRaffles.find((raffle) => raffle.gameId === gameId);
+      setRaffleSelected(raffleFound || null);
     }
-  }, [updatedRaffles]);
+  }, [activeRaffles]);
 
-  const renderRaffle = () => {
-    if (!raffleSelected) {
-      if (raffleSelected === undefined) {
-        return (
-          <Body>
-            <h1 style={{ color: 'brown' }}>Loading</h1>
-          </Body>
-        );
-      }
-      if (raffleSelected === null) {
-        return (
-          <Body>
-            <h1 style={{ color: 'brown' }}>Raffle not found</h1>
-          </Body>
-        );
-      }
-    }
-
-    const { info, description } = raffleSelected;
-    const { prizes, prizesTotalValue } = info;
-
-    const raffleDate = raffleSelected.createdAt;
-
+  if (raffleSelected === undefined) {
     return (
       <Body>
-        {raffleSelected && (
-          <ViewRaffleContainer>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-              <TitleAndBackButton>
-                <div>
-                  <Link to={'/raffles'}>
-                    <TrixelsButton btnType="DEFAULT" label="BACK" />
-                  </Link>
-                </div>
-
-                <TruncatedText>
-                  <h4 style={{ whiteSpace: 'wrap' }}>Raffle: {description}</h4>
-                </TruncatedText>
-              </TitleAndBackButton>
-
-              <RaffleCaption>
-                <TruncatedText>
-                  <h4>Game: {raffleSelected.gameId}</h4>
-                </TruncatedText>
-                <h4>{new Date(raffleDate).toLocaleDateString()}</h4>
-              </RaffleCaption>
-            </div>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-              <Wheel raffle={raffleSelected} />
-              <div>
-                <RaffleTotalPrize prizesTotalValue={prizesTotalValue} />
-                <Prizes prizes={prizes} />
-              </div>
-            </div>
-
-            <TicketsElements raffle={raffleSelected} />
-          </ViewRaffleContainer>
-        )}
+        <h1 style={{ color: 'brown' }}>Loading</h1>
       </Body>
     );
-  };
+  }
 
-  return renderRaffle();
+  if (raffleSelected === null) {
+    return (
+      <Body>
+        <NotFoundMessage label="Raffle not found" />
+      </Body>
+    );
+  }
+
+  const { info, description, createdAt } = raffleSelected;
+  const { prizes, prizesTotalValue } = info;
+
+  return (
+    <Body>
+      <ViewRaffleContainer>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+          <TitleAndBackButton>
+            <div>
+              <Link to="/raffles">
+                <TrixelsButton btnType="DEFAULT" label="BACK" />
+              </Link>
+            </div>
+            <TruncatedText>
+              <h4 style={{ whiteSpace: 'wrap' }}>Raffle: {description}</h4>
+            </TruncatedText>
+          </TitleAndBackButton>
+
+          <RaffleCaption>
+            <TruncatedText>
+              <h4>Game: {raffleSelected.gameId}</h4>
+            </TruncatedText>
+            <h4>{new Date(createdAt).toLocaleDateString()}</h4>
+          </RaffleCaption>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+          <Wheel raffle={raffleSelected} />
+
+          <div>
+            <RaffleTotalPrize prizesTotalValue={prizesTotalValue} />
+            <Prizes prizes={prizes} />
+          </div>
+        </div>
+
+        <TicketsElements raffle={raffleSelected} />
+      </ViewRaffleContainer>
+    </Body>
+  );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import styled from 'styled-components';
+import { v4 } from 'uuid';
 
 import CurrencyIconAndAmountMEDIUM from '../components/CurrencyIconAndAmount';
 import PrivacyConfigElement from '../components/Games/Raffles/RaffleCreation/PrivacyModeButtons';
@@ -10,10 +11,10 @@ import SelectPrizesElement from '../components/Games/Raffles/RaffleCreation/Sele
 import TrixelsButton from '../components/TrixelsButton';
 import { ROUTES } from '../config/constants/CLIENT_ROUTES';
 import { useAvailableItemsContext } from '../contexts/ItemsAvailableContext';
+import { useRafflesContext } from '../contexts/RafflesContext';
 import { useScreenConfig } from '../contexts/ScreenConfigContext';
 import useCreateRaffle from '../hooks/useCreateRaffle';
 import useGetMessages from '../hooks/useGetMessages';
-import useGetRaffles from '../hooks/useGetRaffles';
 import useRequireLogin from '../hooks/useRequireLogin';
 import { IRaffleCreationPayload } from '../interfaces/IRaffleCreation';
 import { Body } from '../styles/GlobalStyles';
@@ -89,10 +90,10 @@ export default function RaffleCreation() {
   const navigate = useNavigate();
   const requireLoginFn = useRequireLogin();
   const handleCreateRaffle = useCreateRaffle();
-  const { updatedRaffles } = useGetRaffles();
+  const { activeRaffles } = useRafflesContext();
   const { width } = useScreenConfig();
   const availableItems = useAvailableItemsContext();
-  const { messagesData, setFilteredResponse } = useGetMessages();
+  const { messagesData, raffleCreationMessages, setRaffleCreationMessages } = useGetMessages();
 
   const [isRaffleCreationProcessing, setIsRaffleCreationProcessing] = useState({
     isProcessing: false,
@@ -104,6 +105,7 @@ export default function RaffleCreation() {
     privacy: { mode: 'public', type: 'public' },
     prizes: {},
     description: 'This is a fun raffle!',
+    request: v4(),
   });
   const [raffleDetails, setRaffleDetails] = useState({ prizesTotalValue: 0, ticketPrice: 0, raffleOwnerCost: 0 });
 
@@ -150,34 +152,37 @@ export default function RaffleCreation() {
   };
 
   useEffect(() => {
-    if (messagesData) {
-      const createRaffleMessages = messagesData.filter((message) => message.type === 'CREATE_RAFFLE');
+    if (raffleCreationMessages) {
+      raffleCreationMessages.forEach((message) => {
+        const { data, success, request } = message;
 
-      createRaffleMessages.forEach((message) => {
-        const { data, success } = message;
-
-        if (success && data) {
-          setFilteredResponse && setFilteredResponse(() => messagesData.filter((m) => m !== message));
+        if (request === raffleConfig.request) {
+          setRaffleCreationMessages(() => raffleCreationMessages.filter((m) => m !== message));
           setIsRaffleCreationProcessing(() => {
             return { gameId: data.gameId, isProcessing: false };
           });
         }
 
-        setFilteredResponse && setFilteredResponse(() => messagesData.filter((m) => m !== message));
+        if (!success) {
+          setIsRaffleCreationProcessing(() => {
+            return { gameId: undefined, isProcessing: false };
+          });
+        }
+
+        setRaffleCreationMessages(() => raffleCreationMessages.filter((m) => m !== message));
       });
     }
   }, [messagesData]);
 
   useEffect(() => {
-    if (updatedRaffles) {
-      const { activeRaffles } = updatedRaffles;
+    if (activeRaffles && isRaffleCreationProcessing.gameId) {
       const findRaffleCreated = activeRaffles.find((raffle) => raffle.gameId === isRaffleCreationProcessing.gameId);
 
       if (findRaffleCreated) {
         navigate(`${ROUTES.RAFFLE}/${isRaffleCreationProcessing.gameId}`);
       }
     }
-  }, [updatedRaffles, isRaffleCreationProcessing]);
+  }, [activeRaffles, isRaffleCreationProcessing]);
 
   const { privacy } = raffleConfig;
 
