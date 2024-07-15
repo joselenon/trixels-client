@@ -21,6 +21,9 @@ const CLIENT_PORT = ENVIRONMENT.VITE_APP_CLIENT_PORT;
 /* https://client.domain.com OU http://localhost:PORT */
 export const CLIENT_FULL_URL = ENVIRONMENT.VITE_APP_MODE === 'PRODUCTION' ? CLIENT_URL : `${CLIENT_URL}:${CLIENT_PORT}`;
 
+export const WS_PROTOCOL = ENVIRONMENT.VITE_APP_HTTPS ? 'wss://' : 'ws://';
+const WS_API_URL = `${WS_PROTOCOL}${SERVER_FULL_URL}${API_BASE}`;
+
 const ENDPOINTS = {
   AUTH: '/auth',
   USER: '/user',
@@ -80,6 +83,7 @@ const URLS = {
     API_URL,
     CLIENT_FULL_URL,
     SERVER_FULL_URL,
+    WS_API_URL,
   },
   ENDPOINTS: API_ENDPOINTS,
 };
