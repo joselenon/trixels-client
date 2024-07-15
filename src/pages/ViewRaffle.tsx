@@ -36,14 +36,21 @@ const RaffleCaption = styled.div`
 
 export default function ViewRaffle() {
   const { gameId } = useParams<{ gameId: string }>();
-  const { activeRaffles } = useRafflesContext();
+  const { activeRaffles, endedRaffles } = useRafflesContext();
   const [raffleSelected, setRaffleSelected] = useState<IRaffleToFrontEndTreated | undefined | null>(undefined);
 
   useEffect(() => {
+    let raffleSelected = null;
+
     if (activeRaffles) {
       const raffleFound = activeRaffles.find((raffle) => raffle.gameId === gameId);
-      setRaffleSelected(raffleFound || null);
+      if (raffleFound) raffleSelected = raffleFound;
     }
+    if (endedRaffles) {
+      const raffleFound = endedRaffles.find((raffle) => raffle.gameId === gameId);
+      if (raffleFound) raffleSelected = raffleFound;
+    }
+    setRaffleSelected(raffleSelected);
   }, [activeRaffles]);
 
   if (raffleSelected === undefined) {
