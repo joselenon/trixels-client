@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -9,9 +10,20 @@ const MessagesContext = React.createContext<{
   messages: {
     messagesData: IGQLResponses<string>[] | undefined;
     setFilteredResponse: React.Dispatch<React.SetStateAction<IGQLResponses<any>[] | undefined>> | undefined;
+    raffleCreationMessages: IGQLResponses<any>[];
+    setRaffleCreationMessages: React.Dispatch<React.SetStateAction<IGQLResponses<any>[]>>;
+    walletVerificationMessages: IGQLResponses<any>[];
+    setWalletVerificationMessages: React.Dispatch<React.SetStateAction<IGQLResponses<any>[]>>;
   };
 }>({
-  messages: { messagesData: undefined, setFilteredResponse: undefined },
+  messages: {
+    messagesData: undefined,
+    setFilteredResponse: undefined,
+    raffleCreationMessages: [],
+    setRaffleCreationMessages: () => {},
+    walletVerificationMessages: [],
+    setWalletVerificationMessages: () => {},
+  },
 });
 
 export default function MessagesContextProvider({ children }: { children: ReactNode }) {
@@ -21,6 +33,8 @@ export default function MessagesContextProvider({ children }: { children: ReactN
   });
 
   const [filteredResponse, setFilteredResponse] = useState<IGQLResponses<any>[] | undefined>(undefined);
+  const [raffleCreationMessages, setRaffleCreationMessages] = useState<IGQLResponses<any>[]>([]);
+  const [walletVerificationMessages, setWalletVerificationMessages] = useState<IGQLResponses<any>[]>([]);
 
   const showToast = (message: IGQLResponses<string>) => {
     if (message.success) {
@@ -43,8 +57,6 @@ export default function MessagesContextProvider({ children }: { children: ReactN
         }
       }
 
-      showToast(newMessage);
-
       setFilteredResponse((prev) => {
         return prev ? [...prev, { ...newMessage, data: dataFiltered }] : [{ ...newMessage, data: dataFiltered }];
       });
@@ -52,7 +64,18 @@ export default function MessagesContextProvider({ children }: { children: ReactN
   }, [response && response.data]);
 
   return (
-    <MessagesContext.Provider value={{ messages: { messagesData: filteredResponse, setFilteredResponse } }}>
+    <MessagesContext.Provider
+      value={{
+        messages: {
+          messagesData: filteredResponse,
+          setFilteredResponse,
+          raffleCreationMessages,
+          setRaffleCreationMessages,
+          walletVerificationMessages,
+          setWalletVerificationMessages,
+        },
+      }}
+    >
       {children}
     </MessagesContext.Provider>
   );

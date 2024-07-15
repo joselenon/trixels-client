@@ -56,7 +56,7 @@ export interface IUpdateUserCredentialsPayload {
 
 export default function UserProfile() {
   const { isMobile } = useScreenConfig();
-  const { userProfileInfo, queryUsername } = useGetUserProfile();
+  const { userProfileInfo } = useGetUserProfile();
 
   const userCredentials = useSelector<IReduxStore, IReduxStore['auth']['userCredentials']>(
     (state) => state.auth.userCredentials,
@@ -65,10 +65,6 @@ export default function UserProfile() {
   const urlParams = useParams<TParams>();
   const { username: usernameToQuery } = urlParams;
   const isCurrentUser = userCredentials?.username === usernameToQuery;
-
-  useEffect(() => {
-    queryUsername();
-  }, [usernameToQuery, userCredentials]);
 
   return (
     <Body>

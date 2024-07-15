@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ export default function useGetUserProfile() {
   const [userProfileInfo, setUserProfileInfo] = useState<TUserProfileInfo>(undefined);
 
   const queryUsername = async () => {
+    console.log('cahnged', userCredentials);
     try {
       if (isCurrentUser) {
         return setUserProfileInfo(userCredentials);
@@ -39,6 +40,10 @@ export default function useGetUserProfile() {
       setUserProfileInfo(null);
     }
   };
+
+  useEffect(() => {
+    queryUsername();
+  }, [userCredentials, usernameToQuery]);
 
   return { userProfileInfo, queryUsername };
 }

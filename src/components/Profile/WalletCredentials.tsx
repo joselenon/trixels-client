@@ -3,11 +3,9 @@ import { useSelector } from 'react-redux';
 import { styled } from 'styled-components';
 
 import { TUserProfileInfo } from '../../hooks/useGetUserProfile';
-import useWalletVerification, { IWalletVerificationInRedis } from '../../hooks/useWalletVerification';
 import { IReduxStore } from '../../interfaces/IRedux';
 import { ITextInput } from '../../interfaces/IRHF';
 import Input from '../Input';
-import Modal from '../Modal';
 import VerifyWalletModal from '../Modals/VerifyWalletModal/VerifyWalletModal';
 import TrixelsButton from '../TrixelsButton';
 

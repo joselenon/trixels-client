@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useMessagesContext } from '../contexts/MessagesContext';
 import { IGQLResponses } from '../interfaces/IGQLResponses';
@@ -13,10 +13,14 @@ interface IUseGetMessages {
 
 export default function useGetMessages(): IUseGetMessages {
   const { messages } = useMessagesContext();
-  const { messagesData, setFilteredResponse } = messages;
-
-  const [raffleCreationMessages, setRaffleCreationMessages] = useState<IGQLResponses<any>[]>([]);
-  const [walletVerificationMessages, setWalletVerificationMessages] = useState<IGQLResponses<any>[]>([]);
+  const {
+    messagesData,
+    setFilteredResponse,
+    raffleCreationMessages,
+    setRaffleCreationMessages,
+    walletVerificationMessages,
+    setWalletVerificationMessages,
+  } = messages;
 
   const removeMessage = (id: string) => {
     if (setFilteredResponse) {
@@ -29,12 +33,12 @@ export default function useGetMessages(): IUseGetMessages {
       const createRaffleMessages = messagesData.filter((m) => m.type === 'CREATE_RAFFLE');
       if (createRaffleMessages.length > 0) setRaffleCreationMessages(createRaffleMessages);
 
-      const walletVerificationMessages = messagesData.filter((m) => m.type === 'WALLET_VERIFICATION');
-      if (walletVerificationMessages.length > 0) setRaffleCreationMessages(walletVerificationMessages);
+      const walletVerificationMessagesFound = messagesData.filter((m) => m.type === 'WALLET_VERIFICATION');
+      if (walletVerificationMessagesFound.length > 0) setWalletVerificationMessages(walletVerificationMessagesFound);
 
       createRaffleMessages.forEach((raffle) => removeMessage(raffle.request));
     }
-  }, [messagesData]);
+  }, [messagesData, setRaffleCreationMessages, setWalletVerificationMessages]);
 
   return {
     messagesData,
