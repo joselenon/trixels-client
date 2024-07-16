@@ -106,7 +106,7 @@ export default function RaffleCreation() {
     prizes: {},
     description: 'This is a fun raffle!',
     request: v4(),
-    maxTicketsPerUser: undefined,
+    maxTicketsPerUser: null,
   });
   const [raffleDetails, setRaffleDetails] = useState({ prizesTotalValue: 0, ticketPrice: 0, raffleOwnerCost: 0 });
 
@@ -126,7 +126,7 @@ export default function RaffleCreation() {
     setRaffleConfig((prevConfig) => ({ ...prevConfig, totalTickets: amount }));
   };
 
-  const handleChangemaxTicketsPerUser = (amount?: number) => {
+  const handleChangemaxTicketsPerUser = (amount: number | null) => {
     setRaffleConfig((prevConfig) => ({ ...prevConfig, maxTicketsPerUser: amount }));
   };
 
@@ -260,7 +260,7 @@ export default function RaffleCreation() {
                     width="40px"
                     btnType={raffleConfig.maxTicketsPerUser === undefined ? 'BLUE' : 'DEFAULT'}
                     label="∞"
-                    attributes={{ onClick: () => handleChangemaxTicketsPerUser(undefined) }}
+                    attributes={{ onClick: () => handleChangemaxTicketsPerUser(null) }}
                   />
                 </div>
               </TicketsAmountContainer>

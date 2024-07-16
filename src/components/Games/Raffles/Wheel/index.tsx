@@ -7,7 +7,6 @@ import {
   DelayTillAnimate,
   raffleAnimationAlreadyEndedFn,
   TimerTime,
-  TotalTimeTillAnimationFinish,
   WheelAnimationTime,
 } from '../../../../config/app/RaffleConfig';
 import { IRaffleToFrontEndTreated } from '../../../../interfaces/IRaffles';
@@ -70,7 +69,7 @@ const WheelPointer = styled.div<{ $nowTime: number; $timerEnded: boolean; $finis
 const AvatarItemContainer = styled.div`
   width: 80px;
   height: 80px;
-  border: 1.5px solid grey;
+  box-shadow: 0 0 0px 2px var(--default-lightgrey);
 `;
 
 interface IWheelProps {
