@@ -19,7 +19,8 @@ const ItemsContainer = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
   flex-wrap: wrap;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   max-height: 600px;
 
   @media (max-width: 480px) {

@@ -66,46 +66,6 @@ export default function NextStep({ walletVerificationInfo }: { walletVerificatio
                 />
               </div>
             </div>
-            {/*             {walletVerificationInfo ? (
-              <div style={{ display: 'flex', width: '100%' }}>
-                <div style={{ width: '100%' }}>
-                  <CurrencyIconAndAmount
-                    theme="white"
-                    amount={parseFloat(randomValue.toString())}
-                    showFullAmount={true}
-                  />
-                </div>
-
-                <div>
-                  <MiniSquareButton
-                    btnType="WHITE"
-                    element={<IoCopySharp />}
-                    attributes={{
-                      onClick: () =>
-                        navigator.clipboard.writeText(
-                          walletVerificationInfo ? walletVerificationInfo.randomValue.toString() : '',
-                        ),
-                    }}
-                  />
-                </div>
-              </div>
-            ) : (
-              <BlurredLoadDiv isLoading={true}>
-                <div style={{ display: 'flex', height: '100%' }}>
-                  <div style={{ display: 'flex', width: '100%' }}>
-                    <CurrencyIconAndAmount theme="white" amount={0.0} showFullAmount={true} />
-                  </div>
-
-                  <MiniSquareButton
-                    btnType="WHITE"
-                    element={<IoCopySharp />}
-                    attributes={{
-                      onClick: () => navigator.clipboard.writeText(''),
-                    }}
-                  />
-                </div>
-              </BlurredLoadDiv>
-            )} */}
           </WalletAndCopyButtonContainer>
         </DepositWalletContainer>
 

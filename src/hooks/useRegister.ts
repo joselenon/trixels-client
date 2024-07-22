@@ -20,7 +20,7 @@ const useRegister = () => {
 
     const response = await TrixelsAxiosServiceInstance.request<IAuthResponse>({
       requestConfig: { url: URLS.ENDPOINTS.AUTH.REGISTER, method: 'post', data: { ...payload } },
-      showToastMessage: true,
+      showSuccessErrorToast: [true, true],
     });
 
     if (response && response.data) {

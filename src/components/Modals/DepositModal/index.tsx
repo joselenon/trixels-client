@@ -11,6 +11,7 @@ import Modal from '../../Modal';
 import SectionSelector, { ISection } from '../../SectionSelector';
 import TrixelsButton from '../../TrixelsButton';
 import DepositInfo from './DepositInfo';
+import RedeemCode from './RedeemCode';
 
 export const DepositModalContainer = styled.div`
   width: 100%;
@@ -53,6 +54,7 @@ export default function DepositModal() {
       color: 'var(--default-darkblue)',
     },
     { id: 'tip', label: 'Tip', content: <div>SOON</div>, color: 'var(--default-awdaw)' },
+    { id: 'redeemCode', label: 'Redeem Code', content: <RedeemCode />, color: 'var(--default-darkgreen)' },
   ];
 
   return (

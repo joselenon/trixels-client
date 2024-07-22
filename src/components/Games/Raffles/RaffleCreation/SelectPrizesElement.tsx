@@ -3,9 +3,9 @@ import { styled } from 'styled-components';
 
 import { useAvailableItemsContext } from '../../../../contexts/ItemsAvailableContext';
 import { IRaffleCreationPayload } from '../../../../interfaces/IRaffleCreation';
+import RaffleItemsSelectionModal from '../../../Modals/RaffleItemsSelectionModal';
 import FakeItemBox from './FakeItemBox';
 import ItemBox from './ItemBox';
-import RaffleItemsSelectionModal from '../../../Modals/RaffleItemsSelectionModal';
 
 const PrizesSelectionContainer = styled.div`
   gap: 1rem;

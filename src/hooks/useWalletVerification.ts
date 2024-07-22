@@ -26,7 +26,7 @@ export default function useWalletVerification() {
 
       const res = await TrixelsAxiosServiceInstance.request<IWalletVerificationInRedis>({
         requestConfig: { url: URLS.ENDPOINTS.USER.VERIFY_WALLET, method: 'post', data: { request } },
-        showToastMessage: true,
+        showSuccessErrorToast: [true, true],
       });
 
       return res;

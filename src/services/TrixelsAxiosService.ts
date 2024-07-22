@@ -6,7 +6,7 @@ import AuthService from './AuthService';
 
 export interface IRequestProps {
   requestConfig: AxiosRequestConfig;
-  showToastMessage?: boolean;
+  showSuccessErrorToast?: boolean[];
 }
 
 export interface IMyAPIResponse<T = null> {
@@ -40,14 +40,15 @@ class TrixelsAxiosServiceClass {
   }
 
   async request<T>(requestProps: IRequestProps): Promise<IMyAPIResponse<T | null>> {
-    try {
-      const { requestConfig, showToastMessage } = requestProps;
+    const { requestConfig, showSuccessErrorToast } = requestProps;
+    const [showSuccessToast = false, showErrorToast = false] = showSuccessErrorToast || [];
 
+    try {
       const response: AxiosResponse<IMyAPIResponse<T>> = await this.trixelsAPI.request({
         ...requestConfig,
       });
 
-      if (showToastMessage) {
+      if (showSuccessToast) {
         toast.success(response.data.message);
       }
 
@@ -56,7 +57,7 @@ class TrixelsAxiosServiceClass {
       const axiosError = err as AxiosError<IMyAPIResponse>;
 
       console.error('Axios Error:', axiosError);
-      if (axiosError.response && requestProps.showToastMessage) {
+      if (axiosError.response && showErrorToast) {
         console.error('Response Data:', axiosError.response.data);
         toast.error(axiosError.response.data.message);
       }

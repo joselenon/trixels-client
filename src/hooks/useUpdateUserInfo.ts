@@ -13,7 +13,7 @@ export default function useUpdateUserInfo() {
   const postUpdateUserInfo = async (payload: IUpdateUserCredentialsPayload) => {
     const response = await TrixelsAxiosServiceInstance.request<IUserToFrontEnd>({
       requestConfig: { method: 'put', url: URLS.ENDPOINTS.USER.UPDATE_USER_CREDENTIALS, data: payload },
-      showToastMessage: true,
+      showSuccessErrorToast: [true, true],
     });
 
     if (response?.success && response.data) {

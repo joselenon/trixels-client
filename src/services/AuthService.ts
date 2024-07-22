@@ -55,7 +55,7 @@ class AuthService {
   async login(reduxDispatch: Dispatch, payload: { username: string; password: string }) {
     const response = await TrixelsAxiosServiceInstance.request<IAuthResponse>({
       requestConfig: { url: URLS.ENDPOINTS.AUTH.LOGIN, method: 'post', data: { ...payload } },
-      showToastMessage: true,
+      showSuccessErrorToast: [true, true],
     });
 
     if (!response || !response.data) throw new Error('No response'); /* FIX */
