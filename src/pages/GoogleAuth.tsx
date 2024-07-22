@@ -10,8 +10,11 @@ const GoogleAuth = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const data = urlParams.get('data');
 
+    console.log('data', data);
     if (data) {
       const googleAuthResponse: IGoogleAuthResponse = JSON.parse(decodeURIComponent(data));
+      console.log('googleAuthResponse', googleAuthResponse);
+
       window.opener.postMessage(googleAuthResponse, URLS.MAIN_URLS.CLIENT_FULL_URL);
       window.close();
     } else {
