@@ -22,11 +22,12 @@ const useLoginThroughGoogle = ({ onMessageReceived }: IUseLoginThroughGoogleProp
       if (origin !== URLS.MAIN_URLS.CLIENT_FULL_URL) {
         return;
       }
-
-      if (responseData?.state !== stateAuth) {
+      if (!responseData) {
         return;
       }
-
+      if (responseData.state !== stateAuth) {
+        return;
+      }
       if (!success) {
         return toast.error('Something went wrong');
       }
@@ -50,7 +51,7 @@ const useLoginThroughGoogle = ({ onMessageReceived }: IUseLoginThroughGoogleProp
     });
 
     if (res && res.data) {
-      const newPopup = window.open(res.data.authorizeUrl, '_blank', 'width=600,height=400');
+      const newPopup = window.open(res.data.authorizeUrl, '_blank', 'width=450,height=600');
 
       if (newPopup) {
         newPopup.focus();
