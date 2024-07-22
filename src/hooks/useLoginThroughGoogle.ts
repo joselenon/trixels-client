@@ -16,18 +16,24 @@ const useLoginThroughGoogle = ({ onMessageReceived }: IUseLoginThroughGoogleProp
 
   const handleMessage = useCallback(
     (event: MessageEvent) => {
-      const { origin, data: googleAuthResponse } = event;
+      const { origin, data } = event;
+      const { success, data: responseData } = data as IGoogleAuthResponse;
 
-      const { success, data } = googleAuthResponse;
-      console.log('success', success);
-      console.log('data', data);
-      if (!success) return toast.error('Something went wrong');
-
-      if (origin === URLS.MAIN_URLS.CLIENT_FULL_URL && data?.state === stateAuth) {
-        onMessageReceived(data as IGoogleAuthResponse);
+      if (origin !== URLS.MAIN_URLS.CLIENT_FULL_URL) {
+        return;
       }
+
+      if (responseData?.state !== stateAuth) {
+        return;
+      }
+
+      if (!success) {
+        return toast.error('Something went wrong');
+      }
+
+      onMessageReceived(data as IGoogleAuthResponse);
     },
-    [onMessageReceived],
+    [onMessageReceived, stateAuth],
   );
 
   useEffect(() => {

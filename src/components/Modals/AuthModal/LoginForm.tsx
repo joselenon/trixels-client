@@ -28,7 +28,7 @@ const LoginFormContainer = styled.div`
 
 export interface IGoogleAuthResponse {
   success: boolean;
-  data: { userCredentials: IUserToFrontEnd; state: string; accessToken: string; refreshToken: string };
+  data: { userCredentials: IUserToFrontEnd; state: string; accessToken: string; refreshToken: string } | null;
 }
 
 const LoginForm = () => {
@@ -38,12 +38,11 @@ const LoginForm = () => {
 
   const { initiateGoogleAuth } = useLoginThroughGoogle({
     onMessageReceived: (googleAuthResponse: IGoogleAuthResponse) => {
-      const { success, data } = googleAuthResponse;
-      console.log('success', success);
-      console.log('data', data);
-      if (!success) return toast.error('Something went wrong');
+      const { data } = googleAuthResponse;
 
-      return AuthService.applyUserCredentials(reduxDispatch, { userCredentials: data.userCredentials });
+      if (data) {
+        return AuthService.applyUserCredentials(reduxDispatch, { userCredentials: data!.userCredentials });
+      }
     },
   });
 
