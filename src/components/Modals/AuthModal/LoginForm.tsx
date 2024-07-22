@@ -38,8 +38,10 @@ const LoginForm = () => {
 
   const { initiateGoogleAuth } = useLoginThroughGoogle({
     onMessageReceived: (googleAuthResponse: IGoogleAuthResponse) => {
-      const { data } = googleAuthResponse;
-      if (!data) return toast.error('Something went wrong');
+      const { success, data } = googleAuthResponse;
+      console.log('success', success);
+      console.log('data', data);
+      if (!success) return toast.error('Something went wrong');
 
       return AuthService.applyUserCredentials(reduxDispatch, { userCredentials: data.userCredentials });
     },
