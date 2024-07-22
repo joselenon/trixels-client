@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 import google_icon_white from '../../../assets/images/google_icon_white.jpg';
@@ -26,10 +27,8 @@ const LoginFormContainer = styled.div`
 `;
 
 export interface IGoogleAuthResponse {
-  userCredentials: IUserToFrontEnd;
-  state: string;
-  accessToken: string;
-  refreshToken: string;
+  success: boolean;
+  data: { userCredentials: IUserToFrontEnd; state: string; accessToken: string; refreshToken: string };
 }
 
 const LoginForm = () => {
@@ -38,8 +37,11 @@ const LoginForm = () => {
   const handleEnterButtonClick = useLogin();
 
   const { initiateGoogleAuth } = useLoginThroughGoogle({
-    onMessageReceived: (data: IGoogleAuthResponse) => {
-      AuthService.applyUserCredentials(reduxDispatch, { userCredentials: data.userCredentials });
+    onMessageReceived: (googleAuthResponse: IGoogleAuthResponse) => {
+      const { data } = googleAuthResponse;
+      if (!data) return toast.error('Something went wrong');
+
+      return AuthService.applyUserCredentials(reduxDispatch, { userCredentials: data.userCredentials });
     },
   });
 
