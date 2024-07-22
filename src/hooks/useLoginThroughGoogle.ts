@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
 
 import { IGoogleAuthResponse } from '../components/Modals/AuthModal/LoginForm';
@@ -15,7 +16,12 @@ const useLoginThroughGoogle = ({ onMessageReceived }: IUseLoginThroughGoogleProp
 
   const handleMessage = useCallback(
     (event: MessageEvent) => {
-      const { origin, data } = event;
+      const { origin, data: googleAuthResponse } = event;
+
+      const { success, data } = googleAuthResponse;
+      console.log('success', success);
+      console.log('data', data);
+      if (!success) return toast.error('Something went wrong');
 
       if (origin === URLS.MAIN_URLS.CLIENT_FULL_URL && data?.state === stateAuth) {
         onMessageReceived(data as IGoogleAuthResponse);
