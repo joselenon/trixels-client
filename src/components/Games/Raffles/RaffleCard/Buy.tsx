@@ -23,7 +23,7 @@ export default function Buy({ gameId }: IBuyProps) {
       <TrixelsButton
         btnType="CTA"
         label={'Buy 1'}
-        width="100%"
+        styles={{ width: '100%' }}
         attributes={{
           onClick: () =>
             buyTicketsFn({

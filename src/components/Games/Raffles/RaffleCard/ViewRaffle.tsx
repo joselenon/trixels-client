@@ -35,7 +35,7 @@ export default function ViewRaffle({ gameId }: IViewRaffleProps) {
     <ViewRaffleContainer>
       <Link to={`/raffle/${gameId}`}>
         <TrixelsButton
-          width="100%"
+          styles={{ width: '100%' }}
           btnType="ELEMENT"
           element={
             <ViewContainer>

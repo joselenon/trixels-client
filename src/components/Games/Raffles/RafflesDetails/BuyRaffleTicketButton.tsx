@@ -76,7 +76,7 @@ function BuyRaffleTicketButton({ buyRaffleTicketsPayloadState, ticketPrice, raff
   return (
     <BuyButtonContainer>
       <TrixelsButton
-        width="auto"
+        styles={{ width: '100%' }}
         btnType={(selectedTickets.length > 0 || isRandomTicket) && !raffle.finishedAt ? 'CTA' : 'DEFAULT'}
         label={`Buy (${selectedTicketsTotalPrice.toFixed(8)})`}
         attributes={{ onClick: async () => await handleBuyTickets(buyRaffleTicketsPayload) }}
