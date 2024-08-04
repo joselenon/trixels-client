@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 import google_icon_white from '../../../assets/images/google_icon_white.jpg';
-import useLogin from '../../../hooks/useLogin';
+import { useAuthContext } from '../../../contexts/AuthContext';
 import useLoginThroughGoogle from '../../../hooks/useLoginThroughGoogle';
 import { ICreateInput } from '../../../interfaces/IRHF';
 import { IUserToFrontEnd } from '../../../interfaces/IUser';
@@ -32,16 +32,14 @@ export interface IGoogleAuthResponse {
 }
 
 const LoginForm = () => {
-  const reduxDispatch = useDispatch();
-
-  const handleEnterButtonClick = useLogin();
+  const { loginFn: handleEnterButtonClick, applyUserCredentials } = useAuthContext();
 
   const { initiateGoogleAuth } = useLoginThroughGoogle({
     onMessageReceived: (googleAuthResponse: IGoogleAuthResponse) => {
       const { data } = googleAuthResponse;
 
       if (data) {
-        return AuthService.applyUserCredentials(reduxDispatch, { userCredentials: data!.userCredentials });
+        return applyUserCredentials({ userCredentials: data!.userCredentials });
       }
     },
   });
@@ -78,7 +76,7 @@ const LoginForm = () => {
 
       <TrixelsButton
         btnType="CTA"
-        width="100%"
+        styles={{ width: '100%' }}
         element={
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
             <img src={google_icon_white} alt="google_icon" width={20} style={{ borderRadius: '4px' }} />

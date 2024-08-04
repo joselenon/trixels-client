@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import SentryConfig from './config/app/SentryConfig';
 import { ApolloClientProvider } from './contexts/ApolloClientContext';
+import { AuthContextProvider } from './contexts/AuthContext';
 import reduxStore from './redux';
 
 Sentry.init(SentryConfig());
@@ -16,9 +17,13 @@ root.render(
   <Provider store={reduxStore}>
     <ApolloClientProvider>
       {/*       <React.StrictMode> */}
+
       <BrowserRouter>
-        <App />
+        <AuthContextProvider>
+          <App />
+        </AuthContextProvider>
       </BrowserRouter>
+
       {/*       </React.StrictMode> */}
     </ApolloClientProvider>
   </Provider>,

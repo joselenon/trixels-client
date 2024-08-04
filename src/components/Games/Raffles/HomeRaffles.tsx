@@ -7,7 +7,7 @@ import { EffectCards } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { useRafflesContext } from '../../../contexts/RafflesContext';
-import RaffleBox from './RaffleBox';
+import RaffleBox from './RaffleCard';
 
 const HomeRafflesContainer = styled.div`
   display: flex;

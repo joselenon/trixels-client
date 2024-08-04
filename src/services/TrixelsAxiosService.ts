@@ -56,7 +56,6 @@ class TrixelsAxiosServiceClass {
     } catch (err: unknown) {
       const axiosError = err as AxiosError<IMyAPIResponse>;
 
-      console.error('Axios Error:', axiosError);
       if (axiosError.response && showErrorToast) {
         console.error('Response Data:', axiosError.response.data);
         toast.error(axiosError.response.data.message);
@@ -67,15 +66,12 @@ class TrixelsAxiosServiceClass {
   }
 
   private async handleResponseError(error: AxiosError): Promise<AxiosResponse | void> {
-    const { config } = error;
-    if (!config) {
+    const { config: originalRequest, response } = error;
+    if (!originalRequest) {
       return Promise.reject(error);
     }
 
-    const { method, data, url } = config;
-    const originalRequest = { method, data: data && JSON.parse(data), url };
-
-    if (error.response?.status === 401 && originalRequest) {
+    if (response?.status === 401) {
       if (!this.isRefreshing) {
         this.isRefreshing = true;
 
@@ -85,8 +81,7 @@ class TrixelsAxiosServiceClass {
           this.failedRequests.forEach((callback) => callback());
           this.failedRequests = [];
 
-          const res = await this.trixelsAPI({ ...originalRequest });
-          return res;
+          return await this.trixelsAPI({ ...originalRequest });
         } catch (err: unknown) {
           const axiosError = err as AxiosError<unknown, any>;
 
@@ -100,8 +95,11 @@ class TrixelsAxiosServiceClass {
           return Promise.reject(err);
         }
       } else {
-        return new Promise((resolve) => {
-          this.failedRequests.push(() => {
+        return new Promise((resolve, reject) => {
+          this.failedRequests.push((error?: unknown) => {
+            if (error) {
+              return reject(error);
+            }
             resolve(this.trixelsAPI(originalRequest));
           });
         });

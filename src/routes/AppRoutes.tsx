@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import AvailableItemsContextProvider from '../contexts/ItemsAvailableContext';
+import RafflesContextProvider from '../contexts/RafflesContext';
 import { ScreenConfigProvider } from '../contexts/ScreenConfigContext';
 import Affiliates from '../pages/Affiliates';
 import CashoutsApprovals from '../pages/CashoutsApprovals';
@@ -20,37 +21,45 @@ export default function AppRoutes() {
       <Route
         path="/"
         element={
-          <ScreenConfigProvider>
-            <AvailableItemsContextProvider>
-              <Home />
-            </AvailableItemsContextProvider>
-          </ScreenConfigProvider>
+          <RafflesContextProvider>
+            <ScreenConfigProvider>
+              <AvailableItemsContextProvider>
+                <Home />
+              </AvailableItemsContextProvider>
+            </ScreenConfigProvider>
+          </RafflesContextProvider>
         }
       />
       <Route
         path="/raffles"
         element={
-          <AvailableItemsContextProvider>
-            <Raffles />
-          </AvailableItemsContextProvider>
+          <RafflesContextProvider>
+            <AvailableItemsContextProvider>
+              <Raffles />
+            </AvailableItemsContextProvider>
+          </RafflesContextProvider>
         }
       />
       <Route
         path="/raffles/create"
         element={
-          <AvailableItemsContextProvider>
-            <RaffleCreation />
-          </AvailableItemsContextProvider>
+          <RafflesContextProvider>
+            <AvailableItemsContextProvider>
+              <RaffleCreation />
+            </AvailableItemsContextProvider>
+          </RafflesContextProvider>
         }
       />
       <Route
         path="/raffle/:gameId"
         element={
-          <ScreenConfigProvider>
-            <AvailableItemsContextProvider>
-              <ViewRaffle />
-            </AvailableItemsContextProvider>
-          </ScreenConfigProvider>
+          <RafflesContextProvider>
+            <ScreenConfigProvider>
+              <AvailableItemsContextProvider>
+                <ViewRaffle />
+              </AvailableItemsContextProvider>
+            </ScreenConfigProvider>
+          </RafflesContextProvider>
         }
       />
       <Route

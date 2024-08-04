@@ -19,6 +19,7 @@ export default function AvailableItemsContextProvider({ children }: { children: 
       try {
         const availableItemsResponse = await TrixelsAxiosServiceInstance.request<IItemsInfoResponse>({
           requestConfig: { url: URLS.ENDPOINTS.RAFFLES.GET_AVAILABLE_ITEMS, method: 'get', data: null },
+          showSuccessErrorToast: [false, false],
         });
 
         if (availableItemsResponse && availableItemsResponse.data) {

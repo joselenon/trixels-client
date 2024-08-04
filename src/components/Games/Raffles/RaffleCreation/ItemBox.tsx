@@ -53,6 +53,10 @@ const QuantitySelectionContainer = styled.div`
   align-items: center;
 `;
 
+const SumSubButtons = styled.div`
+  width: 40px;
+`;
+
 interface IItemBoxProps {
   itemInfos: TItemInfos;
   quantity?: number;
@@ -73,9 +77,15 @@ export default function ItemBox({ itemInfos, quantity = 0, handleItemClick }: II
 
       {quantity > 0 ? (
         <QuantitySelectionContainer>
-          <TrixelsButton label="-" btnType="BLUE" attributes={{ onClick: () => handleItemClick(id, 'remove') }} />
+          <SumSubButtons>
+            <TrixelsButton label="-" btnType="BLUE" attributes={{ onClick: () => handleItemClick(id, 'remove') }} />
+          </SumSubButtons>
+
           <h4>{quantity}</h4>
-          <TrixelsButton label="+" btnType="BLUE" attributes={{ onClick: () => handleItemClick(id, 'add') }} />
+
+          <SumSubButtons>
+            <TrixelsButton label="+" btnType="BLUE" attributes={{ onClick: () => handleItemClick(id, 'add') }} />
+          </SumSubButtons>
         </QuantitySelectionContainer>
       ) : (
         <div style={{ width: '100%' }}>

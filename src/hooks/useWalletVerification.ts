@@ -3,8 +3,8 @@ import { toast } from 'react-toastify';
 import { v4 } from 'uuid';
 
 import URLS from '../config/constants/URLS';
+import { useAuthContext } from '../contexts/AuthContext';
 import TrixelsAxiosServiceInstance from '../services/TrixelsAxiosService';
-import useGetUserCredentials from './useGetUserCredentials';
 
 export interface IWalletVerificationInRedis {
   createdAt: number;
@@ -15,7 +15,7 @@ export interface IWalletVerificationInRedis {
 }
 
 export default function useWalletVerification() {
-  const { userCredentials } = useGetUserCredentials();
+  const { userCredentials } = useAuthContext();
 
   const handleVerifyWallet = async (request: string) => {
     if (userCredentials) {

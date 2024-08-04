@@ -111,7 +111,7 @@ export default function UserProfileForm({ userProfileInfo, isCurrentUser }: IUse
       if (!requireLoginFn()) return;
 
       setIsProcessing(true);
-      await handleUpdateUserInfo({ ...info });
+      const res = await handleUpdateUserInfo({ ...info });
       setIsProcessing(false);
     } catch (err) {
       setIsProcessing(false);

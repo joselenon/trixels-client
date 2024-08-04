@@ -59,11 +59,12 @@ export default function DepositModal() {
 
   return (
     <div>
-      <div style={{ width: 37 }}>
+      <div style={{ width: 40 }}>
         <TrixelsButton
           element={<FontAwesomeIcon icon={faPlus} />}
           btnType="CTA"
           attributes={{ id: 'redeem', onClick: toggleModal }}
+          styles={{ borderRadius: '0 var(--default-br) var(--default-br) 0' }}
         />
       </div>
 

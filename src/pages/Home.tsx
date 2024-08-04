@@ -12,6 +12,7 @@ const HomeContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 5rem;
+  height: 100%;
 `;
 
 export default function Home() {

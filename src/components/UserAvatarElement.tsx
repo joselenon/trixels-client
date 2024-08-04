@@ -13,6 +13,7 @@ const UserAvatarElementContainer = styled.div<{ $sizeInPx?: number }>`
     height: 100%;
     min-width: ${({ $sizeInPx }) => `${$sizeInPx ? `${$sizeInPx}px` : '100%'}`};
     max-width: ${({ $sizeInPx }) => `${$sizeInPx ? `${$sizeInPx}px` : '100%'}`};
+    border-radius: 6px;
   }
 `;
 

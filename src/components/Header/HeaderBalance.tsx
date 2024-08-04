@@ -2,8 +2,9 @@ import React, { memo, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import useGetBalance from '../../hooks/useGetBalance';
+import Balance from '../Balance';
 import BlurredLoadDiv from '../BlurredLoadDiv';
-import BerryIconAndAmount, { BalanceText } from '../CurrencyIconAndAmount';
+import { BalanceText } from '../CurrencyIconAndAmount';
 import DepositModal from '../Modals/DepositModal';
 
 const BalanceContainer = styled.div`
@@ -13,7 +14,6 @@ const BalanceContainer = styled.div`
 `;
 
 const BalanceDisplayContainer = styled.div`
-  background-color: var(--primary-bg-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -77,7 +77,7 @@ const BalanceUpdateContainer = styled.div<{ $animationType: string; $display: bo
   }
 `;
 
-function Balance() {
+function HeaderBalance() {
   const { updatedBalance: newBalance } = useGetBalance();
   const isBalanceActive = typeof newBalance === 'number';
 
@@ -111,7 +111,7 @@ function Balance() {
       <BalanceDisplayContainer>
         <BlurredLoadDiv isLoading={!isBalanceActive}>
           <BalanceAndIcon>
-            <BerryIconAndAmount theme="default" currency="PIXEL" amount={isBalanceActive ? newBalance : 0} />
+            <Balance theme="default" currency="PIXEL" amount={isBalanceActive ? newBalance : 0} />
           </BalanceAndIcon>
         </BlurredLoadDiv>
 
@@ -131,4 +131,4 @@ function Balance() {
   );
 }
 
-export default memo(Balance);
+export default memo(HeaderBalance);

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -22,6 +22,7 @@ const UserProfileContainer = styled.div`
 `;
 
 const MainContainer = styled.div`
+  border-radius: var(--default-br);
   display: flex;
   flex-direction: column;
   gap: 2rem;

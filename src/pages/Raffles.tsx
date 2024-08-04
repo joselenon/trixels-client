@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import RaffleBox from '../components/Games/Raffles/RaffleBox';
+import RaffleBox from '../components/Games/Raffles/RaffleCard';
 import Reveal from '../components/Reveal';
 import TrixelsButton from '../components/TrixelsButton';
 import { useRafflesContext } from '../contexts/RafflesContext';

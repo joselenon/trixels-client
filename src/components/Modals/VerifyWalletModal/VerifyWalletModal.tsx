@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
 import { styled } from 'styled-components';
 import { v4 } from 'uuid';
 
+import { useAuthContext } from '../../../contexts/AuthContext';
 import useGetMessages from '../../../hooks/useGetMessages';
-import useGetUserCredentials from '../../../hooks/useGetUserCredentials';
 import useWalletVerification, { IWalletVerificationInRedis } from '../../../hooks/useWalletVerification';
 import { setToken } from '../../../redux/features/authSlice';
 import { WarnParagraph } from '../../../styles/GlobalStyles';
@@ -33,11 +32,11 @@ interface IVerifyWalletModalProps {
 
 export default function VerifyWalletModal({ showModal, setShowModal }: IVerifyWalletModalProps) {
   const reduxDispatch = useDispatch();
-  const { userCredentials } = useGetUserCredentials();
+  const { userCredentials } = useAuthContext();
   const { handleVerifyWallet } = useWalletVerification();
   const { walletVerificationMessages } = useGetMessages();
 
-  const [request, setRequest] = useState(v4());
+  const request = v4();
   const [walletVerificationInfo, setWalletVerificationInfo] = useState<IWalletVerificationInRedis | undefined>(
     undefined,
   );

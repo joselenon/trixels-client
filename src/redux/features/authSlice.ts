@@ -4,7 +4,7 @@ import { IReduxStore } from '../../interfaces/IRedux';
 import { IUserToFrontEnd } from '../../interfaces/IUser';
 
 export interface IAuthResponse {
-  userCredentials: IUserToFrontEnd;
+  userCredentials: IUserToFrontEnd | undefined;
 }
 
 const initialState: IReduxStore['auth'] = {

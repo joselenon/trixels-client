@@ -19,6 +19,7 @@ export default createGlobalStyle`
     --default-oceanblue: #39649c;
     --default-darkblue: #0e76ff;
     --default-blue: #2985ff;
+    --default-white: #ffffff;
     --default-black: #1b1b1b;
     --default-brown: #4b4237;
     --default-lightblue: #579efc;
@@ -47,11 +48,12 @@ export default createGlobalStyle`
     --secondary-text-color: #d9d9d9;
     --body-mxwidth: 1400px;
 
-    --default-br: 10px; // Border-radius
+    --default-br: 6px; // Border-radius
     --default-halfpdn: 12.5px; // Padding
     --default-pdn: 25px; // Padding
     --default-bshadow: 0px 2px 3px rgb(0, 0, 0, 0.6); // Box-shadow
     --default-btn-mt: 8px;
+    --default-boxheight: 40px;
     --main-gradient: linear-gradient(153deg, #1a1a1a 18%, rgba(74,74,74,1) 100%);
   }
 
@@ -107,9 +109,13 @@ export default createGlobalStyle`
     background: var(--secondary-bg-color);
   }
 
-  input, button, select {
-    padding: 10px;
+  input, select {
     height: 40px;
+    border-radius: var(--default-br);
+  }
+
+  input,  select {
+    padding: 10px;
   }
 
 
@@ -270,12 +276,13 @@ export const AlertParagraph = styled.p`
 
 export const WarnParagraph = styled.p`
   font-size: 14px;
-  color: red;
+  color: var(--default-red);
   font-weight: 700;
   text-align: center;
-  border: 1px solid red;
+  border: 2px solid var(--default-red);
   width: 100%;
   padding: 6px;
+  border-radius: var(--default-br);
 `;
 
 export const DateSpan = styled.span`

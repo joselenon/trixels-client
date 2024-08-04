@@ -2,7 +2,7 @@ import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { IconType } from 'react-icons/lib';
-import styled from 'styled-components';
+import styled, { CSSProperties } from 'styled-components';
 
 export type TButtonTypes = 'TEXT' | 'CTA' | 'DANGER' | 'ELEMENT' | 'DEFAULT' | 'BLUE';
 
@@ -37,17 +37,21 @@ const ButtonTypes: IButtonTypeConfig = {
   },
 };
 
-interface IPendingProps {
+interface IButtonStylesProps {
   $isPending: boolean | undefined;
+  $btnType: TButtonTypes;
+  $borderRadius?: string;
 }
 
-const ButtonStyle = styled.button<IPendingProps>`
-  border: none;
-  background: none;
+const ButtonStyle = styled.button<IButtonStylesProps>`
   width: 100%;
+  height: 40px;
+  background: none;
   position: relative;
   cursor: ${({ $isPending }) => ($isPending ? 'not-allowed' : 'pointer')};
   pointer-events: ${({ $isPending }) => ($isPending ? 'none' : 'auto')};
+  border: none;
+  border-radius: ${({ $borderRadius }) => ($borderRadius ? $borderRadius : 'var(--default-br)')};
 
   &:hover {
     filter: ${({ $isPending }) => ($isPending ? 'none' : 'brightness(0.95)')};
@@ -63,28 +67,33 @@ const ButtonStyle = styled.button<IPendingProps>`
     opacity: 0.6;
   }
 
+  h5 {
+    color: var(--default-white);
+  }
+
   svg {
     max-width: 40px;
     max-height: 40px;
   }
 
   span {
-    font-family: var(--kemco-font);
-    font-weight: 900;
     color: white;
   }
 `;
 
-const ButtonElementsContainer = styled.div<IPendingProps>`
+const ButtonElementsContainer = styled.div<IButtonStylesProps>`
+  padding: ${({ $btnType }) => ($btnType === 'ELEMENT' ? '0' : '10px')};
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.25rem;
   opacity: ${({ $isPending }) => ($isPending ? 0 : 1)};
   white-space: nowrap;
+  width: 100%;
+  height: 100%;
 `;
 
-const PendingGIFContainer = styled.div<IPendingProps>`
+const PendingGIFContainer = styled.div<IButtonStylesProps>`
   position: absolute;
   backdrop-filter: blur(2px);
   background-color: rgb(0, 0, 0, 0.2);
@@ -143,11 +152,11 @@ export interface ITrixelsButton {
   element?: JSX.Element;
   attributes?: ITrixelsButtonAtributtes;
   isPending?: boolean;
-  width?: 'auto' | '100%' | string;
+  styles?: React.CSSProperties;
 }
 
 export default function TrixelsButton(props: ITrixelsButton): JSX.Element {
-  const { btnType, icon, label, element, attributes, isPending, width = 'auto' } = props;
+  const { btnType, icon, label, element, attributes, isPending, styles } = props;
   const btnStyles: React.CSSProperties = ButtonTypes[btnType];
 
   const iconElement = () => {
@@ -165,22 +174,23 @@ export default function TrixelsButton(props: ITrixelsButton): JSX.Element {
   };
 
   return (
-    <div style={{ width: width }}>
-      <ButtonStyle
-        {...attributes}
-        style={btnStyles}
-        type={attributes?.type ? attributes.type : 'button'}
-        $isPending={isPending}
-        disabled={isPending}
-      >
-        <ButtonElementsContainer $isPending={isPending}>
-          {iconElement() || null}
-          {label ? typeof label === 'string' ? <span>{label.toUpperCase()}</span> : label : ''}
-          {element && element}
-        </ButtonElementsContainer>
+    <ButtonStyle
+      {...attributes}
+      style={{ ...btnStyles, ...styles }}
+      type={attributes?.type ? attributes.type : 'button'}
+      $isPending={isPending}
+      $btnType={btnType}
+      disabled={isPending}
+    >
+      <ButtonElementsContainer $btnType={btnType} $isPending={isPending}>
+        {iconElement() || null}
+        {label ? typeof label === 'string' ? <h5>{label.toUpperCase()}</h5> : label : ''}
+        {element && element}
+      </ButtonElementsContainer>
 
-        <PendingGIFContainer $isPending={isPending}>{PendingSVGGIF}</PendingGIFContainer>
-      </ButtonStyle>
-    </div>
+      <PendingGIFContainer $btnType={btnType} $isPending={isPending}>
+        {PendingSVGGIF}
+      </PendingGIFContainer>
+    </ButtonStyle>
   );
 }

@@ -9,7 +9,8 @@ import { useScreenConfig } from '../../contexts/ScreenConfigContext';
 import { IReduxStore } from '../../interfaces/IRedux';
 import AuthModal from '../Modals/AuthModal';
 import TrixelsLogo from '../TrixelsLogo';
-import Balance from './Balance';
+import UserAvatarElement from '../UserAvatarElement';
+import HeaderBalance from './HeaderBalance';
 
 const HeaderContainer = styled.div`
   height: var(--header-height);
@@ -142,15 +143,17 @@ const Header = () => {
         </div>
 
         {/* Separated Balance for mobile users */}
-        {userCredentials && width <= 1150 && <Balance />}
+        {userCredentials && width <= 1150 && <HeaderBalance />}
 
         <AuthAndBalanceContainer>
-          {userCredentials && width > 1150 && <Balance />}
+          {userCredentials && width > 1150 && <HeaderBalance />}
 
-          {userCredentials /*  && width > 1150 */ && (
+          {userCredentials && (
             <Link to={`/profile/${userCredentials?.username}`}>
-              {/* <h3>{userCredentials?.username}</h3> */}
-              <img width={40} alt="palyer-avatar" src={userCredentials.avatar ? userCredentials.avatar : blankAvatar} />
+              <UserAvatarElement
+                userInfo={{ url: userCredentials.avatar ? userCredentials.avatar : blankAvatar }}
+                sizeInPx={40}
+              />
             </Link>
           )}
 

@@ -74,7 +74,7 @@ export default function PrivacySettings({ raffleConfig, setRaffleConfig }: IPriv
 
       <ParticipantsContainer>
         <h5>Participants</h5>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', gap: '0.25rem' }}>
           <TrixelsButton
             btnType={privacy.mode === 'public' ? 'BLUE' : 'DEFAULT'}
             label="Anyone"

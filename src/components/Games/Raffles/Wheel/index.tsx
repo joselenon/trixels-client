@@ -58,7 +58,7 @@ const WheelPointer = styled.div<{ $nowTime: number; $timerEnded: boolean; $finis
   left: calc(50%);
   width: 3px;
   height: 100%;
-  background-color: red;
+  background-color: var(--default-red);
   transition: all 0.5s ease-in-out;
   opacity: ${({ $timerEnded, $finishedAt, $nowTime }) => {
     if ($finishedAt && $timerEnded /*  && $nowTime < $finishedAt + TotalTimeTillAnimationFinish */) return 1;
@@ -69,7 +69,6 @@ const WheelPointer = styled.div<{ $nowTime: number; $timerEnded: boolean; $finis
 const AvatarItemContainer = styled.div`
   width: 80px;
   height: 80px;
-  box-shadow: 0 0 0px 2px var(--default-lightgrey);
 `;
 
 interface IWheelProps {

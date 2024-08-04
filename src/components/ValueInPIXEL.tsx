@@ -11,7 +11,7 @@ interface IValueInPIXELProps {
 }
 
 const BerryIconAndAmountContainer = styled.div`
-  height: 100%;
+  height: var(--default-boxheight);
   position: relative;
   padding: 5px 15px;
   display: flex;

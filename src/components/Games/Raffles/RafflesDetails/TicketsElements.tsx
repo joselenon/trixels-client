@@ -33,6 +33,7 @@ const GraySquare = styled.div`
   width: 80px;
   height: 80px;
   background-color: var(--default-middlegrey);
+  border-radius: var(--default-br);
 `;
 
 const RandomTicketContainer = styled.div`

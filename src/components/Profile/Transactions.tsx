@@ -23,6 +23,8 @@ const TransactionItem = styled.div<{ $type: ITransactionToFrontendBase['type'] }
       if ($type === 'codeRedeem') return `var(--default-black)`;
     }};
 
+  border-radius: var(--default-br);
+
   h4 {
     color: var(--default-black);
   }

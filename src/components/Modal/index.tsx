@@ -43,6 +43,7 @@ const ModalContent = styled.div<{ $contentBackground?: string }>`
   justify-content: center;
   flex-direction: column;
   gap: 1rem;
+  border-radius: var(--default-br);
 `;
 
 const ModalHeader = styled.div`

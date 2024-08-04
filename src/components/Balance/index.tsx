@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from 'styled-components';
 
-import CurrenciesInfo from '../assets/CurrenciesInfo';
+import CurrenciesInfo from '../../assets/CurrenciesInfo';
 
 const BerryIconAndAmountContainer = styled.div<{ $theme: ICurrencyIconAndAmountProps['theme'] }>`
   height: var(--default-boxheight);
@@ -17,7 +17,7 @@ const BerryIconAndAmountContainer = styled.div<{ $theme: ICurrencyIconAndAmountP
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  border-radius: var(--default-br);
+  border-radius: var(--default-br) 0 0 var(--default-br);
 
   img {
     image-rendering: pixelated;
@@ -51,7 +51,7 @@ interface ICurrencyIconAndAmountProps {
   showFullAmount?: boolean;
 }
 
-export default function CurrencyIconAndAmount({
+export default function index({
   currency = 'PIXEL',
   amount,
   theme = 'default',

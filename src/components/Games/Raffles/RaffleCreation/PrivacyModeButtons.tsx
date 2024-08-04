@@ -6,8 +6,7 @@ import TrixelsButton from '../../../TrixelsButton';
 
 const PrivacyConfigContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  gap: 0.25rem;
 `;
 
 interface IPrivacyConfigProps {
@@ -31,18 +30,16 @@ export default function PrivacyConfigElement({ raffleConfig, setRaffleConfig }: 
 
   return (
     <PrivacyConfigContainer>
-      <div style={{ display: 'flex' }}>
-        <TrixelsButton
-          btnType={privacy.type === 'public' ? 'BLUE' : 'DEFAULT'}
-          label="Public"
-          attributes={{ onClick: () => handleChangePrivacyType('public') }}
-        />
-        <TrixelsButton
-          btnType={privacy.type === 'private' ? 'BLUE' : 'DEFAULT'}
-          label="Private"
-          attributes={{ onClick: () => handleChangePrivacyType('private') }}
-        />
-      </div>
+      <TrixelsButton
+        btnType={privacy.type === 'public' ? 'BLUE' : 'DEFAULT'}
+        label="Public"
+        attributes={{ onClick: () => handleChangePrivacyType('public') }}
+      />
+      <TrixelsButton
+        btnType={privacy.type === 'private' ? 'BLUE' : 'DEFAULT'}
+        label="Private"
+        attributes={{ onClick: () => handleChangePrivacyType('private') }}
+      />
     </PrivacyConfigContainer>
   );
 }

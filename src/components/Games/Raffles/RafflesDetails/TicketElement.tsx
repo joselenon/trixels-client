@@ -19,6 +19,7 @@ const TicketContainer = styled.div<ITicketContainerProps>`
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: var(--default-br);
   background: var(--default-blue);
   border: ${({ $isWinner, $isSelected, $alreadyEnded }) => {
     if ($isWinner && $alreadyEnded) return '4px solid var(--default-green)';

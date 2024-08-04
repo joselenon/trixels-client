@@ -1,45 +1,57 @@
 import 'react-toastify/dist/ReactToastify.css';
 
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
 import MobileMenu from './components/MobileMenu';
+import { useAuthContext } from './contexts/AuthContext';
 import BalanceContextProvider from './contexts/BalanceContext';
 import MessagesContextProvider from './contexts/MessagesContext';
-import RafflesContextProvider from './contexts/RafflesContext';
 import { ScreenConfigProvider } from './contexts/ScreenConfigContext';
 import AppRoutes from './routes/AppRoutes';
-import AuthService from './services/AuthService';
 import GlobalStyles from './styles/GlobalStyles';
 import ScrollToTop from './utils/scrollToTop';
 
 function App() {
-  const reduxDispatch = useDispatch();
-  AuthService.getUserCredentials(reduxDispatch);
+  const { isAuthenticated } = useAuthContext();
 
   return (
     <>
       <ScrollToTop />
 
-      <MessagesContextProvider>
-        <ScreenConfigProvider>
+      {isAuthenticated ? (
+        <MessagesContextProvider>
           <>
             <BalanceContextProvider>
-              <Header />
+              <ScreenConfigProvider>
+                <Header />
+              </ScreenConfigProvider>
             </BalanceContextProvider>
 
-            <MobileMenu />
+            <ScreenConfigProvider>
+              <MobileMenu />
+            </ScreenConfigProvider>
           </>
-        </ScreenConfigProvider>
 
-        <RafflesContextProvider>
           <AppRoutes />
-        </RafflesContextProvider>
-        <Footer />
-      </MessagesContextProvider>
+          <Footer />
+        </MessagesContextProvider>
+      ) : (
+        <>
+          <>
+            <Header />
+
+            <ScreenConfigProvider>
+              <MobileMenu />
+            </ScreenConfigProvider>
+          </>
+
+          <AppRoutes />
+          <Footer />
+        </>
+      )}
 
       <GlobalStyles />
       <ToastContainer

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import Transactions from './Transactions';
 import styled from 'styled-components';
-import TrixelsButton from '../TrixelsButton';
+
 import useRequireLogin from '../../hooks/useRequireLogin';
+import TrixelsButton from '../TrixelsButton';
+import Transactions from './Transactions';
 
 const UserMenusContainer = styled.div`
   display: flex;

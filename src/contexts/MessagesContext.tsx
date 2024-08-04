@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import USER_QUERIES from '../graphql/UserInfoGQL';
 import { gqlSubscription } from '../hooks/useGraphQLService';
-import { IGQLResponses } from '../interfaces/IGQLResponses';
+import { IGQLResponses, TGQLResponsesTypes } from '../interfaces/IGQLResponses';
 
 const MessagesContext = React.createContext<{
   messages: {
@@ -26,6 +26,8 @@ const MessagesContext = React.createContext<{
   },
 });
 
+const ignoreMessagesFrom: TGQLResponsesTypes[] = ['GET_LIVE_RAFFLES', 'GET_AVAILABLE_ITEMS'];
+
 export default function MessagesContextProvider({ children }: { children: ReactNode }) {
   const response = gqlSubscription<string, 'getLiveMessages'>({
     gql: USER_QUERIES.GET_LIVE_MESSAGES,
@@ -37,7 +39,7 @@ export default function MessagesContextProvider({ children }: { children: ReactN
   const [walletVerificationMessages, setWalletVerificationMessages] = useState<IGQLResponses<any>[]>([]);
 
   const showToast = (message: IGQLResponses<string>) => {
-    if (message.success) {
+    if (message.success && !ignoreMessagesFrom.includes(message.type)) {
       toast.success(message.message);
     } else {
       toast.error(message.message);
