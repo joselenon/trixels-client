@@ -25,7 +25,6 @@ const PrizeContainer = styled.div`
 `;
 
 export default function Header({ createdBy, prizesTotalValue }: IHeaderProps) {
-  console.log(prizesTotalValue);
   return (
     <HeaderContainer>
       <div>

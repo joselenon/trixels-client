@@ -1,5 +1,4 @@
 // Config to run before exception be computed in Sentry
-import { Event } from '@sentry/react';
 
 export default function sentryBeforeSendConfig(event: any) {
   if (event.exception && event.exception.values) {

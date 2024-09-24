@@ -1,4 +1,3 @@
-import ENVIRONMENT from '../constants/ENVIRONMENT';
 import sentryBeforeSendConfig from './sentryBeforeSendConfig';
 
 const SentryConfig = () => {

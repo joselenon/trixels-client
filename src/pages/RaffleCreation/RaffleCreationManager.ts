@@ -25,26 +25,21 @@ export class RaffleCreationManager {
 
   public setTotalTickets(amount: number): void {
     this.config.totalTickets = amount;
-    console.log(this.getConfig());
   }
 
   public setMaxTicketsPerUser(amount: number | null): void {
-    console.log(this.getConfig());
     this.config.maxTicketsPerUser = amount;
   }
 
   public setPrivacyMode(mode: 'public' | 'guildMembers'): void {
-    console.log(this.getConfig());
     this.config.privacy = { ...this.config.privacy, mode };
   }
 
   public setPrivacyType(type: 'public' | 'private'): void {
-    console.log(this.getConfig());
     this.config.privacy = { ...this.config.privacy, type };
   }
 
   public setWinnerPrize(winnerIndex: number, _prize: { itemId: string; action: 'add' | 'sub' }): void {
-    console.log(this.getConfig());
     if (winnerIndex >= 0 && winnerIndex < this.config.prizes.length) {
       let winnerPrizeItems = this.config.prizes[winnerIndex].items;
 
