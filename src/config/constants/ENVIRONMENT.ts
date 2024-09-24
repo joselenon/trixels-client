@@ -6,7 +6,7 @@ const ENVIRONMENT = {
   VITE_APP_CLIENT_PORT: parseInt(import.meta.env.VITE_APP_CLIENT_PORT || '', 10), // Converta para número
   VITE_APP_SERVER_URL: import.meta.env.VITE_APP_SERVER_URL || '', // Certifique-se de que é uma string
   VITE_APP_CLIENT_URL: import.meta.env.VITE_APP_CLIENT_URL || '', // Certifique-se de que é uma string
-  VITE_APP_API_BASE: import.meta.env.VITE_APP_CLIENT_URL || '', // Certifique-se de que é uma string
+  VITE_APP_API_BASE: import.meta.env.VITE_APP_API_BASE || '', // Certifique-se de que é uma string
 };
 
 // Validação das variáveis de ambiente

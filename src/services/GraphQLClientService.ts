@@ -52,7 +52,7 @@ class GraphQLClientService {
 
   private createWsClient(token: string) {
     return createClient({
-      url: `${URLS.MAIN_URLS.WS_API_URL}${URLS.ENDPOINTS.GRAPHQL}`,
+      url: `${URLS.MAIN_URLS.WS_API_URL_WITH_PROTOCOl}${URLS.ENDPOINTS.GRAPHQL}`,
       connectionParams: { Authorization: token ? token : '' },
       lazy: true,
     });
