@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useEffect, useRef, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
-import { v4 } from 'uuid';
 
 import {
   DelayTillAnimate,
@@ -69,6 +68,10 @@ const WheelPointer = styled.div<{ $nowTime: number; $timerEnded: boolean; $finis
 const AvatarItemContainer = styled.div`
   width: 80px;
   height: 80px;
+
+  img {
+    border-radius: 0;
+  }
 `;
 
 interface IWheelProps {

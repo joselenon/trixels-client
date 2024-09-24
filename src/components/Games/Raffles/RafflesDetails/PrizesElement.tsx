@@ -7,7 +7,7 @@ import { styled } from 'styled-components';
 
 import { TRaffleWinnersPrizes } from '../../../../interfaces/IRaffles';
 import CurrencyIconAndAmount from '../../../CurrencyIconAndAmount';
-import WinnerXPrizesElement from '../WinnerXPrizesElement';
+import WinnerPrizeElement from '../WinnerPrizeElement';
 
 const WinnersPrizesElementContainer = styled.div`
   display: flex;
@@ -46,22 +46,18 @@ interface IPrizesElementProps {
 }
 
 export default function Prizes({ prizes }: IPrizesElementProps) {
-  const winnersKeys = Object.keys(prizes);
-
   const renderWinnerPrizesElement = () => {
-    return winnersKeys.map((winnerKey) => {
-      const winnerPrizes = prizes[winnerKey];
-
+    return prizes.map((prize, i) => {
       return (
-        <WinnerPrizes key={winnerKey}>
+        <WinnerPrizes key={i}>
           <div style={{ textAlign: 'center', marginBottom: 15 }}>
-            <h5>{winnerKey}</h5>
+            <h5>Winner {i + 1}</h5>
           </div>
 
-          <WinnerXPrizesElement winnerXPrizes={winnerPrizes} />
+          <WinnerPrizeElement prize={prize} />
 
           <PrizeAmountContainer>
-            <CurrencyIconAndAmount theme="default" fontSize="small" amount={winnerPrizes.totalValue} />
+            <CurrencyIconAndAmount theme="default" fontSize="small" amount={prize.totalValue} />
           </PrizeAmountContainer>
         </WinnerPrizes>
       );

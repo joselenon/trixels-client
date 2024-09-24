@@ -37,9 +37,9 @@ export default function UserAvatarElement({ userInfo, clickable = false, sizeInP
   }, [url]);
 
   const avatarImage = error ? (
-    <img src={blankAvatar} alt="trixels default user avatar" onError={() => setError(true)} />
+    <img src={blankAvatar} alt="app default user avatar" onError={() => setError(true)} />
   ) : (
-    <img src={url} alt={`trixels user avatar ${url}`} onError={handleImageError} />
+    <img src={url} alt={`app user avatar ${url}`} onError={handleImageError} />
   );
 
   return clickable ? (

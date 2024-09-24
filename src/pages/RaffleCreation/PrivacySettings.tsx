@@ -1,8 +1,8 @@
 import React from 'react';
 import { styled } from 'styled-components';
 
-import { IRaffleCreationPayload } from '../../../../interfaces/IRaffleCreation';
-import TrixelsButton from '../../../TrixelsButton';
+import TrixelsButton from '../../components/TrixelsButton';
+import { useRaffleCreationContext } from '../../contexts/RaffleCreationContext';
 
 const DiscountPercentageAndParticipantsContainer = styled.div`
   display: grid;
@@ -33,34 +33,13 @@ const ParticipantsContainer = styled.div`
   flex-direction: column;
 `;
 
-interface IPrivacySettingsProps {
-  raffleConfig: IRaffleCreationPayload;
-  setRaffleConfig: React.Dispatch<React.SetStateAction<IRaffleCreationPayload>>;
-}
-
-export default function PrivacySettings({ raffleConfig, setRaffleConfig }: IPrivacySettingsProps) {
-  const { privacy, discountPercentage } = raffleConfig;
-
-  const handleChangeDiscountPercentage = (number: string) => {
-    const toIntNumber = parseInt(number);
-
-    setRaffleConfig((prevConfig) => ({
-      ...prevConfig,
-      discountPercentage: toIntNumber,
-    }));
-  };
-
-  const handleChangePrivacyMode = (mode: IRaffleCreationPayload['privacy']['mode']) => {
-    setRaffleConfig((prevConfig) => ({
-      ...prevConfig,
-      privacy: { ...prevConfig.privacy, mode: mode },
-    }));
-  };
+export default function PrivacySettings() {
+  const { raffleConfig, setPrivacyMode, setDiscountPercentage } = useRaffleCreationContext();
 
   return (
     <DiscountPercentageAndParticipantsContainer>
       <DiscountContainer>
-        <h5>Discount - {discountPercentage}%</h5>
+        <h5>Discount - {raffleConfig.discountPercentage}%</h5>
         <input
           type="range"
           name=""
@@ -68,7 +47,7 @@ export default function PrivacySettings({ raffleConfig, setRaffleConfig }: IPriv
           min="0"
           max="100"
           defaultValue={0}
-          onChange={(e) => handleChangeDiscountPercentage(e.target.value)}
+          onChange={(e) => setDiscountPercentage(parseInt(e.target.value))}
         />
       </DiscountContainer>
 
@@ -76,17 +55,17 @@ export default function PrivacySettings({ raffleConfig, setRaffleConfig }: IPriv
         <h5>Participants</h5>
         <div style={{ display: 'flex', gap: '0.25rem' }}>
           <TrixelsButton
-            btnType={privacy.mode === 'public' ? 'BLUE' : 'DEFAULT'}
+            btnType={raffleConfig.privacy.mode === 'public' ? 'BLUE' : 'DEFAULT'}
             label="Anyone"
             attributes={{
-              onClick: () => handleChangePrivacyMode('public'),
+              onClick: () => setPrivacyMode('public'),
             }}
           />
           <TrixelsButton
-            btnType={privacy.mode === 'guildMembers' ? 'BLUE' : 'DEFAULT'}
+            btnType={raffleConfig.privacy.mode === 'guildMembers' ? 'BLUE' : 'DEFAULT'}
             label="Guild"
             attributes={{
-              onClick: () => handleChangePrivacyMode('guildMembers'),
+              onClick: () => setPrivacyMode('guildMembers'),
             }}
           />
         </div>

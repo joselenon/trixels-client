@@ -7,16 +7,14 @@ export interface IRafflesControllerGQL {
   }>;
 }
 
-export type TRafflePrizeX = { prizeId: string; quantity: number; totalValue: number };
+export type TPrizeItem = { itemId: string; quantity: number; totalValue: number };
 
 export type TRaffleWinnerPrizes = {
   totalValue: number;
-  info: { [prizeX: string]: TRafflePrizeX };
+  items: TPrizeItem[];
 };
 
-export type TRaffleWinnersPrizes = {
-  [winnerX: string]: TRaffleWinnerPrizes;
-};
+export type TRaffleWinnersPrizes = TRaffleWinnerPrizes[];
 
 export type TWinnerBetInRedis = {
   betRef: IBetToFrontEnd;

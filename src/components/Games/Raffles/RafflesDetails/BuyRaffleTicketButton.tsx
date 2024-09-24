@@ -57,14 +57,30 @@ function BuyRaffleTicketButton({ buyRaffleTicketsPayloadState, ticketPrice, raff
       if (res) {
         res.success &&
           setBuyRaffleTicketPayload((prev) => {
-            return { ...prev, info: { ...prev.info, ticketNumbers: [], quantityOfTickets: 0 } };
+            return {
+              ...prev,
+              info: {
+                ...prev.info,
+                ticketNumbers: [],
+                quantityOfTickets: prev.info.quantityOfTickets,
+                randomTicket: prev.info.randomTicket,
+              },
+            };
           });
       }
     } catch (err) {
       console.log('err');
     } finally {
       setBuyRaffleTicketPayload((prev) => {
-        return { ...prev, info: { ...prev.info, ticketNumbers: [], quantityOfTickets: 0 } };
+        return {
+          ...prev,
+          info: {
+            ...prev.info,
+            ticketNumbers: [],
+            quantityOfTickets: prev.info.quantityOfTickets,
+            randomTicket: prev.info.randomTicket,
+          },
+        };
       });
       setIsBuyRaffleButtonPending(false);
     }

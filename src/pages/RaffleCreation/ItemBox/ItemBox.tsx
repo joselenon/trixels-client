@@ -1,10 +1,12 @@
 import React from 'react';
 import { styled } from 'styled-components';
 
-import { TItemInfos } from '../../../../contexts/ItemsAvailableContext';
-import { THandleItemClickFn } from '../../../../pages/RaffleCreation';
-import BerryIconAndAmount from '../../../CurrencyIconAndAmount';
-import TrixelsButton from '../../../TrixelsButton';
+import itemsInfo from '../../../config/itemsInfo';
+import { useAvailableItemsContext } from '../../../contexts/ItemsAvailableContext';
+import { useRaffleCreationContext } from '../../../contexts/RaffleCreationContext';
+import { TRaffleCreationItem } from '../../../interfaces/IRaffleCreation';
+import BerryIconAndAmount from '../../../components/CurrencyIconAndAmount';
+import TrixelsButton from '../../../components/TrixelsButton';
 
 const ItemContainer = styled.div`
   position: relative; // Adicionando posição relativa para posicionamento absoluto dentro deste container
@@ -17,6 +19,7 @@ const ItemContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   padding: 20px;
+  border-radius: var(--default-br);
 
   img {
     image-rendering: pixelated;
@@ -58,38 +61,55 @@ const SumSubButtons = styled.div`
 `;
 
 interface IItemBoxProps {
-  itemInfos: TItemInfos;
-  quantity?: number;
-  handleItemClick: THandleItemClickFn;
+  item: TRaffleCreationItem;
+  winnerIndex: number;
 }
 
-export default function ItemBox({ itemInfos, quantity = 0, handleItemClick }: IItemBoxProps) {
-  const { id, img, name, price } = itemInfos;
+export default function ItemBox({ item, winnerIndex }: IItemBoxProps) {
+  const { setWinnerPrize } = useRaffleCreationContext();
+  const availableItems = useAvailableItemsContext();
+  const { itemId, quantity } = item;
 
   return (
     <ItemContainer>
-      <img src={img} alt={`${name}-img`} />
+      {<img src={itemsInfo[itemId].icon} alt={`${itemId}-img`} />}
       <TitleContainer>
-        <h4>{name}</h4>
+        <h4>{itemId}</h4>
       </TitleContainer>
 
-      <BerryIconAndAmount theme="default" currency="PIXEL" amount={price} />
+      <BerryIconAndAmount
+        theme="default"
+        currency="PIXEL"
+        amount={availableItems ? availableItems[item.itemId].price : 0}
+      />
 
       {quantity > 0 ? (
         <QuantitySelectionContainer>
           <SumSubButtons>
-            <TrixelsButton label="-" btnType="BLUE" attributes={{ onClick: () => handleItemClick(id, 'remove') }} />
+            <TrixelsButton
+              label="-"
+              btnType="BLUE"
+              attributes={{ onClick: () => setWinnerPrize(winnerIndex, { itemId, action: 'sub' }) }}
+            />
           </SumSubButtons>
 
           <h4>{quantity}</h4>
 
           <SumSubButtons>
-            <TrixelsButton label="+" btnType="BLUE" attributes={{ onClick: () => handleItemClick(id, 'add') }} />
+            <TrixelsButton
+              label="+"
+              btnType="BLUE"
+              attributes={{ onClick: () => setWinnerPrize(winnerIndex, { itemId, action: 'add' }) }}
+            />
           </SumSubButtons>
         </QuantitySelectionContainer>
       ) : (
         <div style={{ width: '100%' }}>
-          <TrixelsButton label="Add" btnType="BLUE" attributes={{ onClick: () => handleItemClick(id, 'add') }} />
+          <TrixelsButton
+            label="Add"
+            btnType="BLUE"
+            attributes={{ onClick: () => setWinnerPrize(winnerIndex, { itemId, action: 'add' }) }}
+          />
         </div>
       )}
     </ItemContainer>

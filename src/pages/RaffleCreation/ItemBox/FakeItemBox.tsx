@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 
-import TrixelsButton from '../../../TrixelsButton';
+import RaffleItemsSelectionModal from '../../../components/Modals/RaffleItemsSelectionModal';
+import TrixelsButton from '../../../components/TrixelsButton';
+import { useRaffleCreationContext } from '../../../contexts/RaffleCreationContext';
 
 const ItemContainer = styled.div`
   position: relative; // Adicionando posição relativa para posicionamento absoluto dentro deste container
@@ -36,13 +38,25 @@ const ItemContainer = styled.div`
 `;
 
 interface IItemBoxProps {
-  handleItemClick: () => any;
+  winnerIndex: number;
 }
 
-export default function FakeItemBox({ handleItemClick }: IItemBoxProps) {
+export default function FakeItemBox({ winnerIndex }: IItemBoxProps) {
+  const { raffleConfig } = useRaffleCreationContext();
+
+  const [showModal, setShowModal] = useState(false);
+
+  const winnerSelectedPrize = raffleConfig.prizes[winnerIndex];
+
   return (
     <ItemContainer>
-      <TrixelsButton label="Add Items" btnType="CTA" attributes={{ onClick: () => handleItemClick() }} />
+      <TrixelsButton label="Add Items" btnType="CTA" attributes={{ onClick: () => setShowModal(true) }} />
+
+      <RaffleItemsSelectionModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        winnerSelectedPrize={winnerSelectedPrize}
+      />
     </ItemContainer>
   );
 }

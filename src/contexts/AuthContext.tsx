@@ -15,6 +15,7 @@ interface AuthContextType {
   loginFn: (userData: any) => Promise<void>;
   logoutFn: () => Promise<void>;
   applyUserCredentials: (payload: IAuthResponse) => void;
+  registerFn: (payload: { username: string; password: string }) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -27,7 +28,10 @@ const AuthContext = createContext<AuthContextType>({
     throw new Error('logoutFn not implemented');
   },
   applyUserCredentials: () => {
-    throw new Error('logoutFn not implemented');
+    throw new Error('applyUserCredentials not implemented');
+  },
+  registerFn: () => {
+    throw new Error('registerFn not implemented');
   },
 });
 
@@ -83,7 +87,6 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
           method: 'post',
         },
       });
-
       reduxDispatch(setToken({ userCredentials: undefined }));
       setUserCredentials(undefined);
       setIsAuthenticated(false);
@@ -99,8 +102,28 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(true);
   };
 
+  const registerFn = async (payload: { username: string; password: string }) => {
+    if (isAuthenticated) {
+      toast.error("You're already logged.");
+      return;
+    }
+
+    const response = await TrixelsAxiosServiceInstance.request<IAuthResponse>({
+      requestConfig: { url: URLS.ENDPOINTS.AUTH.REGISTER, method: 'post', data: { ...payload } },
+      showSuccessErrorToast: [true, true],
+    });
+
+    if (response && response.data) {
+      applyUserCredentials(response.data);
+    } else {
+      toast.error('Something went wrong.');
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userCredentials, loginFn, logoutFn, applyUserCredentials }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, userCredentials, registerFn, loginFn, logoutFn, applyUserCredentials }}
+    >
       {children}
     </AuthContext.Provider>
   );

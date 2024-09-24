@@ -72,6 +72,8 @@ export default function ViewRaffle() {
   const { info, description, createdAt } = raffleSelected;
   const { prizes, prizesTotalValue } = info;
 
+  console.log(prizes);
+
   return (
     <Body>
       <ViewRaffleContainer>

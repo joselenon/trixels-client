@@ -30,7 +30,7 @@ export default function Buy({ gameId }: IBuyProps) {
               gameId,
               info: {
                 randomTicket: true,
-                quantityOfTickets: 0,
+                quantityOfTickets: 1,
                 ticketNumbers: [],
               },
             }),

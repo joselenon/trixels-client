@@ -9,24 +9,22 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { TRaffleWinnerPrizes } from '../../../interfaces/IRaffles';
 import PrizeX from './PrizeX';
 
-interface IWinnerXPrizesElementProps {
-  winnerXPrizes: TRaffleWinnerPrizes;
+interface IWinnerPrizeElementProps {
+  prize: TRaffleWinnerPrizes;
 }
 
-export default function WinnerXPrizesElement({ winnerXPrizes }: IWinnerXPrizesElementProps) {
-  const winnerXPrizesInfoKeys = Object.keys(winnerXPrizes['info']);
-
-  const winnerXPrizesElements = winnerXPrizesInfoKeys.map((prizeX, i) => {
+export default function WinnerPrizeElement({ prize }: IWinnerPrizeElementProps) {
+  const WinnerPrizeElements = prize.items.map((prizeX, i) => {
     return (
       <SwiperSlide key={i}>
-        <PrizeX prizeInfo={winnerXPrizes['info'][prizeX]} />
+        <PrizeX prizeInfo={prizeX} />
       </SwiperSlide>
     );
   });
 
   return (
     <Swiper pagination={true} modules={[Pagination]} className="mySwiper prizes">
-      {winnerXPrizesElements}
+      {WinnerPrizeElements}
     </Swiper>
   );
 }

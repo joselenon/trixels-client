@@ -116,6 +116,7 @@ export default function TicketsElements({ raffle }: ITicketsElementsProps) {
         info: {
           ...prev.info,
           ticketNumbers: [],
+          quantityOfTickets: 1,
           randomTicket: !prev.info.randomTicket,
         },
       };

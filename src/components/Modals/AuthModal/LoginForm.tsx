@@ -1,6 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
 import styled from 'styled-components';
 
 import google_icon_white from '../../../assets/images/google_icon_white.jpg';
@@ -8,7 +6,6 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import useLoginThroughGoogle from '../../../hooks/useLoginThroughGoogle';
 import { ICreateInput } from '../../../interfaces/IRHF';
 import { IUserToFrontEnd } from '../../../interfaces/IUser';
-import AuthService from '../../../services/AuthService';
 import isUsernameValid from '../../../utils/isUsernameValid';
 import Form from '../../Form';
 import TrixelsButton from '../../TrixelsButton';

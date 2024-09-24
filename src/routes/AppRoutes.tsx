@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import AvailableItemsContextProvider from '../contexts/ItemsAvailableContext';
+import { RaffleCreationContextProvider } from '../contexts/RaffleCreationContext';
 import RafflesContextProvider from '../contexts/RafflesContext';
 import { ScreenConfigProvider } from '../contexts/ScreenConfigContext';
 import Affiliates from '../pages/Affiliates';
@@ -45,7 +46,9 @@ export default function AppRoutes() {
         element={
           <RafflesContextProvider>
             <AvailableItemsContextProvider>
-              <RaffleCreation />
+              <RaffleCreationContextProvider>
+                <RaffleCreation />
+              </RaffleCreationContextProvider>
             </AvailableItemsContextProvider>
           </RafflesContextProvider>
         }

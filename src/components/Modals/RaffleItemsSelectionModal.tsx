@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { IItemsInfoResponse } from '../../contexts/ItemsAvailableContext';
-import { TRaffleCreationWinnerPrizes } from '../../interfaces/IRaffleCreation';
-import { THandleItemClickFn } from '../../pages/RaffleCreation';
-import RaffleCalcs from '../../utils/RaffleCalcs';
-import ItemBox from '../Games/Raffles/RaffleCreation/ItemBox';
+import { IItemsInfoResponse, useAvailableItemsContext } from '../../contexts/ItemsAvailableContext';
+import { useRaffleCreationContext } from '../../contexts/RaffleCreationContext';
+import { IRaffleCreationPayload, TRaffleCreationWinnerPrize } from '../../interfaces/IRaffleCreation';
+import { RaffleCreationManager } from '../../pages/RaffleCreation/RaffleCreationManager';
+import { GetWinnerItems } from '../../utils/RaffleCalcs';
+import ItemBox from '../../pages/RaffleCreation/ItemBox/ItemBox';
 import Modal from '../Modal';
 
 const RaffleItemsSelectionModalContainer = styled.div`
@@ -31,19 +32,20 @@ const ItemsContainer = styled.div`
 interface IRaffleItemsSelectionModalProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  availableItems: IItemsInfoResponse | undefined;
-  winnerSelectedPrizes: TRaffleCreationWinnerPrizes;
-  handleItemClick: THandleItemClickFn;
-  winnerNumber: number;
+  winnerSelectedPrize?: TRaffleCreationWinnerPrize;
 }
 
-export default function RaffleItemsSelectionModal(props: IRaffleItemsSelectionModalProps) {
-  const { handleItemClick, setShowModal, availableItems, winnerSelectedPrizes, showModal } = props;
+export default function RaffleItemsSelectionModal({
+  showModal,
+  setShowModal,
+  winnerSelectedPrize,
+}: IRaffleItemsSelectionModalProps) {
+  const availableItems = useAvailableItemsContext();
 
   const calculateTotalValue = () => {
-    if (availableItems && winnerSelectedPrizes) {
-      const { winnerXPrizeObj } = new RaffleCalcs(availableItems).getWinnerXPrize(winnerSelectedPrizes['info']);
-      return winnerXPrizeObj.totalValue.toFixed(2);
+    if (availableItems && winnerSelectedPrize) {
+      const { winnerPrizeObj } = GetWinnerItems(winnerSelectedPrize['items'], availableItems);
+      return winnerPrizeObj.totalValue.toFixed(2);
     }
 
     return 0;
@@ -52,14 +54,13 @@ export default function RaffleItemsSelectionModal(props: IRaffleItemsSelectionMo
   const renderItemsElements = () => {
     if (availableItems) {
       const itemsElements = Object.keys(availableItems).map((itemId, i) => {
-        const itemQuantity =
-          winnerSelectedPrizes && Object.keys(winnerSelectedPrizes['info']).includes(itemId)
-            ? winnerSelectedPrizes['info'][itemId].quantity
-            : 0;
+        const findItem = winnerSelectedPrize && winnerSelectedPrize['items'].find((item) => item.itemId === itemId);
+
+        const itemQuantity = findItem ? findItem.quantity : 0;
 
         return (
           <div key={i}>
-            <ItemBox handleItemClick={handleItemClick} itemInfos={availableItems[itemId]} quantity={itemQuantity} />
+            <ItemBox winnerIndex={0} item={{ itemId, quantity: itemQuantity }} />
           </div>
         );
       });
