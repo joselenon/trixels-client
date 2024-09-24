@@ -14,7 +14,7 @@ const SERVER_FULL_URL =
   ENVIRONMENT.VITE_APP_MODE === 'DEVELOPMENT' ? `${SERVER_URL_WITH_PROTOCOL}:${SERVER_PORT}` : SERVER_URL_WITH_PROTOCOL;
 
 // https://serverdomain.com/api OU http://localhost:PORT/api
-export const API_BASE = '/api';
+export const API_BASE = ENVIRONMENT.VITE_APP_API_BASE;
 export const API_URL = `${SERVER_FULL_URL}${API_BASE}`;
 
 // CLIENT

@@ -6,6 +6,7 @@ const ENVIRONMENT = {
   VITE_APP_CLIENT_PORT: parseInt(import.meta.env.VITE_APP_CLIENT_PORT || '', 10), // Converta para número
   VITE_APP_SERVER_URL: import.meta.env.VITE_APP_SERVER_URL || '', // Certifique-se de que é uma string
   VITE_APP_CLIENT_URL: import.meta.env.VITE_APP_CLIENT_URL || '', // Certifique-se de que é uma string
+  VITE_APP_API_BASE: import.meta.env.VITE_APP_CLIENT_URL || '', // Certifique-se de que é uma string
 };
 
 // Validação das variáveis de ambiente
@@ -65,6 +66,10 @@ const validateEnv = () => {
     errors.push(
       `Invalid value for VITE_APP_CLIENT_URL. Expected a non-empty string, got '${ENVIRONMENT.VITE_APP_CLIENT_URL}'.`,
     );
+  }
+
+  if (typeof ENVIRONMENT.VITE_APP_API_BASE !== 'string') {
+    errors.push(`Invalid value for VITE_APP_CLIENT_URL. Expected a string, got '${ENVIRONMENT.VITE_APP_CLIENT_URL}'.`);
   }
 
   // Se houver erros, lança uma exceção
